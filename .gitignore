@@ -9,6 +9,7 @@ obj/
 
 # ---------------- 导出产物 ----------------
 build/
+dist/
 *.pck
 export_credentials.cfg
 
