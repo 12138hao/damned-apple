@@ -102,9 +102,24 @@ Godot_v4.7.2-stable_mono_win64.exe --path .
 | `assets/audio/sfx/` | jump / hurt / attack / swing / charge / death / enemy_hurt / pickup / collapse / slam / boss_cry / vehicle_shoot / blip |
 | `assets/audio/bgm/` | town / house / boss_fight |
 
-对话打字音 `blip` 是用 `tools/gen_blip.py` 按实测参数合成的（纯标准库，不需要任何依赖），想换音高或密度改脚本里的参数重跑即可。
+对话打字音 `blip` 是用 `tools/gen_blip_soft.py` 按实测参数合成的（纯标准库，不需要任何依赖），想换音高或密度改脚本里的参数重跑即可。
 
-> 部分音效取自公开音效库与个人参考素材，**仅供本 demo 学习展示，请勿单独提取使用**。
+---
+
+## 素材来源与授权
+
+| 素材 | 来源 | 说明 |
+|---|---|---|
+| 代码、场景、关卡 | 本项目自制 | 版权归作者 |
+| 美术素材 | 本项目自制 | 版权归作者 |
+| 对话打字音 `blip` | `tools/gen_blip_soft.py` 参数合成 | 本项目自制，不含任何第三方录音 |
+| 音效、背景音乐 | Pixabay / GamerSounds 游戏音效工厂 | 见下方说明 |
+
+**Pixabay** — 依据 Pixabay Content License，素材可免费使用、**无需署名**、可修改改编。该协议唯一硬性限制是不得把素材原样单独再分发。
+
+**GamerSounds 游戏音效工厂** — 站点声明所有音效素材「完全免费」，面向独立游戏开发、Demo 制作、个人学习等场景提供。
+
+> 以上音频素材仅作为本项目 demo 的组成部分使用，**请勿从本仓库单独提取后另作他用**。如需在自己项目中使用，请前往上述来源站点按其授权条款获取。
 
 ---
 
