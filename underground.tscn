@@ -1,0 +1,122 @@
+[gd_scene format=3 uid="uid://cdb8fglf031rr"]
+
+[ext_resource type="Script" uid="uid://ckfwsyc34ots7" path="res://Box.cs" id="1_qbb5w"]
+[ext_resource type="Texture2D" uid="uid://dsfapsyeiv41h" path="res://assets/player_sheet_v2.png" id="2_xggcg"]
+[ext_resource type="Script" uid="uid://dmq7nrftqx2qw" path="res://DialogueUI.cs" id="3_pvodk"]
+[ext_resource type="Script" uid="uid://bkvaedtmio4gf" path="res://SwingTrail.cs" id="4_6xgwd"]
+[ext_resource type="Script" uid="uid://bfk5suig6pucp" path="res://ChargeArc.cs" id="5_xdn7w"]
+[ext_resource type="Texture2D" uid="uid://c7irabu5sxp5h" path="res://assets/weapon.png" id="6_h7tmf"]
+[ext_resource type="Script" uid="uid://c57ocnohmulys" path="res://WeaponAura.cs" id="7_us87v"]
+[ext_resource type="Texture2D" uid="uid://06cun7xp5j10" path="res://assets/cave.png" id="8_xggcg"]
+[ext_resource type="Texture2D" uid="uid://8y3qr3225sps" path="res://assets/cave_floor_transparent.png" id="9_6xgwd"]
+[ext_resource type="Script" uid="uid://xj40k62qt5mj" path="res://SpawnSavePoint.cs" id="9_pvodk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0boax"]
+size = Vector2(32, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vktki"]
+size = Vector2(26, 42)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_btfou"]
+size = Vector2(4363.5, 20)
+
+[node name="Main2" type="Node2D" unique_id=1867660586]
+
+[node name="box" type="CharacterBody2D" parent="." unique_id=1416931068]
+z_index = 10
+position = Vector2(250, 100)
+collision_layer = 2
+collision_mask = 9
+script = ExtResource("1_qbb5w")
+Speed = 300.0
+jumpVelocity = 400.0
+KnockBack = 100.0
+LockCameraY = true
+VehicleSpeedMult = 1.3
+VehicleBulletDamage = 30
+VehicleBulletKnockback = 50.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=1778465336]
+shape = SubResource("RectangleShape2D_0boax")
+
+[node name="Camera2D" type="Camera2D" parent="box" unique_id=588490328]
+offset = Vector2(0, -80)
+limit_left = 2
+limit_top = 0
+limit_right = 12786
+limit_bottom = 8251
+position_smoothing_enabled = true
+position_smoothing_speed = 22.0
+
+[node name="Sprite2D" type="Sprite2D" parent="box" unique_id=1613019246]
+texture = ExtResource("2_xggcg")
+offset = Vector2(0, -10)
+hframes = 20
+
+[node name="DialogueUI" type="Node2D" parent="box" unique_id=2025897324]
+z_index = 20
+position = Vector2(-85, -114)
+script = ExtResource("3_pvodk")
+
+[node name="Text" type="Label" parent="box/DialogueUI" unique_id=308102230]
+offset_left = -109.0
+offset_top = -35.0
+offset_right = 97.0
+offset_bottom = 27.0
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="SwingTrail" type="Node2D" parent="box" unique_id=1730687839]
+z_index = 2
+script = ExtResource("4_6xgwd")
+
+[node name="ChargeArc" type="Node2D" parent="box" unique_id=174614601]
+position = Vector2(-38, -6)
+script = ExtResource("5_xdn7w")
+Radius = 20.0
+SweepDeg = 120.0
+
+[node name="Weapon" type="Area2D" parent="box" unique_id=543418955]
+z_index = 100
+position = Vector2(18, -15)
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box/Weapon" unique_id=1165327875]
+shape = SubResource("RectangleShape2D_vktki")
+
+[node name="Sprite2D" type="Sprite2D" parent="box/Weapon" unique_id=1488048582]
+visible = false
+texture = ExtResource("6_h7tmf")
+
+[node name="Aura" type="Node2D" parent="box/Weapon" unique_id=1913287129]
+script = ExtResource("7_us87v")
+
+[node name="background" type="Sprite2D" parent="." unique_id=1133267646]
+z_index = -100
+texture_repeat = 2
+position = Vector2(4895.125, 283.6875)
+scale = Vector2(0.97882503, 1.11725)
+texture = ExtResource("8_xggcg")
+region_enabled = true
+region_rect = Rect2(0, 0, 10000, 500)
+
+[node name="road" type="StaticBody2D" parent="." unique_id=204918861]
+position = Vector2(-44, 406)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="road" unique_id=1089853058]
+z_index = -100
+position = Vector2(2222, 97)
+shape = SubResource("RectangleShape2D_btfou")
+
+[node name="Sprite2D" type="Sprite2D" parent="road" unique_id=1607880520]
+z_index = -90
+position = Vector2(595, 292)
+scale = Vector2(0.78453046, 0.74723756)
+texture = ExtResource("9_6xgwd")
+
+[node name="SpawnSave" type="Node2D" parent="." unique_id=1556134010]
+position = Vector2(255, 111)
+script = ExtResource("9_pvodk")
