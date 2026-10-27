@@ -91,24 +91,20 @@ Godot_v4.7.2-stable_mono_win64.exe --path .
 
 ---
 
-## 关于音频
+## 音频
 
-仓库里**不包含音频文件**（`assets/audio/` 已加入 `.gitignore`），原因是这些音效来源为第三方音效库和参考录屏，为避免版权问题不上传。
+仓库包含完整的音效与背景音乐，克隆下来就能直接听到声音。
 
-所以克隆下来的版本是**静音的**，但游戏逻辑完全正常——`AudioManager` 找不到文件时会静默跳过，不会报错。
+音频系统是自己写的（`AudioManager.cs`）：8 路音效播放器轮换，BGM 淡入淡出，**音效按名字查找文件，找不到时静默跳过**——所以增删素材完全不用改代码。
 
-想补回来的话，在对应目录放入同名文件即可，不需要改代码：
+| 目录 | 内容 |
+|---|---|
+| `assets/audio/sfx/` | jump / hurt / attack / swing / charge / death / enemy_hurt / pickup / collapse / slam / boss_cry / vehicle_shoot / blip |
+| `assets/audio/bgm/` | town / house / boss_fight |
 
-```
-assets/audio/sfx/<名字>.wav|mp3|ogg
-assets/audio/bgm/<名字>.mp3|ogg
-```
+对话打字音 `blip` 是用 `tools/gen_blip.py` 按实测参数合成的（纯标准库，不需要任何依赖），想换音高或密度改脚本里的参数重跑即可。
 
-对话打字音可以用仓库里的脚本重新生成：
-
-```bash
-python tools/gen_blip.py
-```
+> 部分音效取自公开音效库与个人参考素材，**仅供本 demo 学习展示，请勿单独提取使用**。
 
 ---
 

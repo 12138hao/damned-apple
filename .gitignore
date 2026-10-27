@@ -18,13 +18,9 @@ export_credentials.cfg
 *.bak[0-9]*
 
 # ---------------- 音频素材 ----------------
-# 音效与 BGM 均为第三方来源（音效库 / 录屏截取），
-# 为规避版权问题不放入公开仓库。游戏在本地可正常运行，
-# 克隆后如需听声音，请自行在下列目录放入同名音频文件：
-#   assets/audio/sfx/<名字>.wav|mp3|ogg
-#   assets/audio/bgm/<名字>.mp3|ogg
-# 对话打字音可以用 tools/gen_blip.py 重新合成一个。
-assets/audio/
+# 音频已纳入仓库（音效 + BGM）。
+# 例外：m4a 不支持（Godot 只认 wav / mp3 / ogg），不入库。
+*.m4a
 
 # ---------------- 音频分析与试听 ----------------
 # tools/ref 存放从参考录屏中抽取的音频，tools/preview_audio 是试听产物
