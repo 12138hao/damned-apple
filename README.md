@@ -4,6 +4,16 @@
 
 一个用 **Godot 4 + C#** 从零手写的横版动作 demo。没有用任何现成的角色控制器或战斗框架，移动、平台、战斗、Boss、对话全部是自己一行行写出来的。
 
+## 直接下载游玩
+
+不想装引擎的话，去 **[Releases](https://github.com/12138hao/damned-apple/releases)** 下载 `damned-apple-v0.1.0-win64.zip`：
+
+1. 解压（**要整个文件夹，不能只拖出 exe**）
+2. 双击 `该死的苹果.exe`
+
+**不需要安装 Godot，也不需要装 .NET 运行时。**
+Windows 可能弹出 SmartScreen 蓝色提示（exe 没有代码签名），点「更多信息 → 仍要运行」即可。
+
 ---
 
 ## 玩法与操作

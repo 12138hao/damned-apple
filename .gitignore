@@ -32,3 +32,6 @@ tools/preview_audio/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# 图标生成中间产物（可由 ffmpeg 从 pixel-128-transparent.png 重新生成）
+tools/icon/

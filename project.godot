@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="我的第一个游戏"
+config/icon="res://pixel-128-transparent.png"
 run/main_scene="uid://c5cw7k2nfpe4s"
 config/features=PackedStringArray("4.7", "C#", "GL Compatibility")
 
