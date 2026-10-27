@@ -1,0 +1,1561 @@
+[gd_scene format=3 uid="uid://c5cw7k2nfpe4s"]
+
+[ext_resource type="Script" uid="uid://ckfwsyc34ots7" path="res://Box.cs" id="1_box"]
+[ext_resource type="Texture2D" uid="uid://8mkr6ihxcnw2" path="res://assets/ground_tile.png" id="2_ground"]
+[ext_resource type="Texture2D" uid="uid://dsfapsyeiv41h" path="res://assets/player_sheet_v2.png" id="3_player"]
+[ext_resource type="Texture2D" uid="uid://qmpg0urij8j5" path="res://assets/sky_gradient.png" id="4_sky"]
+[ext_resource type="Texture2D" uid="uid://8gw28t2gendj" path="res://assets/sun.png" id="5_sun"]
+[ext_resource type="Texture2D" uid="uid://dgwqsdp32cd6w" path="res://assets/mountains_far.png" id="6_mfar"]
+[ext_resource type="Texture2D" uid="uid://dmpp2rhej2cs6" path="res://assets/mountains_near.png" id="7_mnear"]
+[ext_resource type="Texture2D" uid="uid://bjx8f8sduly" path="res://assets/cloud_a.png" id="8_ca"]
+[ext_resource type="Texture2D" uid="uid://bnhufvta1ehld" path="res://assets/cloud_b.png" id="9_cb"]
+[ext_resource type="Texture2D" uid="uid://dgacdwykvbgvj" path="res://assets/cloud_c.png" id="10_cc"]
+[ext_resource type="Script" uid="uid://8fkscthjuq31" path="res://Clouds.cs" id="11_clouds"]
+[ext_resource type="Texture2D" uid="uid://e7c01kbfbjb8" path="res://assets/enemy_sheet.png" id="12_enemy_tex"]
+[ext_resource type="Texture2D" uid="uid://c7irabu5sxp5h" path="res://assets/weapon.png" id="18_weapon"]
+[ext_resource type="Script" uid="uid://25b5frpd6y4j" path="res://Pickup.cs" id="19_pickup"]
+[ext_resource type="Texture2D" uid="uid://cy8d8wluksx84" path="res://assets/ui/enemy_bar_bg.png" id="20_ebg"]
+[ext_resource type="Texture2D" uid="uid://rcoouocy0qfd" path="res://assets/ui/enemy_bar_fill.png" id="21_efill"]
+[ext_resource type="Texture2D" uid="uid://ckbxmw15wu7ak" path="res://assets/ui/enemy_bar_border.png" id="22_eborder"]
+[ext_resource type="Script" uid="uid://bfk5suig6pucp" path="res://ChargeArc.cs" id="23_charge"]
+[ext_resource type="Script" uid="uid://bkvaedtmio4gf" path="res://SwingTrail.cs" id="24_trail"]
+[ext_resource type="Script" uid="uid://dmq7nrftqx2qw" path="res://DialogueUI.cs" id="25_cb0qr"]
+[ext_resource type="Script" uid="uid://yepyo4hu3b73" path="res://Npc.cs" id="26_cb0qr"]
+[ext_resource type="Texture2D" uid="uid://b1a1qmph1i2h0" path="res://assets/naiwa_sheet.png" id="26_naiwa"]
+[ext_resource type="Script" uid="uid://bjqr8o3rcadc8" path="res://SheetAnimator.cs" id="27_sheetanim"]
+[ext_resource type="Script" uid="uid://cuipsb4n5tu8t" path="res://Breath.cs" id="28_breath"]
+[ext_resource type="Texture2D" uid="uid://c2xtxbjc6naey" path="res://d1f5ea4575a7c69f3a8439524a128515.png" id="29_eja4j"]
+[ext_resource type="Texture2D" uid="uid://dijjc0ang68bh" path="res://7d4304a8c92e5d3059a5430660718669.png" id="30_bo8hs"]
+[ext_resource type="Texture2D" uid="uid://dmdlrp0tj7qmv" path="res://road_side_64x64.png" id="32_tynxm"]
+[ext_resource type="Texture2D" uid="uid://dg5bcas5h7gno" path="res://rocks2_64.png" id="33_pfgsj"]
+[ext_resource type="Texture2D" uid="uid://dicoe0dcmnnyh" path="res://dirt_64.png" id="34_ks3nn"]
+[ext_resource type="Texture2D" uid="uid://djcafrm6r5dl1" path="res://楼2_红砖阳台4层_透明128.png" id="35_ks3nn"]
+[ext_resource type="Texture2D" uid="uid://d8ccd5c1vmop" path="res://楼4_浅蓝空调3层_透明128.png" id="36_2qoau"]
+[ext_resource type="Texture2D" uid="uid://0gvdhc7l085t" path="res://楼1_米色平顶3层_透明128.png" id="37_uy4qa"]
+[ext_resource type="Script" uid="uid://dpvcbm6kfba6x" path="res://Door.cs" id="38_door"]
+[ext_resource type="Texture2D" uid="uid://s4cldyxchbgq" path="res://11_浅绿外楼梯3层_128.png" id="38_i6ha1"]
+[ext_resource type="Script" uid="uid://clrl3orq3o4fp" path="res://KillZone.cs" id="39_kill"]
+[ext_resource type="Texture2D" uid="uid://b6nyfkmg7fg04" path="res://楼3_灰水泥水塔2层_透明128.png" id="39_u7cgq"]
+[ext_resource type="Texture2D" uid="uid://bf6bm0qj8owo2" path="res://09_米白防盗网5层_128.png" id="40_58jeh"]
+[ext_resource type="Resource" path="res://assets/weapons/bat.tres" id="40_bat"]
+[ext_resource type="Texture2D" uid="uid://dqtebegyphi6o" path="res://10_淡黄阳台晾衣4层_128.png" id="41_p4c2a"]
+[ext_resource type="Script" uid="uid://b3usr6w73hux2" path="res://EMarker.cs" id="42_emarker"]
+[ext_resource type="Texture2D" uid="uid://b4npt84rf7q3o" path="res://e-marker-64.png" id="43_emarker"]
+[ext_resource type="Texture2D" uid="uid://dnwdrejahamgt" path="res://sheet-2x.png" id="45_58jeh"]
+[ext_resource type="Script" uid="uid://0u2ugkyn8p4o" path="res://DeathExplosion.cs" id="45_deathexp"]
+[ext_resource type="Script" uid="uid://c2dq846cinckp" path="res://AppleEnemy.cs" id="46_apple"]
+[ext_resource type="Texture2D" uid="uid://8xj7jkwlotdb" path="res://楼浅绿色_128.png" id="46_qc6h8"]
+[ext_resource type="Texture2D" uid="uid://beqmsae8f3ru6" path="res://county_front_128.png" id="47_esalc"]
+[ext_resource type="Texture2D" uid="uid://cn45fyf1y526x" path="res://楼浅黄色_128.png" id="48_3a150"]
+[ext_resource type="Script" uid="uid://xp6dw8pqqw6b" path="res://SlimeEnemy.cs" id="48_slime"]
+[ext_resource type="Script" uid="uid://e2lmtmdyfjt3" path="res://Enemy2.cs" id="49_enemy2"]
+[ext_resource type="Texture2D" uid="uid://b02civf6agc1c" path="res://park2_800x128_transparent.png" id="49_hrcpt"]
+[ext_resource type="Script" uid="uid://levov5tvavte" path="res://Enemy3.cs" id="50_enemy3"]
+[ext_resource type="PackedScene" uid="uid://cp4v7l1a2auik" path="res://RevivePoint.tscn" id="50_fq71s"]
+[ext_resource type="Texture2D" uid="uid://cwyxbp3ssy3r" path="res://road_seamless_1024x64.png" id="51_s8kc1"]
+[ext_resource type="Texture2D" uid="uid://711xxoftjjrx" path="res://cliff_3000x6000.png" id="57_wn8cm"]
+[ext_resource type="Script" uid="uid://hxrbxsjner5p" path="res://EnemyManager.cs" id="70_enemymgr"]
+[ext_resource type="Script" uid="uid://c57ocnohmulys" path="res://WeaponAura.cs" id="71_aura"]
+[ext_resource type="PackedScene" uid="uid://bttnay5m05qd3" path="res://BossArena.tscn" id="90_bossarena"]
+[ext_resource type="Script" uid="uid://3f3mr8ns1cfu" path="res://FallTrigger.cs" id="91_fall"]
+[ext_resource type="Texture2D" uid="uid://c3spca8fwidkh" path="res://assets/enemy/apple_hat.png" id="92_hat"]
+
+[sub_resource type="RectangleShape2D" id="Shape_Ground"]
+size = Vector2(722, 40)
+
+[sub_resource type="RectangleShape2D" id="Shape_Enemy"]
+size = Vector2(32, 32)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_btfou"]
+radius = 21.0
+
+[sub_resource type="RectangleShape2D" id="Shape_Player"]
+size = Vector2(32, 32)
+
+[sub_resource type="RectangleShape2D" id="Shape_Weapon"]
+size = Vector2(26, 42)
+
+[sub_resource type="CircleShape2D" id="Shape_Pickup"]
+radius = 26.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_btfou"]
+size = Vector2(20, 875)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_uv0j0"]
+radius = 2617.2505
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vgssw"]
+radius = 156.88
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uv0j0"]
+size = Vector2(149, 27.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m3r2q"]
+size = Vector2(4000, 40)
+
+[sub_resource type="RectangleShape2D" id="Shape_Kill1"]
+size = Vector2(390, 60)
+
+[sub_resource type="RectangleShape2D" id="Shape_Kill2"]
+size = Vector2(8628.5, 60)
+
+[sub_resource type="RectangleShape2D" id="Shape_Kill3"]
+size = Vector2(318, 60)
+
+[sub_resource type="RectangleShape2D" id="Shape_Door"]
+size = Vector2(99, 80)
+
+[sub_resource type="RectangleShape2D" id="Shape_AppleBody"]
+size = Vector2(55, 56)
+
+[sub_resource type="CircleShape2D" id="Shape_AppleHurt"]
+radius = 32.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_xuf88"]
+load_path = "res://.godot/imported/sheet-2x.png-ce475904086915b5b7a1735173dc42b5.ctex"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vgssw"]
+size = Vector2(2523, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ehvjd"]
+size = Vector2(232, 4541)
+
+[node name="Main" type="Node2D" unique_id=881941884]
+y_sort_enabled = true
+
+[node name="Sky" type="Sprite2D" parent="." unique_id=1182319644]
+z_index = -100
+position = Vector2(1600, 327)
+texture = ExtResource("4_sky")
+
+[node name="Sun" type="Sprite2D" parent="." unique_id=448767235]
+z_index = -99
+position = Vector2(520, 320)
+texture = ExtResource("5_sun")
+
+[node name="MountainsFar" type="Sprite2D" parent="." unique_id=1549539107]
+z_index = -80
+position = Vector2(1600, 415)
+texture = ExtResource("6_mfar")
+
+[node name="Sky2" type="Sprite2D" parent="." unique_id=2010000001]
+z_index = -100
+position = Vector2(4810, 324)
+texture = ExtResource("4_sky")
+
+[node name="Sky3" type="Sprite2D" parent="." unique_id=2010000002]
+z_index = -100
+position = Vector2(8000, 322)
+texture = ExtResource("4_sky")
+
+[node name="Sky4" type="Sprite2D" parent="." unique_id=2010000003]
+z_index = -100
+position = Vector2(11200, 322)
+texture = ExtResource("4_sky")
+
+[node name="MountainsFar2" type="Sprite2D" parent="." unique_id=2010000011]
+z_index = -80
+position = Vector2(4800, 415)
+texture = ExtResource("6_mfar")
+
+[node name="MountainsFar3" type="Sprite2D" parent="." unique_id=2010000012]
+z_index = -80
+position = Vector2(8000, 415)
+texture = ExtResource("6_mfar")
+
+[node name="MountainsFar4" type="Sprite2D" parent="." unique_id=2010000013]
+z_index = -80
+position = Vector2(11200, 415)
+texture = ExtResource("6_mfar")
+
+[node name="MountainsNear" type="Sprite2D" parent="." unique_id=1269413935]
+z_index = -70
+position = Vector2(1600, 439)
+texture = ExtResource("7_mnear")
+
+[node name="MountainsNear2" type="Sprite2D" parent="." unique_id=2010000021]
+z_index = -70
+position = Vector2(4800, 438)
+texture = ExtResource("7_mnear")
+
+[node name="MountainsNear3" type="Sprite2D" parent="." unique_id=2010000022]
+z_index = -70
+position = Vector2(8000, 438)
+texture = ExtResource("7_mnear")
+
+[node name="MountainsNear4" type="Sprite2D" parent="." unique_id=2010000023]
+z_index = -70
+position = Vector2(11200, 438)
+texture = ExtResource("7_mnear")
+
+[node name="CloudsFar" type="Node2D" parent="." unique_id=1730653742]
+z_index = -90
+script = ExtResource("11_clouds")
+RightEdge = 10300.0
+
+[node name="Cloud1" type="Sprite2D" parent="CloudsFar" unique_id=2020000001]
+position = Vector2(180, 300)
+texture = ExtResource("10_cc")
+
+[node name="Cloud2" type="Sprite2D" parent="CloudsFar" unique_id=2020000002]
+position = Vector2(820, 318)
+texture = ExtResource("8_ca")
+
+[node name="Cloud3" type="Sprite2D" parent="CloudsFar" unique_id=2020000003]
+position = Vector2(1460, 292)
+texture = ExtResource("9_cb")
+
+[node name="Cloud4" type="Sprite2D" parent="CloudsFar" unique_id=2020000004]
+position = Vector2(2100, 312)
+texture = ExtResource("10_cc")
+
+[node name="Cloud5" type="Sprite2D" parent="CloudsFar" unique_id=2020000005]
+position = Vector2(2740, 300)
+texture = ExtResource("8_ca")
+
+[node name="Cloud6" type="Sprite2D" parent="CloudsFar" unique_id=2020000006]
+position = Vector2(3380, 318)
+texture = ExtResource("9_cb")
+
+[node name="Cloud7" type="Sprite2D" parent="CloudsFar" unique_id=2020000007]
+position = Vector2(4020, 292)
+texture = ExtResource("10_cc")
+
+[node name="Cloud8" type="Sprite2D" parent="CloudsFar" unique_id=2020000008]
+position = Vector2(4660, 312)
+texture = ExtResource("8_ca")
+
+[node name="Cloud9" type="Sprite2D" parent="CloudsFar" unique_id=2020000009]
+position = Vector2(5300, 300)
+texture = ExtResource("9_cb")
+
+[node name="Cloud10" type="Sprite2D" parent="CloudsFar" unique_id=2020000010]
+position = Vector2(5940, 318)
+texture = ExtResource("10_cc")
+
+[node name="Cloud11" type="Sprite2D" parent="CloudsFar" unique_id=2020000011]
+position = Vector2(6580, 292)
+texture = ExtResource("8_ca")
+
+[node name="Cloud12" type="Sprite2D" parent="CloudsFar" unique_id=2020000012]
+position = Vector2(7220, 312)
+texture = ExtResource("9_cb")
+
+[node name="Cloud13" type="Sprite2D" parent="CloudsFar" unique_id=2020000013]
+position = Vector2(7860, 300)
+texture = ExtResource("10_cc")
+
+[node name="Cloud14" type="Sprite2D" parent="CloudsFar" unique_id=2020000014]
+position = Vector2(8500, 318)
+texture = ExtResource("8_ca")
+
+[node name="Cloud15" type="Sprite2D" parent="CloudsFar" unique_id=2020000015]
+position = Vector2(9140, 292)
+texture = ExtResource("9_cb")
+
+[node name="Cloud16" type="Sprite2D" parent="CloudsFar" unique_id=2020000016]
+position = Vector2(9780, 312)
+texture = ExtResource("10_cc")
+
+[node name="CloudsNear" type="Node2D" parent="." unique_id=118912260]
+z_index = -90
+script = ExtResource("11_clouds")
+Speed = 18.0
+RightEdge = 10300.0
+
+[node name="Cloud17" type="Sprite2D" parent="CloudsNear" unique_id=2020000017]
+position = Vector2(300, 350)
+texture = ExtResource("10_cc")
+
+[node name="Cloud18" type="Sprite2D" parent="CloudsNear" unique_id=2020000018]
+position = Vector2(1160, 340)
+texture = ExtResource("8_ca")
+
+[node name="Cloud19" type="Sprite2D" parent="CloudsNear" unique_id=2020000019]
+position = Vector2(2020, 356)
+texture = ExtResource("9_cb")
+
+[node name="Cloud20" type="Sprite2D" parent="CloudsNear" unique_id=2020000020]
+position = Vector2(2880, 336)
+texture = ExtResource("10_cc")
+
+[node name="Cloud21" type="Sprite2D" parent="CloudsNear" unique_id=2020000021]
+position = Vector2(3740, 350)
+texture = ExtResource("8_ca")
+
+[node name="Cloud22" type="Sprite2D" parent="CloudsNear" unique_id=2020000022]
+position = Vector2(4600, 340)
+texture = ExtResource("9_cb")
+
+[node name="Cloud23" type="Sprite2D" parent="CloudsNear" unique_id=2020000023]
+position = Vector2(5460, 356)
+texture = ExtResource("10_cc")
+
+[node name="Cloud24" type="Sprite2D" parent="CloudsNear" unique_id=2020000024]
+position = Vector2(6320, 336)
+texture = ExtResource("8_ca")
+
+[node name="Cloud25" type="Sprite2D" parent="CloudsNear" unique_id=2020000025]
+position = Vector2(7180, 350)
+texture = ExtResource("9_cb")
+
+[node name="Cloud26" type="Sprite2D" parent="CloudsNear" unique_id=2020000026]
+position = Vector2(8040, 340)
+texture = ExtResource("10_cc")
+
+[node name="Cloud27" type="Sprite2D" parent="CloudsNear" unique_id=2020000027]
+position = Vector2(8900, 356)
+texture = ExtResource("8_ca")
+
+[node name="Cloud28" type="Sprite2D" parent="CloudsNear" unique_id=2020000028]
+position = Vector2(9760, 336)
+texture = ExtResource("9_cb")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1220461389]
+z_index = -10
+position = Vector2(576, 550)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=887990072]
+position = Vector2(-225, 5)
+shape = SubResource("Shape_Ground")
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D" unique_id=1948094114]
+texture_repeat = 2
+position = Vector2(-221.87498, 63)
+scale = Vector2(1.4435, 1)
+texture = ExtResource("2_ground")
+region_enabled = true
+region_rect = Rect2(0, 0, 500, 160)
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="." unique_id=1279305877]
+position = Vector2(1700, 550)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2" unique_id=779746643]
+position = Vector2(-230.5, 5)
+shape = SubResource("Shape_Ground")
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D2" unique_id=1127901140]
+texture_repeat = 2
+position = Vector2(-231.5, 60)
+scale = Vector2(1.4499999, 1)
+texture = ExtResource("2_ground")
+region_enabled = true
+region_rect = Rect2(0, 0, 500, 160)
+
+[node name="Enemy" type="CharacterBody2D" parent="." unique_id=1000001]
+position = Vector2(1700, 500)
+collision_layer = 4
+script = ExtResource("48_slime")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy" unique_id=1000002]
+position = Vector2(0, 6)
+shape = SubResource("Shape_Enemy")
+
+[node name="Sprite2D" type="Sprite2D" parent="Enemy" unique_id=1000003]
+texture = ExtResource("12_enemy_tex")
+hframes = 4
+
+[node name="HpBar" type="TextureProgressBar" parent="Enemy" unique_id=1060459220]
+offset_left = -20.0
+offset_top = -42.0
+offset_right = 20.0
+offset_bottom = -34.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="Enemy" unique_id=1000004]
+position = Vector2(-18, 0)
+target_position = Vector2(0, 24)
+
+[node name="RayRight" type="RayCast2D" parent="Enemy" unique_id=1000005]
+position = Vector2(18, 0)
+target_position = Vector2(0, 24)
+
+[node name="HurtArea" type="Area2D" parent="Enemy" unique_id=467770685]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy/HurtArea" unique_id=114302963]
+position = Vector2(0, 6)
+shape = SubResource("CircleShape2D_btfou")
+
+[node name="Enemy2" type="CharacterBody2D" parent="." unique_id=1952536702]
+position = Vector2(1300, 500)
+collision_layer = 4
+script = ExtResource("49_enemy2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy2" unique_id=859783153]
+position = Vector2(0, 6)
+shape = SubResource("Shape_Enemy")
+
+[node name="Sprite2D" type="Sprite2D" parent="Enemy2" unique_id=6794657]
+texture = ExtResource("12_enemy_tex")
+hframes = 4
+
+[node name="HpBar" type="TextureProgressBar" parent="Enemy2" unique_id=1808566377]
+offset_left = -20.0
+offset_top = -42.0
+offset_right = 20.0
+offset_bottom = -34.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="Enemy2" unique_id=1535749419]
+position = Vector2(-18, 0)
+target_position = Vector2(0, 24)
+
+[node name="RayRight" type="RayCast2D" parent="Enemy2" unique_id=1806058884]
+position = Vector2(18, 0)
+target_position = Vector2(0, 24)
+
+[node name="HurtArea" type="Area2D" parent="Enemy2" unique_id=1661047262]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy2/HurtArea" unique_id=2087783028]
+position = Vector2(0, 6)
+shape = SubResource("CircleShape2D_btfou")
+
+[node name="Enemy3" type="CharacterBody2D" parent="." unique_id=2072072198]
+position = Vector2(1550, 500)
+collision_layer = 4
+script = ExtResource("50_enemy3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy3" unique_id=766779077]
+position = Vector2(0, 6)
+shape = SubResource("Shape_Enemy")
+
+[node name="Sprite2D" type="Sprite2D" parent="Enemy3" unique_id=995673539]
+texture = ExtResource("12_enemy_tex")
+hframes = 4
+
+[node name="HpBar" type="TextureProgressBar" parent="Enemy3" unique_id=448715898]
+offset_left = -20.0
+offset_top = -42.0
+offset_right = 20.0
+offset_bottom = -34.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="Enemy3" unique_id=1654987572]
+position = Vector2(-18, 0)
+target_position = Vector2(0, 24)
+
+[node name="RayRight" type="RayCast2D" parent="Enemy3" unique_id=1018437363]
+position = Vector2(18, 0)
+target_position = Vector2(0, 24)
+
+[node name="HurtArea" type="Area2D" parent="Enemy3" unique_id=1233429769]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy3/HurtArea" unique_id=560354842]
+position = Vector2(0, 6)
+shape = SubResource("CircleShape2D_btfou")
+
+[node name="box" type="CharacterBody2D" parent="." unique_id=520863321]
+z_index = 10
+position = Vector2(250, 100)
+collision_layer = 2
+collision_mask = 9
+script = ExtResource("1_box")
+Speed = 300.0
+jumpVelocity = 400.0
+KnockBack = 100.0
+LockCameraY = true
+CameraFixedY = 500.0
+VehicleSpeedMult = 1.3
+VehicleBulletDamage = 30
+VehicleBulletKnockback = 50.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=223460591]
+shape = SubResource("Shape_Player")
+
+[node name="Camera2D" type="Camera2D" parent="box" unique_id=922040322]
+offset = Vector2(0, -80)
+limit_left = 7
+limit_top = 1
+limit_right = 12791
+limit_bottom = 8252
+position_smoothing_enabled = true
+position_smoothing_speed = 22.0
+
+[node name="Sprite2D" type="Sprite2D" parent="box" unique_id=77773720]
+texture = ExtResource("3_player")
+offset = Vector2(0, -10)
+hframes = 20
+
+[node name="DialogueUI" type="Node2D" parent="box" unique_id=1060460000]
+z_index = 20
+position = Vector2(-85, -114)
+script = ExtResource("25_cb0qr")
+
+[node name="Text" type="Label" parent="box/DialogueUI" unique_id=1060460001]
+offset_left = -109.0
+offset_top = -35.0
+offset_right = 97.0
+offset_bottom = 27.0
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="SwingTrail" type="Node2D" parent="box" unique_id=1060459225]
+z_index = 2
+script = ExtResource("24_trail")
+
+[node name="ChargeArc" type="Node2D" parent="box" unique_id=1060459224]
+position = Vector2(-38, -6)
+script = ExtResource("23_charge")
+Radius = 20.0
+SweepDeg = 120.0
+
+[node name="Weapon" type="Area2D" parent="box" unique_id=1060459217]
+z_index = 100
+position = Vector2(18, -15)
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box/Weapon" unique_id=1060459218]
+shape = SubResource("Shape_Weapon")
+
+[node name="Sprite2D" type="Sprite2D" parent="box/Weapon" unique_id=1060459219]
+visible = false
+texture = ExtResource("18_weapon")
+
+[node name="Aura" type="Node2D" parent="box/Weapon" unique_id=1176142165]
+script = ExtResource("71_aura")
+
+[node name="BatPickup" type="Area2D" parent="." unique_id=1060459221]
+position = Vector2(400, 505)
+collision_mask = 2
+script = ExtResource("19_pickup")
+Weapon = ExtResource("40_bat")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BatPickup" unique_id=1060459222]
+visible = false
+shape = SubResource("Shape_Pickup")
+
+[node name="Sprite2D" type="Sprite2D" parent="BatPickup" unique_id=1060459223]
+texture = ExtResource("18_weapon")
+
+[node name="EMarker" type="Sprite2D" parent="BatPickup" unique_id=529067278]
+z_index = 20
+position = Vector2(7.9999957, -48.00001)
+scale = Vector2(0.5836684, 0.50075614)
+texture = ExtResource("43_emarker")
+script = ExtResource("42_emarker")
+
+[node name="invisible wall" type="StaticBody2D" parent="." unique_id=680629651]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="invisible wall" unique_id=787832646]
+position = Vector2(-2, 314.5)
+shape = SubResource("RectangleShape2D_btfou")
+
+[node name="naiwa" type="CharacterBody2D" parent="." unique_id=1645119146]
+light_mask = 2
+visibility_layer = 3
+z_index = 1
+position = Vector2(500, 500)
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("26_cb0qr")
+FirstLines = PackedStringArray("npc:你好，你是谁呀？", "me:我是Orange，你呢？", "npc:我是奶蛙，你应该是第一次来这里吧", "npc:那我教你操作吧！", "npc:A左 D右 W向上看 S向下看 1234可以切换武器，R是召唤妙妙工具", "npc:空格跳跃，E拾取对话", "me:记住了，谢谢！", "npc:那么请你一路小心~")
+RepeatLines = PackedStringArray("npc:哈哈，你还在这里呀", "npc:...........", "npc:我是被我妈妈扔在这里的", "npc:我妈妈不要我了", "npc:.........")
+LineFaces = PackedInt32Array(-1, -1, -1, 0, 0, 0, -1, -1, -1)
+
+[node name="Sprite2D" type="Sprite2D" parent="naiwa" unique_id=1116629849]
+light_mask = 2
+visibility_layer = 2
+z_index = 1
+position = Vector2(10.999999, -8.999999)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("26_naiwa")
+hframes = 4
+script = ExtResource("27_sheetanim")
+Interval = 0.2
+
+[node name="DialogueUI" type="Node2D" parent="naiwa" unique_id=1521024309]
+z_index = 1
+position = Vector2(-85, -114)
+script = ExtResource("25_cb0qr")
+
+[node name="Text" type="Label" parent="naiwa/DialogueUI" unique_id=2001698275]
+offset_left = -109.0
+offset_top = -35.0
+offset_right = 97.0
+offset_bottom = 27.0
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="FaceA" type="Sprite2D" parent="naiwa" unique_id=1060459260]
+visible = false
+z_index = 1
+position = Vector2(5, -9)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("29_eja4j")
+script = ExtResource("28_breath")
+
+[node name="FaceB" type="Sprite2D" parent="naiwa" unique_id=1060459261]
+visible = false
+z_index = 1
+position = Vector2(10.999999, -8.999999)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("30_bo8hs")
+script = ExtResource("28_breath")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="naiwa" unique_id=923831061]
+visible = false
+z_index = 1
+position = Vector2(12, -13)
+scale = Vector2(0.01, 0.01)
+shape = SubResource("CircleShape2D_uv0j0")
+
+[node name="TalkArea" type="Area2D" parent="naiwa" unique_id=563583427]
+visible = false
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="naiwa/TalkArea" unique_id=1369957054]
+position = Vector2(10, -13)
+shape = SubResource("CircleShape2D_vgssw")
+
+[node name="EMarker" type="Sprite2D" parent="naiwa" unique_id=163420515]
+z_index = 20
+position = Vector2(10, -76)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("43_emarker")
+script = ExtResource("42_emarker")
+
+[node name="pingtai" type="StaticBody2D" parent="." unique_id=206639850]
+position = Vector2(838, 518)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="pingtai" unique_id=227398377]
+position = Vector2(72.5, 13.25)
+shape = SubResource("RectangleShape2D_uv0j0")
+
+[node name="ColorRect" type="ColorRect" parent="pingtai" unique_id=1617261875]
+offset_right = 150.0
+offset_bottom = 30.0
+color = Color(0.98234254, 0.9823423, 0.9823424, 1)
+
+[node name="StaticBody2D3" type="StaticBody2D" parent="." unique_id=547715823]
+position = Vector2(4047, 531)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D3" unique_id=520605488]
+z_index = -100
+position = Vector2(101, 29)
+shape = SubResource("RectangleShape2D_m3r2q")
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D3" unique_id=1433581226]
+z_index = -80
+texture_repeat = 2
+position = Vector2(101, 60.5)
+scale = Vector2(1, 1.765625)
+texture = ExtResource("32_tynxm")
+region_enabled = true
+region_rect = Rect2(0, 0, 4000, 64)
+
+[node name="rock" type="Sprite2D" parent="." unique_id=1313153564]
+z_index = -80
+texture_repeat = 2
+position = Vector2(354, 792)
+scale = Vector2(1.0314286, 1)
+texture = ExtResource("33_pfgsj")
+region_enabled = true
+region_rect = Rect2(0, 0, 700, 200)
+
+[node name="rock2" type="Sprite2D" parent="." unique_id=630753374]
+z_index = -80
+texture_repeat = 2
+position = Vector2(1468, 790)
+scale = Vector2(1.0314286, 1)
+texture = ExtResource("33_pfgsj")
+region_enabled = true
+region_rect = Rect2(0, 0, 700, 200)
+
+[node name="rock3" type="Sprite2D" parent="." unique_id=65301907]
+z_index = -80
+texture_repeat = 2
+position = Vector2(1075, 789)
+scale = Vector2(0.7163334, 1)
+texture = ExtResource("33_pfgsj")
+region_enabled = true
+region_rect = Rect2(0, 0, 3000, 500)
+
+[node name="dir" type="Sprite2D" parent="." unique_id=1152519411]
+z_index = -90
+texture_repeat = 2
+position = Vector2(4150, 868)
+texture = ExtResource("34_ks3nn")
+region_enabled = true
+region_rect = Rect2(0, 0, 4000, 460)
+
+[node name="KillZone1" type="Area2D" parent="." unique_id=1060459401]
+position = Vector2(911, 675)
+collision_layer = 0
+collision_mask = 6
+script = ExtResource("39_kill")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZone1" unique_id=1060459411]
+position = Vector2(-1, 46)
+shape = SubResource("Shape_Kill1")
+
+[node name="KillZone2" type="Area2D" parent="." unique_id=1060459402]
+position = Vector2(131, 1172)
+collision_layer = 0
+collision_mask = 6
+script = ExtResource("39_kill")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZone2" unique_id=1060459412]
+position = Vector2(4192.75, -114)
+shape = SubResource("Shape_Kill2")
+
+[node name="KillZone3" type="Area2D" parent="." unique_id=1060459403]
+position = Vector2(1989, 880)
+collision_layer = 0
+collision_mask = 6
+script = ExtResource("39_kill")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZone3" unique_id=1060459413]
+position = Vector2(5, -157)
+shape = SubResource("Shape_Kill3")
+
+[node name="HouseDoor" type="Area2D" parent="." unique_id=1060459300]
+position = Vector2(3062, 493)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("38_door")
+TargetScene = "res://house_inside.tscn"
+TargetSpawn = Vector2(350, 223)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HouseDoor" unique_id=1060459301]
+shape = SubResource("Shape_Door")
+
+[node name="EMarker" type="Sprite2D" parent="HouseDoor" unique_id=1060459800]
+z_index = 20
+position = Vector2(0, -70)
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("43_emarker")
+script = ExtResource("42_emarker")
+
+[node name="Hint" type="Label" parent="HouseDoor" unique_id=1060459302]
+visible = false
+z_index = 20
+offset_left = -70.0
+offset_top = -74.0
+offset_right = 70.0
+offset_bottom = -48.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.09, 0.13, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 14
+text = "按 E 进入"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="build" type="Sprite2D" parent="." unique_id=1924898616]
+z_index = -10
+position = Vector2(2702.25, 353.75)
+scale = Vector2(2.7148428, 2.9648435)
+texture = ExtResource("35_ks3nn")
+
+[node name="build2" type="Sprite2D" parent="build" unique_id=451079066]
+z_index = -10
+position = Vector2(-101.71582, 9.959656)
+scale = Vector2(1.0404539, 0.84149855)
+texture = ExtResource("36_2qoau")
+
+[node name="home" type="Sprite2D" parent="build" unique_id=1350965788]
+position = Vector2(125.51361, -21.501972)
+scale = Vector2(1.5155917, 1.3485702)
+texture = ExtResource("37_uy4qa")
+
+[node name="build3" type="Sprite2D" parent="build" unique_id=1559952394]
+position = Vector2(296.7943, -5.9868317)
+scale = Vector2(1.1569586, 1.0878963)
+texture = ExtResource("38_i6ha1")
+
+[node name="label" type="Sprite2D" parent="build" unique_id=1919176461]
+position = Vector2(420.55853, -0.59025013)
+texture = ExtResource("39_u7cgq")
+
+[node name="build4" type="Sprite2D" parent="build" unique_id=1963601582]
+
+[node name="build5" type="Sprite2D" parent="build" unique_id=1765233114]
+position = Vector2(569.69446, -20.21903)
+scale = Vector2(1.4316347, 1.3324926)
+texture = ExtResource("40_58jeh")
+
+[node name="build6" type="Sprite2D" parent="build" unique_id=850131838]
+position = Vector2(772.4298, -32.161377)
+scale = Vector2(1.8280747, 1.520533)
+texture = ExtResource("41_p4c2a")
+
+[node name="build7" type="Sprite2D" parent="build" unique_id=1711297]
+position = Vector2(973.5602, -10.223983)
+scale = Vector2(1.3334546, 1.1986166)
+texture = ExtResource("46_qc6h8")
+
+[node name="build8" type="Sprite2D" parent="build" unique_id=2098865630]
+position = Vector2(1114.3601, -4.637682)
+scale = Vector2(1.2859703, 1.1693017)
+texture = ExtResource("47_esalc")
+
+[node name="build9" type="Sprite2D" parent="build" unique_id=430966512]
+position = Vector2(2949.9866, -7.6732597)
+scale = Vector2(1.3940642, 1.1717721)
+texture = ExtResource("48_3a150")
+
+[node name="Sprite2D" type="Sprite2D" parent="build" unique_id=502783225]
+position = Vector2(3145.5781, -20.490114)
+scale = Vector2(1.6010803, 1.2908434)
+texture = ExtResource("40_58jeh")
+
+[node name="park" type="Sprite2D" parent="build" unique_id=70666738]
+z_index = -10
+position = Vector2(1569.7961, 5.8181744)
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("49_hrcpt")
+
+[node name="apple2" type="CharacterBody2D" parent="." unique_id=2072072199]
+position = Vector2(3584, 500)
+collision_layer = 4
+script = ExtResource("46_apple")
+Speed = 150.0
+Damage = 20
+MaxHp = 70
+DeadTime = 2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple2" unique_id=2072072200]
+position = Vector2(-0.5, 0)
+shape = SubResource("Shape_AppleBody")
+
+[node name="Sprite2D" type="Sprite2D" parent="apple2" unique_id=2072072201]
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("45_58jeh")
+hframes = 16
+
+[node name="HpBar" type="TextureProgressBar" parent="apple2" unique_id=2072072202]
+offset_left = -20.0
+offset_top = -76.0
+offset_right = 20.0
+offset_bottom = -68.0
+max_value = 70.0
+value = 70.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="apple2" unique_id=2072072203]
+position = Vector2(-28, 0)
+target_position = Vector2(0, 40)
+
+[node name="RayRight" type="RayCast2D" parent="apple2" unique_id=2072072204]
+position = Vector2(28, 0)
+target_position = Vector2(0, 40)
+
+[node name="HurtArea" type="Area2D" parent="apple2" unique_id=2072072205]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple2/HurtArea" unique_id=2072072206]
+position = Vector2(1, 0)
+shape = SubResource("Shape_AppleHurt")
+
+[node name="DeathExplosion" type="Node" parent="apple2" unique_id=2072072207]
+script = ExtResource("45_deathexp")
+Damage = 10
+Radius = 80.0
+Delay = 2.0
+LeavePoison = true
+
+[node name="apple3" type="CharacterBody2D" parent="." unique_id=453998243]
+position = Vector2(3984, 500)
+collision_layer = 4
+script = ExtResource("46_apple")
+Speed = 150.0
+Damage = 20
+MaxHp = 70
+DeadTime = 2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple3" unique_id=1704334439]
+position = Vector2(-0.5, 0)
+shape = SubResource("Shape_AppleBody")
+
+[node name="Sprite2D" type="Sprite2D" parent="apple3" unique_id=1435129691]
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("45_58jeh")
+hframes = 16
+
+[node name="HpBar" type="TextureProgressBar" parent="apple3" unique_id=730892908]
+offset_left = -20.0
+offset_top = -76.0
+offset_right = 20.0
+offset_bottom = -68.0
+max_value = 70.0
+value = 70.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="apple3" unique_id=554461696]
+position = Vector2(-28, 0)
+target_position = Vector2(0, 40)
+
+[node name="RayRight" type="RayCast2D" parent="apple3" unique_id=531938946]
+position = Vector2(28, 0)
+target_position = Vector2(0, 40)
+
+[node name="HurtArea" type="Area2D" parent="apple3" unique_id=675152026]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple3/HurtArea" unique_id=1638815976]
+position = Vector2(1, 0)
+scale = Vector2(1.5, 1.5)
+shape = SubResource("Shape_AppleHurt")
+
+[node name="DeathExplosion" type="Node" parent="apple3" unique_id=1170975709]
+script = ExtResource("45_deathexp")
+Damage = 10
+Radius = 80.0
+Delay = 2.0
+LeavePoison = true
+
+[node name="apple4" type="CharacterBody2D" parent="." unique_id=1300251358]
+position = Vector2(2584, 500)
+collision_layer = 4
+script = ExtResource("46_apple")
+Speed = 150.0
+Damage = 20
+MaxHp = 70
+DeadTime = 2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple4" unique_id=113094274]
+position = Vector2(-0.5, 0)
+shape = SubResource("Shape_AppleBody")
+
+[node name="Sprite2D" type="Sprite2D" parent="apple4" unique_id=2015219165]
+scale = Vector2(0.6, 0.6)
+texture = SubResource("CompressedTexture2D_xuf88")
+hframes = 16
+
+[node name="HpBar" type="TextureProgressBar" parent="apple4" unique_id=1701539465]
+offset_left = -20.0
+offset_top = -76.0
+offset_right = 20.0
+offset_bottom = -68.0
+max_value = 70.0
+value = 70.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="apple4" unique_id=1407929904]
+position = Vector2(-28, 0)
+target_position = Vector2(0, 40)
+
+[node name="RayRight" type="RayCast2D" parent="apple4" unique_id=928786706]
+position = Vector2(28, 0)
+target_position = Vector2(0, 40)
+
+[node name="HurtArea" type="Area2D" parent="apple4" unique_id=811277985]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple4/HurtArea" unique_id=580913910]
+position = Vector2(1, 0)
+scale = Vector2(1.5, 1.5)
+shape = SubResource("Shape_AppleHurt")
+
+[node name="DeathExplosion" type="Node" parent="apple4" unique_id=839283854]
+script = ExtResource("45_deathexp")
+Damage = 10
+Radius = 80.0
+Delay = 2.0
+LeavePoison = true
+
+[node name="EnemyManager" type="Node" parent="." unique_id=2072072300]
+script = ExtResource("70_enemymgr")
+
+[node name="RevivePoint" parent="." unique_id=1585508078 instance=ExtResource("50_fq71s")]
+position = Vector2(192, 492)
+
+[node name="road_break" type="StaticBody2D" parent="." unique_id=324303430]
+position = Vector2(8664, 1316)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="road_break" unique_id=1306174370]
+z_index = -100
+position = Vector2(-1254.5, -744)
+shape = SubResource("RectangleShape2D_vgssw")
+
+[node name="Sprite2D" type="Sprite2D" parent="road_break" unique_id=56822908]
+z_index = -80
+texture_repeat = 2
+position = Vector2(-1250.7882, -723.99994)
+scale = Vector2(0.4219293, 1.7617182)
+texture = ExtResource("51_s8kc1")
+region_enabled = true
+region_rect = Rect2(0, 0, 6000, 64)
+
+[node name="dir2" type="Sprite2D" parent="." unique_id=1004389032]
+z_index = -90
+texture_repeat = 2
+position = Vector2(7410.5, 866)
+scale = Vector2(0.63425, 1)
+texture = ExtResource("34_ks3nn")
+region_enabled = true
+region_rect = Rect2(0, 0, 4000, 460)
+
+[node name="dir3" type="Sprite2D" parent="." unique_id=282294249]
+z_index = -90
+texture_repeat = 2
+position = Vector2(11322.75, 877)
+scale = Vector2(0.74712515, 1)
+texture = ExtResource("34_ks3nn")
+region_enabled = true
+region_rect = Rect2(0, 0, 4000, 460)
+
+[node name="Enemy4" type="CharacterBody2D" parent="." unique_id=141956612]
+position = Vector2(5000, 496)
+collision_layer = 4
+script = ExtResource("48_slime")
+PatrolRange = 500.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy4" unique_id=1690143930]
+position = Vector2(0, 6)
+shape = SubResource("Shape_Enemy")
+
+[node name="Sprite2D" type="Sprite2D" parent="Enemy4" unique_id=1185362133]
+texture = ExtResource("12_enemy_tex")
+hframes = 4
+
+[node name="HpBar" type="TextureProgressBar" parent="Enemy4" unique_id=197105519]
+offset_left = -20.0
+offset_top = -42.0
+offset_right = 20.0
+offset_bottom = -34.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="Enemy4" unique_id=631404936]
+position = Vector2(-18, 0)
+target_position = Vector2(0, 24)
+
+[node name="RayRight" type="RayCast2D" parent="Enemy4" unique_id=1896116786]
+position = Vector2(18, 0)
+target_position = Vector2(0, 24)
+
+[node name="HurtArea" type="Area2D" parent="Enemy4" unique_id=1531722201]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy4/HurtArea" unique_id=606868642]
+position = Vector2(0, 6)
+shape = SubResource("CircleShape2D_btfou")
+
+[node name="BossArena" parent="." unique_id=328502337 instance=ExtResource("90_bossarena")]
+position = Vector2(9253, 480)
+
+[node name="road_break2" type="StaticBody2D" parent="." unique_id=1655546758]
+position = Vector2(12344, 1316)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="road_break2" unique_id=2014886860]
+position = Vector2(-1037.3906, -744)
+shape = SubResource("RectangleShape2D_vgssw")
+
+[node name="Sprite2D" type="Sprite2D" parent="road_break2" unique_id=1413409590]
+texture_repeat = 2
+position = Vector2(-1027.7878, -723.99994)
+scale = Vector2(0.49626273, 1.7617182)
+texture = ExtResource("51_s8kc1")
+region_enabled = true
+region_rect = Rect2(0, 0, 6000, 64)
+
+[node name="FallTrigger" type="Node2D" parent="." unique_id=1526371448]
+position = Vector2(9250, 0)
+script = ExtResource("91_fall")
+TeleportTo = Vector2(200, 400)
+
+[node name="cliff" type="StaticBody2D" parent="." unique_id=1324125321]
+position = Vector2(8405, 1456)
+
+[node name="Sprite2D" type="Sprite2D" parent="cliff" unique_id=216426803]
+z_index = -100
+position = Vector2(865, 954)
+scale = Vector2(0.44000006, 0.6221667)
+texture = ExtResource("57_wn8cm")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="cliff" unique_id=602969944]
+position = Vector2(150, 1362)
+shape = SubResource("RectangleShape2D_ehvjd")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="cliff" unique_id=1486080442]
+position = Vector2(1538, 1366.5)
+shape = SubResource("RectangleShape2D_ehvjd")
+
+[node name="apple5" type="CharacterBody2D" parent="." unique_id=2051078427]
+position = Vector2(5584, 500)
+collision_layer = 4
+script = ExtResource("46_apple")
+Speed = 150.0
+Damage = 20
+MaxHp = 70
+DeadTime = 2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple5" unique_id=1732239297]
+position = Vector2(-0.5, 0)
+shape = SubResource("Shape_AppleBody")
+
+[node name="Sprite2D" type="Sprite2D" parent="apple5" unique_id=646076501]
+scale = Vector2(0.6, 0.6)
+texture = SubResource("CompressedTexture2D_xuf88")
+hframes = 16
+
+[node name="HpBar" type="TextureProgressBar" parent="apple5" unique_id=1612785934]
+offset_left = -20.0
+offset_top = -76.0
+offset_right = 20.0
+offset_bottom = -68.0
+max_value = 70.0
+value = 70.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="apple5" unique_id=921542466]
+position = Vector2(-28, 0)
+target_position = Vector2(0, 40)
+
+[node name="RayRight" type="RayCast2D" parent="apple5" unique_id=1501595464]
+position = Vector2(28, 0)
+target_position = Vector2(0, 40)
+
+[node name="HurtArea" type="Area2D" parent="apple5" unique_id=572593733]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple5/HurtArea" unique_id=2117480066]
+position = Vector2(1, 0)
+scale = Vector2(1.5, 1.5)
+shape = SubResource("Shape_AppleHurt")
+
+[node name="DeathExplosion" type="Node" parent="apple5" unique_id=477116572]
+script = ExtResource("45_deathexp")
+Damage = 10
+Radius = 80.0
+Delay = 2.0
+LeavePoison = true
+
+[node name="apple6" type="CharacterBody2D" parent="." unique_id=1039611184]
+position = Vector2(5884, 500)
+collision_layer = 4
+script = ExtResource("46_apple")
+Speed = 150.0
+Damage = 20
+MaxHp = 70
+DeadTime = 2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple6" unique_id=244910522]
+position = Vector2(-0.5, 0)
+shape = SubResource("Shape_AppleBody")
+
+[node name="Sprite2D" type="Sprite2D" parent="apple6" unique_id=2103375713]
+scale = Vector2(0.819, 0.819)
+texture = ExtResource("92_hat")
+hframes = 16
+
+[node name="HpBar" type="TextureProgressBar" parent="apple6" unique_id=288812483]
+offset_left = -20.0
+offset_top = -76.0
+offset_right = 20.0
+offset_bottom = -68.0
+max_value = 70.0
+value = 70.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="apple6" unique_id=80320796]
+position = Vector2(-28, 0)
+target_position = Vector2(0, 40)
+
+[node name="RayRight" type="RayCast2D" parent="apple6" unique_id=1980300012]
+position = Vector2(28, 0)
+target_position = Vector2(0, 40)
+
+[node name="HurtArea" type="Area2D" parent="apple6" unique_id=2020515871]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple6/HurtArea" unique_id=1204022870]
+position = Vector2(1, 0)
+scale = Vector2(1.5, 1.5)
+shape = SubResource("Shape_AppleHurt")
+
+[node name="DeathExplosion" type="Node" parent="apple6" unique_id=1328587382]
+script = ExtResource("45_deathexp")
+Damage = 10
+Radius = 80.0
+Delay = 2.0
+LeavePoison = true
+
+[node name="apple7" type="CharacterBody2D" parent="." unique_id=1344041382]
+position = Vector2(6284, 500)
+collision_layer = 4
+script = ExtResource("46_apple")
+Speed = 150.0
+Damage = 20
+MaxHp = 70
+DeadTime = 2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple7" unique_id=620606588]
+position = Vector2(-0.5, 0)
+shape = SubResource("Shape_AppleBody")
+
+[node name="Sprite2D" type="Sprite2D" parent="apple7" unique_id=384731085]
+scale = Vector2(0.819, 0.819)
+texture = ExtResource("92_hat")
+hframes = 16
+
+[node name="HpBar" type="TextureProgressBar" parent="apple7" unique_id=724202730]
+offset_left = -20.0
+offset_top = -76.0
+offset_right = 20.0
+offset_bottom = -68.0
+max_value = 70.0
+value = 70.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="apple7" unique_id=838125931]
+position = Vector2(-28, 0)
+target_position = Vector2(0, 40)
+
+[node name="RayRight" type="RayCast2D" parent="apple7" unique_id=1710257234]
+position = Vector2(28, 0)
+target_position = Vector2(0, 40)
+
+[node name="HurtArea" type="Area2D" parent="apple7" unique_id=1285234789]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple7/HurtArea" unique_id=26211974]
+position = Vector2(1, 0)
+scale = Vector2(1.5, 1.5)
+shape = SubResource("Shape_AppleHurt")
+
+[node name="DeathExplosion" type="Node" parent="apple7" unique_id=620472277]
+script = ExtResource("45_deathexp")
+Damage = 10
+Radius = 80.0
+Delay = 2.0
+LeavePoison = true
+
+[node name="apple8" type="CharacterBody2D" parent="." unique_id=1429846294]
+position = Vector2(6884, 500)
+collision_layer = 4
+script = ExtResource("46_apple")
+Speed = 150.0
+Damage = 20
+MaxHp = 70
+DeadTime = 2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple8" unique_id=1388728568]
+position = Vector2(-0.5, 0)
+shape = SubResource("Shape_AppleBody")
+
+[node name="Sprite2D" type="Sprite2D" parent="apple8" unique_id=1511223542]
+scale = Vector2(0.819, 0.819)
+texture = ExtResource("92_hat")
+hframes = 16
+
+[node name="HpBar" type="TextureProgressBar" parent="apple8" unique_id=343807012]
+offset_left = -20.0
+offset_top = -76.0
+offset_right = 20.0
+offset_bottom = -68.0
+max_value = 70.0
+value = 70.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="apple8" unique_id=1879510594]
+position = Vector2(-28, 0)
+target_position = Vector2(0, 40)
+
+[node name="RayRight" type="RayCast2D" parent="apple8" unique_id=1964519795]
+position = Vector2(28, 0)
+target_position = Vector2(0, 40)
+
+[node name="HurtArea" type="Area2D" parent="apple8" unique_id=469275359]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple8/HurtArea" unique_id=2086600951]
+position = Vector2(1, 0)
+scale = Vector2(1.5, 1.5)
+shape = SubResource("Shape_AppleHurt")
+
+[node name="DeathExplosion" type="Node" parent="apple8" unique_id=2108079182]
+script = ExtResource("45_deathexp")
+Damage = 10
+Radius = 80.0
+Delay = 2.0
+LeavePoison = true
+
+[node name="apple9" type="CharacterBody2D" parent="." unique_id=1526649913]
+position = Vector2(5084, 500)
+collision_layer = 4
+script = ExtResource("46_apple")
+Speed = 150.0
+Damage = 20
+MaxHp = 70
+DeadTime = 2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple9" unique_id=1660116407]
+position = Vector2(-0.5, 0)
+shape = SubResource("Shape_AppleBody")
+
+[node name="Sprite2D" type="Sprite2D" parent="apple9" unique_id=639117157]
+scale = Vector2(0.819, 0.819)
+texture = ExtResource("92_hat")
+hframes = 16
+
+[node name="HpBar" type="TextureProgressBar" parent="apple9" unique_id=2010584038]
+offset_left = -20.0
+offset_top = -76.0
+offset_right = 20.0
+offset_bottom = -68.0
+max_value = 70.0
+value = 70.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="apple9" unique_id=121119991]
+position = Vector2(-28, 0)
+target_position = Vector2(0, 40)
+
+[node name="RayRight" type="RayCast2D" parent="apple9" unique_id=442013305]
+position = Vector2(28, 0)
+target_position = Vector2(0, 40)
+
+[node name="HurtArea" type="Area2D" parent="apple9" unique_id=962272512]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple9/HurtArea" unique_id=1224261301]
+position = Vector2(1, 0)
+scale = Vector2(1.5, 1.5)
+shape = SubResource("Shape_AppleHurt")
+
+[node name="DeathExplosion" type="Node" parent="apple9" unique_id=807046273]
+script = ExtResource("45_deathexp")
+Damage = 10
+Radius = 80.0
+Delay = 2.0
+LeavePoison = true
+
+[node name="Enemy5" type="CharacterBody2D" parent="." unique_id=2141468583]
+position = Vector2(6500, 500)
+collision_layer = 4
+script = ExtResource("50_enemy3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy5" unique_id=2106461109]
+position = Vector2(0, 6)
+shape = SubResource("Shape_Enemy")
+
+[node name="Sprite2D" type="Sprite2D" parent="Enemy5" unique_id=670070001]
+texture = ExtResource("12_enemy_tex")
+hframes = 4
+
+[node name="HpBar" type="TextureProgressBar" parent="Enemy5" unique_id=1344646472]
+offset_left = -20.0
+offset_top = -42.0
+offset_right = 20.0
+offset_bottom = -34.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="Enemy5" unique_id=1521874925]
+position = Vector2(-18, 0)
+target_position = Vector2(0, 24)
+
+[node name="RayRight" type="RayCast2D" parent="Enemy5" unique_id=334249059]
+position = Vector2(18, 0)
+target_position = Vector2(0, 24)
+
+[node name="HurtArea" type="Area2D" parent="Enemy5" unique_id=1869363152]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy5/HurtArea" unique_id=1390111132]
+position = Vector2(0, 6)
+shape = SubResource("CircleShape2D_btfou")
+
+[node name="apple12" type="CharacterBody2D" parent="." unique_id=353262624]
+position = Vector2(7384, 500)
+collision_layer = 4
+script = ExtResource("46_apple")
+Speed = 150.0
+Damage = 20
+MaxHp = 70
+DeadTime = 2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple12" unique_id=1071137717]
+position = Vector2(-0.5, 0)
+shape = SubResource("Shape_AppleBody")
+
+[node name="Sprite2D" type="Sprite2D" parent="apple12" unique_id=732357018]
+scale = Vector2(0.819, 0.819)
+texture = ExtResource("92_hat")
+hframes = 16
+
+[node name="HpBar" type="TextureProgressBar" parent="apple12" unique_id=1221361931]
+offset_left = -20.0
+offset_top = -76.0
+offset_right = 20.0
+offset_bottom = -68.0
+max_value = 70.0
+value = 70.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="apple12" unique_id=441778389]
+position = Vector2(-28, 0)
+target_position = Vector2(0, 40)
+
+[node name="RayRight" type="RayCast2D" parent="apple12" unique_id=2076401566]
+position = Vector2(28, 0)
+target_position = Vector2(0, 40)
+
+[node name="HurtArea" type="Area2D" parent="apple12" unique_id=1273642846]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple12/HurtArea" unique_id=1120252573]
+position = Vector2(1, 0)
+scale = Vector2(1.5, 1.5)
+shape = SubResource("Shape_AppleHurt")
+
+[node name="DeathExplosion" type="Node" parent="apple12" unique_id=1618091788]
+script = ExtResource("45_deathexp")
+Damage = 10
+Radius = 80.0
+Delay = 2.0
+LeavePoison = true
+
+[node name="apple10" type="CharacterBody2D" parent="." unique_id=337989429]
+position = Vector2(7584, 500)
+collision_layer = 4
+script = ExtResource("46_apple")
+Speed = 150.0
+Damage = 20
+MaxHp = 70
+DeadTime = 2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple10" unique_id=572333147]
+position = Vector2(-0.5, 0)
+shape = SubResource("Shape_AppleBody")
+
+[node name="Sprite2D" type="Sprite2D" parent="apple10" unique_id=347993378]
+scale = Vector2(0.819, 0.819)
+texture = ExtResource("92_hat")
+hframes = 16
+
+[node name="HpBar" type="TextureProgressBar" parent="apple10" unique_id=113590762]
+offset_left = -20.0
+offset_top = -76.0
+offset_right = 20.0
+offset_bottom = -68.0
+max_value = 70.0
+value = 70.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="apple10" unique_id=2041398333]
+position = Vector2(-28, 0)
+target_position = Vector2(0, 40)
+
+[node name="RayRight" type="RayCast2D" parent="apple10" unique_id=803448752]
+position = Vector2(28, 0)
+target_position = Vector2(0, 40)
+
+[node name="HurtArea" type="Area2D" parent="apple10" unique_id=1175944582]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple10/HurtArea" unique_id=573628095]
+position = Vector2(1, 0)
+scale = Vector2(1.5, 1.5)
+shape = SubResource("Shape_AppleHurt")
+
+[node name="DeathExplosion" type="Node" parent="apple10" unique_id=1782959776]
+script = ExtResource("45_deathexp")
+Damage = 10
+Radius = 80.0
+Delay = 2.0
+LeavePoison = true
+
+[node name="apple11" type="CharacterBody2D" parent="." unique_id=1518998530]
+position = Vector2(6284, 500)
+collision_layer = 4
+script = ExtResource("46_apple")
+Speed = 150.0
+Damage = 20
+MaxHp = 70
+DeadTime = 2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple11" unique_id=1498450400]
+position = Vector2(-0.5, 0)
+shape = SubResource("Shape_AppleBody")
+
+[node name="Sprite2D" type="Sprite2D" parent="apple11" unique_id=1326630923]
+scale = Vector2(0.819, 0.819)
+texture = ExtResource("92_hat")
+hframes = 16
+
+[node name="HpBar" type="TextureProgressBar" parent="apple11" unique_id=1204732633]
+offset_left = -20.0
+offset_top = -76.0
+offset_right = 20.0
+offset_bottom = -68.0
+max_value = 70.0
+value = 70.0
+texture_under = ExtResource("20_ebg")
+texture_over = ExtResource("22_eborder")
+texture_progress = ExtResource("21_efill")
+
+[node name="RayLeft" type="RayCast2D" parent="apple11" unique_id=1834617221]
+position = Vector2(-28, 0)
+target_position = Vector2(0, 40)
+
+[node name="RayRight" type="RayCast2D" parent="apple11" unique_id=1968184314]
+position = Vector2(28, 0)
+target_position = Vector2(0, 40)
+
+[node name="HurtArea" type="Area2D" parent="apple11" unique_id=1551128890]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="apple11/HurtArea" unique_id=941652631]
+position = Vector2(1, 0)
+scale = Vector2(1.5, 1.5)
+shape = SubResource("Shape_AppleHurt")
+
+[node name="DeathExplosion" type="Node" parent="apple11" unique_id=1538328288]
+script = ExtResource("45_deathexp")
+Damage = 10
+Radius = 80.0
+Delay = 2.0
+LeavePoison = true
+
+[node name="RevivePoint2" parent="." unique_id=1868645416 instance=ExtResource("50_fq71s")]
+position = Vector2(8000, 492)

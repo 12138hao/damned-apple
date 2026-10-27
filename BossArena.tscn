@@ -1,0 +1,121 @@
+[gd_scene format=3 uid="uid://bttnay5m05qd3"]
+
+[ext_resource type="Script" uid="uid://cpw7xcorxs8o7" path="res://BossArena.cs" id="1_arena"]
+[ext_resource type="Script" uid="uid://dx5kmm1pah3iq" path="res://BossEnemy.cs" id="2_boss"]
+[ext_resource type="Texture2D" uid="uid://cy8d8wluksx84" path="res://assets/ui/enemy_bar_bg.png" id="4_bar_bg"]
+[ext_resource type="Texture2D" uid="uid://rcoouocy0qfd" path="res://assets/ui/enemy_bar_fill.png" id="5_bar_fill"]
+[ext_resource type="Texture2D" uid="uid://ckbxmw15wu7ak" path="res://assets/ui/enemy_bar_border.png" id="6_bar_border"]
+[ext_resource type="Texture2D" uid="uid://bclu2autpxiga" path="res://assets/boss/boss_jump.png" id="7_boss1"]
+[ext_resource type="Texture2D" uid="uid://d2tppqid4uie" path="res://assets/boss/boss_phase2.png" id="8_boss2"]
+[ext_resource type="Script" uid="uid://dmq7nrftqx2qw" path="res://DialogueUI.cs" id="9_dialog"]
+[ext_resource type="Texture2D" uid="uid://cwyxbp3ssy3r" path="res://road_seamless_1024x64.png" id="10_road"]
+[ext_resource type="Texture2D" uid="uid://dicoe0dcmnnyh" path="res://dirt_64.png" id="11_6amr5"]
+[ext_resource type="Script" uid="uid://dxpgpe8m2hmtw" path="res://CollapseFloor.cs" id="11_floor"]
+
+[sub_resource type="RectangleShape2D" id="Shape_Trigger"]
+size = Vector2(822, 300)
+
+[sub_resource type="RectangleShape2D" id="Shape_BossBody"]
+size = Vector2(150, 192)
+
+[sub_resource type="CircleShape2D" id="Shape_BossHurt"]
+radius = 100.0
+
+[sub_resource type="RectangleShape2D" id="Shape_Floor"]
+size = Vector2(1143, 64)
+
+[node name="BossArena" type="Area2D" unique_id=1419886224]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_arena")
+LinesOnWin = PackedStringArray("大苹果：你干嘛打我啊", "我：？你在这乱砸人不打你打谁", "我：而且现在到处都是苹果在作乱", "我：更该打！", "我：而且我最怕苹果了。。（颤抖）", "大苹果：不关我事啊！（委屈", "大苹果：我本来在树上挂着好好的", "大苹果：不知道为什么掉下来了", "大苹果：是你打我我才打你的！！", "大苹果：呜呜呜气死我了", "大苹果：去死吧！！！")
+
+[node name="Trigger" type="CollisionShape2D" parent="." unique_id=1652154367]
+position = Vector2(1, 0)
+shape = SubResource("Shape_Trigger")
+
+[node name="Boss" type="CharacterBody2D" parent="." unique_id=990759381]
+position = Vector2(0, -40)
+collision_layer = 4
+script = ExtResource("2_boss")
+Phase1Texture = ExtResource("7_boss1")
+Phase2Texture = ExtResource("8_boss2")
+Speed = 0.0
+PatrolRange = 0.0
+Damage = 20
+MaxHp = 400
+DeadTime = 1.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boss" unique_id=1509430470]
+shape = SubResource("Shape_BossBody")
+
+[node name="Sprite2D" type="Sprite2D" parent="Boss" unique_id=36691334]
+position = Vector2(-1.9999998, -97.999985)
+scale = Vector2(2.6, 2.6)
+texture = ExtResource("7_boss1")
+hframes = 32
+
+[node name="HpBar" type="TextureProgressBar" parent="Boss" unique_id=1129214457]
+offset_left = -90.0
+offset_top = -96.0
+offset_right = 90.0
+offset_bottom = -76.0
+max_value = 400.0
+value = 400.0
+texture_under = ExtResource("4_bar_bg")
+texture_over = ExtResource("6_bar_border")
+texture_progress = ExtResource("5_bar_fill")
+
+[node name="RayLeft" type="RayCast2D" parent="Boss" unique_id=852871760]
+position = Vector2(-56, 0)
+target_position = Vector2(0, 30)
+
+[node name="RayRight" type="RayCast2D" parent="Boss" unique_id=206192007]
+position = Vector2(56, 0)
+target_position = Vector2(0, 30)
+
+[node name="HurtArea" type="Area2D" parent="Boss" unique_id=1109175157]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boss/HurtArea" unique_id=2057796810]
+shape = SubResource("Shape_BossHurt")
+
+[node name="DialogueUI" type="Node2D" parent="Boss" unique_id=1378494284]
+z_index = 20
+position = Vector2(-85, -230)
+script = ExtResource("9_dialog")
+
+[node name="Text" type="Label" parent="Boss/DialogueUI" unique_id=1068946690]
+offset_left = -109.0
+offset_top = -35.0
+offset_right = 97.0
+offset_bottom = 27.0
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Floor" type="StaticBody2D" parent="." unique_id=25056963]
+position = Vector2(0, 92)
+script = ExtResource("11_floor")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor" unique_id=192426894]
+shape = SubResource("Shape_Floor")
+
+[node name="Sprite2D" type="Sprite2D" parent="Floor" unique_id=254096996]
+texture_repeat = 2
+position = Vector2(15.000019, 20)
+scale = Vector2(1.2128907, 1.7617182)
+texture = ExtResource("10_road")
+region_enabled = true
+region_rect = Rect2(0, 0, 1200, 64)
+
+[node name="dir3" type="Sprite2D" parent="Floor" unique_id=2005639134]
+z_index = -90
+texture_repeat = 2
+position = Vector2(16.000053, 280)
+scale = Vector2(0.36450002, 0.97391295)
+texture = ExtResource("11_6amr5")
+region_enabled = true
+region_rect = Rect2(0, 0, 4000, 460)

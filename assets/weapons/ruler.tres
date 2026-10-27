@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=3 format=3]
+
+[ext_resource type="Script" uid="uid://b1ju6mifrgffb" path="res://WeaponData.cs" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://f5aw7frl8dqs" path="res://assets/ruler.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+DisplayName = "ruler"
+DamageMin = 30
+DamageMax = 60
+KnockbackMin = 270.0
+KnockbackMax = 1050.0
+KnockbackUpRatio = 0.32
+AttackTime = 0.22
+AttackSweepDeg = 120.0
+StartDeg = -75.0
+RangeScale = 1.5
+ChargeThrust = true
+ThrustRangeScale = 2.0
+ThrustWidth = 10.0
+ThrustThreshold = 0.95
+Icon = ExtResource("2_icon")
+AngleOffset = 0.0
+SpriteOffset = Vector2(64, 0)
+SpriteScale = 0.3
+AuraLength = 34.0
+AuraStartDist = 38.0

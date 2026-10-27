@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=3 format=3]
+
+[ext_resource type="Script" uid="uid://b1ju6mifrgffb" path="res://WeaponData.cs" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://c7irabu5sxp5h" path="res://assets/weapon.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+DisplayName = "木棒"
+DamageMin = 20
+DamageMax = 40
+KnockbackMin = 180.0
+KnockbackMax = 700.0
+KnockbackUpRatio = 0.32
+AttackTime = 0.22
+AttackSweepDeg = 120.0
+StartDeg = -75.0
+Icon = ExtResource("2_icon")

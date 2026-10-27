@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://cp4v7l1a2auik"]
+
+[ext_resource type="Script" uid="uid://bjghvhwbfumva" path="res://RevivePoint.cs" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dyrh47qce0tla" path="res://save-sign-128.png" id="2_1m08t"]
+[ext_resource type="Script" uid="uid://b3usr6w73hux2" path="res://EMarker.cs" id="2_emarker"]
+
+[sub_resource type="CircleShape2D" id="Shape_Revive"]
+radius = 32.0
+
+[node name="RevivePoint" type="Area2D" unique_id=1585508078]
+z_index = -1
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1601619481]
+shape = SubResource("Shape_Revive")
+
+[node name="EMarker" type="Sprite2D" parent="." unique_id=1829931996]
+z_index = 20
+position = Vector2(0, -46)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_1m08t")
+script = ExtResource("2_emarker")

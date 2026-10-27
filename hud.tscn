@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" uid="uid://x4ix41t4c7x0" path="res://Hud.cs" id="1_hud"]
+[ext_resource type="Texture2D" uid="uid://dablfatrsgdr8" path="res://assets/ui/hp_bar_bg.png" id="2_hpbg"]
+[ext_resource type="Texture2D" uid="uid://d0laxjl2l4vxg" path="res://assets/ui/hp_bar_fill.png" id="3_hpfill"]
+[ext_resource type="Texture2D" uid="uid://c8jujlwtbv8mu" path="res://assets/ui/hp_bar_border.png" id="4_hpborder"]
+
+[node name="Hud" type="CanvasLayer"]
+script = ExtResource("1_hud")
+
+[node name="HpBar" type="TextureProgressBar" parent="."]
+offset_left = 20.0
+offset_top = 16.0
+offset_right = 140.0
+offset_bottom = 30.0
+value = 100.0
+texture_under = ExtResource("2_hpbg")
+texture_over = ExtResource("4_hpborder")
+texture_progress = ExtResource("3_hpfill")
+
+[node name="HpLabel" type="Label" parent="."]
+offset_left = 148.0
+offset_top = 8.0
+offset_right = 300.0
+offset_bottom = 36.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.09, 0.13, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 20
+text = "100 / 100"
+vertical_alignment = 1
+
+[node name="DeathLabel" type="Label" parent="."]
+visible = false
+offset_left = 220.0
+offset_top = 150.0
+offset_right = 580.0
+offset_bottom = 210.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.09, 0.13, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 48
+text = "YOU SLEEP"
+horizontal_alignment = 1
+vertical_alignment = 1

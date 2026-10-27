@@ -1,0 +1,330 @@
+[gd_scene format=3 uid="uid://bc7jamcqpigo6"]
+
+[ext_resource type="Script" uid="uid://ckfwsyc34ots7" path="res://Box.cs" id="1_box"]
+[ext_resource type="Texture2D" uid="uid://bb56ydrvciiw8" path="res://house_v8_trim.png" id="1_l76ao"]
+[ext_resource type="Texture2D" uid="uid://dsfapsyeiv41h" path="res://assets/player_sheet_v2.png" id="2_player"]
+[ext_resource type="Texture2D" uid="uid://c7irabu5sxp5h" path="res://assets/weapon.png" id="3_weapon"]
+[ext_resource type="Script" uid="uid://bfk5suig6pucp" path="res://ChargeArc.cs" id="4_charge"]
+[ext_resource type="Script" uid="uid://bkvaedtmio4gf" path="res://SwingTrail.cs" id="5_trail"]
+[ext_resource type="Script" uid="uid://dpvcbm6kfba6x" path="res://Door.cs" id="6_door"]
+[ext_resource type="Script" uid="uid://b3usr6w73hux2" path="res://EMarker.cs" id="8_emarker"]
+[ext_resource type="Texture2D" uid="uid://b4npt84rf7q3o" path="res://e-marker-64.png" id="9_emarker"]
+[ext_resource type="Script" uid="uid://yepyo4hu3b73" path="res://Npc.cs" id="10_nbth1"]
+[ext_resource type="Script" uid="uid://dmq7nrftqx2qw" path="res://DialogueUI.cs" id="11_4xr1t"]
+[ext_resource type="Texture2D" uid="uid://ttg8fnnhwwso" path="res://mother.png" id="12_4xr1t"]
+[ext_resource type="Texture2D" uid="uid://duem7p0an8foe" path="res://assets/mother_smile.png" id="13_msmile"]
+[ext_resource type="Texture2D" uid="uid://c7anw2cjj5bfn" path="res://assets/mother_angry.png" id="14_mangry"]
+[ext_resource type="Script" uid="uid://cuipsb4n5tu8t" path="res://Breath.cs" id="15_mbreath"]
+[ext_resource type="Texture2D" uid="uid://bj4y6psi8gp1l" path="res://assets/mother_helpless.png" id="16_mhelp"]
+[ext_resource type="Texture2D" uid="uid://dsf1parvqdfaq" path="res://assets/mother_firm.png" id="17_mfirm"]
+[ext_resource type="Texture2D" uid="uid://bkwrg8cpcrqhk" path="res://bubing.png" id="26_xquxt"]
+[ext_resource type="Script" uid="uid://25b5frpd6y4j" path="res://Pickup.cs" id="60_pickup"]
+[ext_resource type="Resource" path="res://assets/weapons/bat.tres" id="61_bat"]
+[ext_resource type="Resource" path="res://assets/weapons/ruler.tres" id="62_ruler"]
+[ext_resource type="Texture2D" uid="uid://f5aw7frl8dqs" path="res://assets/ruler.png" id="63_rulericon"]
+[ext_resource type="Script" uid="uid://hxrbxsjner5p" path="res://EnemyManager.cs" id="70_enemymgr"]
+[ext_resource type="Script" uid="uid://c57ocnohmulys" path="res://WeaponAura.cs" id="71_aura"]
+[ext_resource type="Script" uid="uid://468o50him3bx" path="res://VehiclePickup.cs" id="72_vehicle"]
+[ext_resource type="Texture2D" uid="uid://cn2hqma0x2jyq" path="res://assets/vehicle_sheet.png" id="74_vsheet"]
+[ext_resource type="PackedScene" uid="uid://cp4v7l1a2auik" path="res://RevivePoint.tscn" id="76_revive"]
+
+[sub_resource type="RectangleShape2D" id="Shape_Floor"]
+size = Vector2(487, 20)
+
+[sub_resource type="RectangleShape2D" id="Shape_WallL"]
+size = Vector2(20, 304)
+
+[sub_resource type="RectangleShape2D" id="Shape_WallR"]
+size = Vector2(20, 296)
+
+[sub_resource type="RectangleShape2D" id="Shape_Ceiling"]
+size = Vector2(487, 20)
+
+[sub_resource type="RectangleShape2D" id="Shape_Shelf"]
+size = Vector2(303, 10)
+
+[sub_resource type="RectangleShape2D" id="Shape_OneWay"]
+size = Vector2(460, 12)
+
+[sub_resource type="RectangleShape2D" id="Shape_Player"]
+size = Vector2(32, 32)
+
+[sub_resource type="RectangleShape2D" id="Shape_Weapon"]
+size = Vector2(26, 42)
+
+[sub_resource type="RectangleShape2D" id="Shape_DoorExit"]
+size = Vector2(63, 80)
+
+[sub_resource type="CircleShape2D" id="Shape_NpcBody"]
+radius = 1.0
+
+[sub_resource type="CircleShape2D" id="Shape_PickupSmall"]
+radius = 20.0
+
+[node name="Main" type="Node2D" unique_id=615064055]
+
+[node name="Backdrop" type="Polygon2D" parent="." unique_id=439457847]
+z_index = -100
+position = Vector2(-19, -27)
+color = Color(0.11, 0.09, 0.08, 1)
+polygon = PackedVector2Array(-400, -300, 1200, -300, 1200, 600, -400, 600)
+
+[node name="homeinside" type="Sprite2D" parent="." unique_id=1472246784]
+position = Vector2(364, 35)
+scale = Vector2(0.44147167, 0.4490902)
+texture = ExtResource("1_l76ao")
+
+[node name="Walls" type="StaticBody2D" parent="." unique_id=493159981]
+
+[node name="Floor" type="CollisionShape2D" parent="Walls" unique_id=1074694184]
+position = Vector2(365, 253)
+shape = SubResource("Shape_Floor")
+
+[node name="WallLeft" type="CollisionShape2D" parent="Walls" unique_id=849774557]
+position = Vector2(138, 115)
+shape = SubResource("Shape_WallL")
+
+[node name="WallRight" type="CollisionShape2D" parent="Walls" unique_id=1939644537]
+position = Vector2(604, 114)
+shape = SubResource("Shape_WallR")
+
+[node name="Ceiling" type="CollisionShape2D" parent="Walls" unique_id=1324600491]
+position = Vector2(369.5, -27)
+shape = SubResource("Shape_Ceiling")
+
+[node name="Shelf" type="CollisionShape2D" parent="Walls" unique_id=807228492]
+position = Vector2(392, 354)
+shape = SubResource("Shape_Shelf")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Walls" unique_id=1677040850]
+position = Vector2(172.49066, 103.92227)
+polygon = PackedVector2Array(-11.490662, 6.0777283, -1.4906616, 5.0777283, -0.49066162, 5.0777283, 9.509338, 5.0777283, 9.509338, 14.077728, 19.509338, 14.077728, 19.509338, 27.077728, 32.50934, 27.077728, 32.50934, 39.07773, 45.50934, 39.07773, 43.50934, 50.07773, 55.50934, 50.07773, 55.50934, 63.07773, 65.50934, 62.07773, 63.50934, 74.07773, 76.50934, 74.07773, 75.50934, 86.07773, 88.50934, 85.07773, 87.50934, 94.07773, 97.50934, 94.07773, 96.50934, 109.07773, 108.50934, 108.07773, 108.50934, 118.07773, 117.50934, 118.07773, 118.50934, 130.07773, 131.50934, 130.07773, 130.50934, 142.07773, 111.50934, 141.07773, -7.4906616, 18.077728, -7.4906616, 12.077728, -28.490662, 12.077728, -27.490662, 4.0777283)
+one_way_collision_margin = 0.0
+
+[node name="OneWayPlatform" type="StaticBody2D" parent="." unique_id=1060459700]
+position = Vector2(309, 114)
+collision_layer = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OneWayPlatform" unique_id=1060459701]
+position = Vector2(63, -1)
+shape = SubResource("Shape_OneWay")
+one_way_collision = true
+one_way_collision_margin = 2.0
+
+[node name="box" type="CharacterBody2D" parent="." unique_id=1645816677]
+z_index = 10
+position = Vector2(350, 223)
+collision_layer = 2
+collision_mask = 9
+script = ExtResource("1_box")
+Speed = 300.0
+jumpVelocity = 400.0
+KnockBack = 100.0
+Weapons = [ExtResource("61_bat"), null, null, null]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=844026206]
+shape = SubResource("Shape_Player")
+
+[node name="Camera2D" type="Camera2D" parent="box" unique_id=2145352812]
+offset = Vector2(0, -30)
+limit_left = 122
+limit_top = -37
+limit_right = 622
+limit_bottom = 273
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
+[node name="Sprite2D" type="Sprite2D" parent="box" unique_id=1427771136]
+position = Vector2(4, -4)
+texture = ExtResource("2_player")
+offset = Vector2(0, -10)
+hframes = 20
+
+[node name="DialogueUI" type="Node2D" parent="box" unique_id=1060460100]
+z_index = 20
+position = Vector2(-85, -114)
+script = ExtResource("11_4xr1t")
+
+[node name="Text" type="Label" parent="box/DialogueUI" unique_id=1060460101]
+offset_left = -109.0
+offset_top = -35.0
+offset_right = 97.0
+offset_bottom = 27.0
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="SwingTrail" type="Node2D" parent="box" unique_id=951530239]
+z_index = 2
+position = Vector2(-1, 0)
+script = ExtResource("5_trail")
+
+[node name="ChargeArc" type="Node2D" parent="box" unique_id=668238321]
+position = Vector2(-38, -6)
+script = ExtResource("4_charge")
+Radius = 20.0
+SweepDeg = 120.0
+
+[node name="Weapon" type="Area2D" parent="box" unique_id=976725987]
+z_index = 100
+position = Vector2(18, -15)
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box/Weapon" unique_id=599294071]
+shape = SubResource("Shape_Weapon")
+
+[node name="Sprite2D" type="Sprite2D" parent="box/Weapon" unique_id=249540291]
+visible = false
+texture = ExtResource("3_weapon")
+
+[node name="Aura" type="Node2D" parent="box/Weapon" unique_id=2016563897]
+script = ExtResource("71_aura")
+
+[node name="ExitDoor" type="Area2D" parent="." unique_id=65962573]
+position = Vector2(355, 199)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("6_door")
+TargetScene = "res://firstry.tscn"
+TargetSpawn = Vector2(3160, 470)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitDoor" unique_id=547551637]
+shape = SubResource("Shape_DoorExit")
+
+[node name="EMarker" type="Sprite2D" parent="ExitDoor" unique_id=1060459900]
+z_index = 20
+position = Vector2(0, -57)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("9_emarker")
+script = ExtResource("8_emarker")
+
+[node name="Visual" type="Polygon2D" parent="ExitDoor" unique_id=531398832]
+visible = false
+z_index = 1
+color = Color(0.45, 0.35, 0.22, 1)
+polygon = PackedVector2Array(-30, -40, 30, -40, 30, 40, -30, 40)
+
+[node name="mother" type="CharacterBody2D" parent="." unique_id=912806036]
+z_index = 5
+position = Vector2(480, 188)
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("10_nbth1")
+FirstLines = PackedStringArray("npc:臭小子你上哪去了", "me:我靠老妈你咋在这", "me:外面那些苹果怪是咋回事", "npc:最近天上掉了很多苹果下来", "npc:也不知道是哪里来的", "me:(鸡皮疙瘩发作)", "npc:知道你害怕，但是你必须站出来对抗他们", "npc:楼上有一些武器，你带着出门吧", "me:哦哦。")
+RepeatLines = PackedStringArray("npc:还不快去", "npc:再不走给你吃苹果")
+TalkDistance = 90.0
+LineFaces = PackedInt32Array(1, -1, -1, 2, 2, -1, 3, 0, -1)
+RepeatFaces = PackedInt32Array(1, 0)
+PlayerTalkJump = 100.0
+
+[node name="Sprite2D" type="Sprite2D" parent="mother" unique_id=286088453]
+position = Vector2(8, 18)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("12_4xr1t")
+script = ExtResource("15_mbreath")
+
+[node name="FaceA" type="Sprite2D" parent="mother" unique_id=286088455]
+visible = false
+z_index = 1
+position = Vector2(8, 18)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("13_msmile")
+script = ExtResource("15_mbreath")
+
+[node name="FaceB" type="Sprite2D" parent="mother" unique_id=286088456]
+visible = false
+z_index = 1
+position = Vector2(8, 18)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("14_mangry")
+script = ExtResource("15_mbreath")
+
+[node name="FaceC" type="Sprite2D" parent="mother" unique_id=286088457]
+visible = false
+z_index = 1
+position = Vector2(8, 18)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("16_mhelp")
+script = ExtResource("15_mbreath")
+
+[node name="FaceD" type="Sprite2D" parent="mother" unique_id=286088458]
+visible = false
+z_index = 1
+position = Vector2(8, 18)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("17_mfirm")
+script = ExtResource("15_mbreath")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="mother" unique_id=286088454]
+visible = false
+scale = Vector2(0.01, 0.01)
+shape = SubResource("Shape_NpcBody")
+
+[node name="DialogueUI" type="Node2D" parent="mother" unique_id=606679203]
+position = Vector2(-51, -96)
+scale = Vector2(0.6, 0.6)
+script = ExtResource("11_4xr1t")
+BubbleSize = Vector2(300, 130)
+TailTip = Vector2(88, 85)
+
+[node name="Text" type="Label" parent="mother/DialogueUI" unique_id=194732885]
+offset_left = -109.0
+offset_top = -35.0
+offset_right = 97.0
+offset_bottom = 27.0
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="EMarker" type="Sprite2D" parent="mother" unique_id=1663488090]
+z_index = 20
+position = Vector2(7, -30)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("9_emarker")
+script = ExtResource("8_emarker")
+
+[node name="RulerPickup" type="Area2D" parent="." unique_id=1645816690]
+position = Vector2(421, 44)
+collision_mask = 2
+script = ExtResource("60_pickup")
+Slot = 2
+Weapon = ExtResource("62_ruler")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RulerPickup" unique_id=1645816691]
+shape = SubResource("Shape_PickupSmall")
+
+[node name="Sprite2D" type="Sprite2D" parent="RulerPickup" unique_id=1645816692]
+position = Vector2(-1, 0.5)
+scale = Vector2(0.3, 0.291)
+texture = ExtResource("63_rulericon")
+
+[node name="EnemyManager" type="Node" parent="." unique_id=2072072300]
+script = ExtResource("70_enemymgr")
+
+[node name="VehiclePickup" type="Area2D" parent="." unique_id=1645816700]
+position = Vector2(562, 84)
+collision_mask = 2
+script = ExtResource("72_vehicle")
+VehicleSheet = ExtResource("74_vsheet")
+VehicleHframes = 8
+IconTexture = ExtResource("26_xquxt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VehiclePickup" unique_id=1645816701]
+shape = SubResource("Shape_PickupSmall")
+
+[node name="Sprite2D" type="Sprite2D" parent="VehiclePickup" unique_id=1645816702]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("26_xquxt")
+
+[node name="EMarker" type="Sprite2D" parent="VehiclePickup" unique_id=1020057079]
+z_index = 20
+position = Vector2(0, -70)
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("9_emarker")
+script = ExtResource("8_emarker")
+
+[node name="RevivePoint" parent="." unique_id=1720368317 instance=ExtResource("76_revive")]
+position = Vector2(280, 70)

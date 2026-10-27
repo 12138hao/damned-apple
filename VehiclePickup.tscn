@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://cveh1cle0rpq0"]
+
+[ext_resource type="Script" uid="uid://468o50him3bx" path="res://VehiclePickup.cs" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cn2hqma0x2jyq" path="res://assets/vehicle_sheet.png" id="2_sheet"]
+[ext_resource type="Texture2D" uid="uid://bkwrg8cpcrqhk" path="res://bubing.png" id="3_icon"]
+[ext_resource type="Script" uid="uid://b3usr6w73hux2" path="res://EMarker.cs" id="5_emarker"]
+[ext_resource type="Texture2D" uid="uid://b4npt84rf7q3o" path="res://e-marker-64.png" id="6_emarkertex"]
+
+[sub_resource type="CircleShape2D" id="Shape_Pickup"]
+radius = 20.0
+
+[node name="VehiclePickup" type="Area2D"]
+collision_mask = 2
+script = ExtResource("1_script")
+VehicleSheet = ExtResource("2_sheet")
+VehicleHframes = 8
+IconTexture = ExtResource("3_icon")
+IconScale = 0.5
+RideScale = 0.7
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Shape_Pickup")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("3_icon")
+
+[node name="EMarker" type="Sprite2D" parent="."]
+z_index = 20
+position = Vector2(0, -70)
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("6_emarkertex")
+script = ExtResource("5_emarker")
