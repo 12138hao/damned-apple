@@ -36,8 +36,8 @@ public partial class HopAppleEnemy : Enemy
     // ─────────────────────────── 蹦跳
     [ExportGroup("蹦跳")]
     [Export] public float HopInterval = 0.55f;   // 落地后停多久再跳下一次
-    [Export] public float HopSpeed = 190f;       // 跳跃时的水平速度
-    [Export] public float HopImpulse = 440f;     // 起跳的向上初速度（越大跳越高）
+    [Export] public float HopSpeed = 190f;       // 跳跃时的水平速度（px/s）
+    [Export] public float HopHeight = 81f;       // 跳跃最高离地多少像素（按重力自动算初速度）
     [Export] public float LandHoldTime = 0.12f;  // 落地压扁保持多久
     [Export] public float HopProbeDistance = 150f; // 跳跃前探测坑的距离（沿朝向前方）
     [Export] public float HopProbeDepth = 180f;    // 探测向下多深算「有地面」
@@ -47,10 +47,12 @@ public partial class HopAppleEnemy : Enemy
     [Export] public float DetectRangeX = 300f;   // 水平多近能发现玩家
     [Export] public float DetectRangeY = 140f;   // 垂直高度差容忍
     [Export] public float LungeChargeTime = 0.5f;  // 蓄力预警时长——玩家的反应窗口
-    [Export] public float LungeSpeed = 1600f;    // 扑出去的水平速度上限（原来是 800，翻倍）
+
+    [Export] public float LungeHeight = 34f;     // 扑击弧线的最高点（像素，越小越贴地）
+    [Export] public float LungeDistanceScale = 1.32f; // 落点距离倍率：1=正好落在玩家身上，0.8=扑近，1.5=冲过头
     [Export] public float LungeMinSpeed = 300f;  // 水平速度下限（玩家贴脸时也不至于慢吞吞）
-    [Export] public float LungeSpeedBias = 1.65f; // 在「正好落到玩家身上」的基础上再加速（会略微冲过头）
-    [Export] public float LungeJumpImpulse = 286f; // 向上初速度：405×√0.5，高度再降 50%（现 34px）
+    [Export] public float LungeSpeed = 1600f;    // 水平速度上限
+
     [Export] public float LungeTime = 1.2f;      // 最长滞空时间（落地就提前结束，要比空中时间留余量）
     [Export] public float RecoverTime = 0.5f;    // 扑完喘气
     [Export] public float LungeHitWidth = 43f;    // 命中判定半宽 = 怪半宽27 + 玩家半宽16
@@ -133,13 +135,14 @@ public partial class HopAppleEnemy : Enemy
                     _timer = LungeTime;
                     _lungeAirborne = false;
                     _lungeHitDone = false;
-                    // 按滞空时间反算水平速度，让落点大致压在玩家身上；
-                    // 再乘 LungeSpeedBias 让它更凶（会略微冲过头，这是「更快」的代价）
-                    float air = 2f * LungeJumpImpulse / Mathf.Max(1f, Gravity);
+                    // 由「弧线高度」反算向上初速度：v = √(2gh)
+                    float jumpImpulse = Mathf.Sqrt(2f * Gravity * Mathf.Max(1f, LungeHeight));
+                    // 滞空时间 t = 2v/g；水平速度 = 距离/时间 × 距离倍率
+                    float air = 2f * jumpImpulse / Mathf.Max(1f, Gravity);
                     float wantDx = Mathf.Abs(_targetDx);
-                    float ideal = wantDx / Mathf.Max(0.05f, air) * LungeSpeedBias;
+                    float ideal = wantDx / Mathf.Max(0.05f, air) * LungeDistanceScale;
                     _lungeVx = Mathf.Clamp(ideal, LungeMinSpeed, LungeSpeed);
-                    Velocity = new Vector2(_lungeDir.X * _lungeVx, -LungeJumpImpulse);
+                    Velocity = new Vector2(_lungeDir.X * _lungeVx, -jumpImpulse);
                 }
                 break;
 
@@ -223,7 +226,9 @@ public partial class HopAppleEnemy : Enemy
         _st = St.Hop;
         _landedOnce = false;
         _landHold = 0f;
-        Velocity = new Vector2(Direction * HopSpeed, -HopImpulse);
+        // 由「跳跃高度」反算初速度：v = √(2gh)
+        float hopImpulse = Mathf.Sqrt(2f * Gravity * Mathf.Max(1f, HopHeight));
+        Velocity = new Vector2(Direction * HopSpeed, -hopImpulse);
     }
 
     /// <summary>
