@@ -123,9 +123,11 @@ public partial class AudioManager : Node
         var stream = LoadStream(BgmDir, name);
         if (stream == null) return;
 
-        // OGG 是唯一能真正做到无缝循环的格式，BGM 用它就顺手开循环。
-        // （mp3 循环在接缝处有一小段静音，所以只对 ogg 生效，不改变现有 mp3 曲子的行为）
+        // BGM 一律循环。所有曲子的首尾静音都已经用 ffmpeg 裁掉了
+        // （silenceremove 首尾各扫一遍，-50dB 以下的空白不要），
+        // 所以接缝处只剩 mp3 编码本身的 ~26ms 填充，听不太出来。
         if (stream is AudioStreamOggVorbis ogg) ogg.Loop = true;
+        else if (stream is AudioStreamMP3 mp3) mp3.Loop = true;
 
         _currentBgm = name;
         _bgm.Stream = stream;
