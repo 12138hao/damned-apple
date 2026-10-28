@@ -44,9 +44,10 @@ public partial class HopAppleEnemy : Enemy
     [ExportGroup("侦测与飞扑")]
     [Export] public float DetectRangeX = 300f;   // 水平多近能发现玩家
     [Export] public float DetectRangeY = 140f;   // 垂直高度差容忍
-    [Export] public float LungeChargeTime = 0.38f; // 蓄力预警时长——玩家的反应窗口
-    [Export] public float LungeSpeed = 560f;     // 扑出去的速度（玩家 300）
-    [Export] public float LungeTime = 0.22f;     // 冲出去多久
+    [Export] public float LungeChargeTime = 0.5f;  // 蓄力预警时长——玩家的反应窗口
+    [Export] public float LungeSpeed = 400f;     // 扑出去的水平速度（玩家 300）
+    [Export] public float LungeJumpImpulse = 380f; // 扑出去的向上初速度，和水平一合成就是抛物线
+    [Export] public float LungeTime = 0.8f;      // 最长滞空时间（落地就提前结束）
     [Export] public float RecoverTime = 0.5f;    // 扑完喘气
     [Export] public float LungeCooldown = 1.1f;  // 两次飞扑之间至少隔多久
 
@@ -56,6 +57,9 @@ public partial class HopAppleEnemy : Enemy
     private float _timer;
     private float _lungeCd;
     private float _landHold;
+    private bool _lungeAirborne;   // 飞扑时是否已经离地（避免起跳当帧就被判定落地）
+    private float _lungeVx;        // 本次扑击的水平速度（按距离算，保证落在玩家身上）
+    private float _targetDx;       // 起跳瞬间和玩家的水平距离
     private Box _player;
     private Vector2 _lungeDir = Vector2.Right;
     private bool _landedOnce;
@@ -112,13 +116,23 @@ public partial class HopAppleEnemy : Enemy
             case St.Charge:
                 if (_timer <= 0f)
                 {
+                    // 起跳：水平 + 向上一起给，之后交给重力画抛物线
                     _st = St.Lunge;
                     _timer = LungeTime;
+                    _lungeAirborne = false;
+                    // 按「抛物线滞空时间」反算水平速度，让落地位置正好压在玩家身上。
+                    // 不这么算的话固定速度会扑过头，玩家站着不动也会被扑到身后。
+                    float air = 2f * LungeJumpImpulse / Mathf.Max(1f, Gravity);
+                    float wantDx = Mathf.Abs(_targetDx);
+                    _lungeVx = Mathf.Clamp(wantDx / Mathf.Max(0.05f, air), LungeSpeed * 0.45f, LungeSpeed);
+                    Velocity = new Vector2(_lungeDir.X * _lungeVx, -LungeJumpImpulse);
                 }
                 break;
 
             case St.Lunge:
-                if (_timer <= 0f)
+                if (!onFloor) _lungeAirborne = true;
+                // 落地 或 超时就收
+                if (_timer <= 0f || (_lungeAirborne && onFloor))
                 {
                     _st = St.Recover;
                     _timer = RecoverTime;
@@ -142,7 +156,7 @@ public partial class HopAppleEnemy : Enemy
         switch (_st)
         {
             case St.Hop:   return Direction * HopSpeed;
-            case St.Lunge: return _lungeDir.X * LungeSpeed;
+            case St.Lunge: return _lungeDir.X * _lungeVx;
             default:       return 0f;      // 蓄力时站定，给玩家看清信号
         }
     }
@@ -160,6 +174,7 @@ public partial class HopAppleEnemy : Enemy
         Direction = dx >= 0f ? 1 : -1;
         _lungeDir = new Vector2(Direction, 0f);
 
+        _targetDx = dx;
         _st = St.Charge;
         _timer = LungeChargeTime;
         _lungeCd = LungeChargeTime + LungeTime + RecoverTime + LungeCooldown;
@@ -209,7 +224,8 @@ public partial class HopAppleEnemy : Enemy
                 break;
 
             case St.Lunge:
-                _sprite.Frame = LungeStartFor(2);   // 拉最长、嘴张最大的那一帧
+                // 上升时张嘴（拉伸最狠那帧），下落时换成回收帧，看着像扑完要咬住
+                _sprite.Frame = LungeStartFor(Velocity.Y < 0f ? 2 : 3);
                 break;
 
             case St.Recover:

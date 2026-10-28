@@ -35,12 +35,12 @@ def load_rgba(path):
     return data
 
 
-def is_whiteish(data, i, tol=48):
+def is_whiteish(data, i, tol=4):
     r, g, b = data[i], data[i + 1], data[i + 2]
     return (255 - r) <= tol and (255 - g) <= tol and (255 - b) <= tol
 
 
-def key_out_white(data, tol=48):
+def key_out_white(data, tol=4):
     """
     从四边泛滥填充，把连通的白底变透明。
     为什么不直接全图删白色：苹果的牙齿、反光高光也是白的，
@@ -79,25 +79,10 @@ def key_out_white(data, tol=48):
             data[idx * 4 + 3] = 0
             removed += 1
 
-    # 边缘柔化：紧贴背景、又偏白的像素给半透明，避免一圈白边
+    # 边缘柔化已关闭：牙齿是画在白底上的（min 通道约 237），
+    # 按「越白越透明」去柔化会把整排牙啃成半透明。这套美术本身有深色描边，
+    # 硬边缘反而干净。
     soft = 0
-    for idx in range(n):
-        if visited[idx]:
-            continue
-        x, y = idx % W, idx // W
-        touches_bg = False
-        for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
-            if 0 <= nx < W and 0 <= ny < H and visited[ny * W + nx]:
-                touches_bg = True
-                break
-        if not touches_bg:
-            continue
-        i = idx * 4
-        r, g, b = data[i], data[i + 1], data[i + 2]
-        whiteness = min(r, g, b)          # 越白越接近 255
-        if whiteness > 190:
-            data[i + 3] = int(max(0, min(255, (255 - whiteness) * 255 / 65)))
-            soft += 1
 
     return removed, soft
 
@@ -161,7 +146,7 @@ def keep_largest_blob(data, opaque=128):
     苹果本体是连成一片的，噪点都是孤立小块，这样一次清干净。
     """
     n = W * H
-    label = bytearray(n)
+    label = [0] * n
     best, best_size, cur = -1, 0, 0
 
     for start in range(n):
