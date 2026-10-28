@@ -40,9 +40,9 @@ public partial class BossEnemy : Enemy
 
     [ExportGroup("毒液")]
     [Export] public int SpitCount = 3;                // 一次喷几滩
-    [Export] public float SpitSpread = 110f;          // 每滩之间的水平间隔
+    [Export] public float SpitSpread = 110f;          // 【已弃用】曾用于等间距排列，现改为区域内随机
     [Export] public float SpitDelay = 0.35f;          // 每滩之间的延迟
-    [Export] public float SpitDropY = 40f;            // 毒液生成在脚下多低
+    [Export] public float SpitDropY = 40f;            // 找不到地面时的兜底落点（相对 Boss 脚下）
     [Export] public float PoisonRadius = 140f;        // 每滩毒液半径（图是 464 宽扁的，要大一点）
     [Export] public float PoisonDuration = 4f;        // 存在多久
     [Export] public int PoisonDamage = 5;             // 每跳伤害
@@ -51,6 +51,12 @@ public partial class BossEnemy : Enemy
     [Export] public float PoisonTexHalfWidth = 232f;  // 贴图内容半宽（464 宽的一半）
     [Export] public float PoisonTexBottomOffset = 45f;// 贴图底部相对中心的距离
     [Export] public float PoisonSquashY = 1f;         // 压扁程度（这张是液体图，不用压）
+
+    [ExportGroup("落点范围")]
+    [Export] public float SpitAreaHalfWidth = 320f;   // 以 Boss 出生点为中心，左右各多远随机
+    [Export] public float SpitMinGap = 80f;           // 同一轮里两滩之间的最小水平间距（避免叠一起）
+    [Export] public float SpitMarkTime = 0.85f;       // 轨道提示持续多久后落地（玩家的反应时间）
+    [Export] public Vector2 SpitOriginOffset = new Vector2(0f, -46f);  // 抛物线起点，相对 Boss 位置
 
     [ExportGroup("概率")]
     [Export] public float JumpChance = 0.55f;  // 跳砸概率，剩下是喷毒
@@ -62,6 +68,8 @@ public partial class BossEnemy : Enemy
     private bool _wasOnFloor = true;
     private int _spitLeft;
     private float _spitTimer;
+    // 本轮已经选过的落点 X，用来避免几滩叠在一起
+    private readonly System.Collections.Generic.List<float> _usedSpitX = new();
 
     private Sprite2D _sprite2;
     private DialogueUI _bubble;
@@ -227,6 +235,7 @@ public partial class BossEnemy : Enemy
                     if (_sprite2 != null) _sprite2.Modulate = Colors.White;
                     _phase = Phase.Spitting;
                     _spitLeft = SpitCount;
+                    _usedSpitX.Clear();
                     _spitTimer = 0.2f;
                 }
                 break;
@@ -235,7 +244,7 @@ public partial class BossEnemy : Enemy
                 _spitTimer -= dt;
                 if (_spitTimer <= 0f)
                 {
-                    SpawnPoison();
+                    ThrowPoison();
                     _spitLeft--;
                     if (_spitLeft <= 0) EnterIdle();
                     else _spitTimer = SpitDelay;
@@ -391,7 +400,45 @@ public partial class BossEnemy : Enemy
         _spitTimer = SpitWarnTime;
     }
 
-    private void SpawnPoison()
+    /// <summary>
+    /// 投一滩毒液：先在限制区域内挑一个没被占用的随机 X，
+    /// 先出轨道提示（抛物线 + 落点警示圈），提示走完才真正生成毒滩。
+    /// </summary>
+    private void ThrowPoison()
+    {
+        float targetX = PickSpitX(_spawnPos.X);
+        _usedSpitX.Add(targetX);
+
+        float groundY = FindGroundY(targetX);
+        var landPos = new Vector2(targetX, groundY);
+        var origin = GlobalPosition + SpitOriginOffset;
+
+        var marker = new SpitMarker();
+        GetParent().AddChild(marker);          // 先入树，再设全局坐标
+        marker.Setup(origin, landPos, PoisonRadius, SpitMarkTime, SpawnPoisonAt);
+    }
+
+    /// <summary>在半径 SpitAreaHalfWidth 的范围内随机取一个 X，并尽量避开本轮已有的落点。</summary>
+    private float PickSpitX(float homeX)
+    {
+        for (int attempt = 0; attempt < 16; attempt++)
+        {
+            float x = homeX + (float)GD.RandRange(-SpitAreaHalfWidth, SpitAreaHalfWidth);
+
+            bool tooClose = false;
+            foreach (float used in _usedSpitX)
+            {
+                if (Mathf.Abs(used - x) < SpitMinGap) { tooClose = true; break; }
+            }
+            if (!tooClose) return x;
+        }
+
+        // 实在挤不下（范围太小 / 滩太大）就放弃避让，总比不出手好
+        return homeX + (float)GD.RandRange(-SpitAreaHalfWidth, SpitAreaHalfWidth);
+    }
+
+    /// <summary>在指定落点生成一滩毒液（由 SpitMarker 倒计时结束时回调）。</summary>
+    private void SpawnPoisonAt(Vector2 position)
     {
         // 代码创建，不依赖 PoisonZone.tscn（和 DeathExplosion 的做法一致）
         if (PoisonTexture == null)
@@ -409,14 +456,7 @@ public partial class BossEnemy : Enemy
             SquashY = PoisonSquashY,
         };
         GetParent().AddChild(zone);
-
-        int idx = SpitCount - _spitLeft;                 // 0, 1, 2...
-        float offsetX = (idx - (SpitCount - 1) * 0.5f) * SpitSpread;
-        float spawnX = GlobalPosition.X + offsetX;
-
-        // 毒液必须落在地面上。喷毒瞬间 Boss 可能还在空中，
-        // 直接用 Boss 的 y 会让毒滩悬在半空，所以向下打一条射线找地面。
-        zone.GlobalPosition = new Vector2(spawnX, FindGroundY(spawnX));
+        zone.GlobalPosition = position;
     }
 
     /// <summary>在 Boss 头顶的气泡里显示一句台词。</summary>
