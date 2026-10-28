@@ -154,23 +154,21 @@ def breathe_frames(view):
 
 
 def hop_frames(view):
-    # 蹦跳循环：蹲 → 起跳 → 最高 → 下落 → 落地压扁 → 回弹
+    # 5 帧：蹲 → 起跳拉伸 → 最高点 → 下落 → 落地压扁
     return [(view, 1.10, 0.880, 0, 0, 1.0, 0, 1.0),
-            (view, 0.92, 1.120, 0, -7, 1.0, 0, 1.0),
-            (view, 0.97, 1.045, 0, -15, 1.0, 0, 1.0),
-            (view, 1.00, 1.000, 0, -9, 1.0, 0, 1.0),
-            (view, 1.12, 0.850, 0, 0, 1.0, 0, 1.0),
-            (view, 0.99, 1.020, 0, -2, 1.0, 0, 1.0)]
+            (view, 0.92, 1.130, 0, -7, 1.0, 0, 1.0),
+            (view, 0.98, 1.020, 0, -14, 1.0, 0, 1.0),
+            (view, 1.00, 1.000, 0, -7, 1.0, 0, 1.0),
+            (view, 1.12, 0.850, 0, 0, 1.0, 0, 1.0)]
 
 
-def lunge_frames():
-    # 6 帧：蓄力后仰 → 压紧 → 前冲拉伸 → 张嘴咬 → 回收 → 站定
-    return [("center", 0.94, 1.060, 0, 0, 1.0, 0, 1.0),
-            ("center", 1.02, 0.930, 0, 1, 1.0, 0, 1.0),
-            ("center", 1.25, 0.930, 2, -5, 1.0, 0, 1.0),
-            ("center", 1.32, 1.000, 3, -7, 1.0, 0, 1.0),
-            ("center", 1.08, 1.020, 1, -2, 1.0, 0, 1.0),
-            ("center", 1.00, 1.000, 0, 0, 1.0, 0, 1.0)]
+def lunge_frames(view):
+    # 4 帧：蓄力后仰 → 前冲拉伸 → 张嘴咬 → 回收
+    # 左右各一套，往哪边扑就用哪边的视图
+    return [(view, 0.94, 1.060, 0, 0, 1.0, 0, 1.0),
+            (view, 1.20, 0.940, 2, -4, 1.0, 0, 1.0),
+            (view, 1.32, 1.000, 3, -6, 1.0, 0, 1.0),
+            (view, 1.06, 1.020, 1, -1, 1.0, 0, 1.0)]
 
 
 # 死亡 6 帧：(内容缩放, 飞散距离, 碎块缩放, 自转角度, 透明度, 爆点闪光)
@@ -191,9 +189,10 @@ frames += breathe_frames("right")   # 0~3
 frames += breathe_frames("left")    # 4~7
 frames += hop_frames("right")       # 8~13
 frames += hop_frames("left")        # 14~19
-frames += lunge_frames()            # 20~25
+frames += lunge_frames("right")     # 18~21
+frames += lunge_frames("left")      # 22~25
 
-assert len(frames) == FRAMES - len(DEATH), (len(frames), len(DEATH))
+assert len(frames) == 26, len(frames)   # 26 之后是死亡段
 
 sheet = bytearray(CELL * FRAMES * CELL * 4)
 def put_cell(idx, cell):

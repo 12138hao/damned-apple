@@ -3,89 +3,72 @@ using Godot;
 /// <summary>
 /// 地下洞穴里的跳跃苹果怪。
 ///
-/// 和第一关的苹果怪（Enemy / AppleEnemy）的区别：
-///   · **不会走**，只会一下一下地蹦着移动（所以没有走路帧）
-///   · 发现玩家会先蹲下蓄力（有预警），再朝玩家扑出去咬一口
-///   · **死亡直接炸开**，不爆炸、不留毒圈、不给范围伤害
+/// 和第一关苹果怪（Enemy / AppleEnemy）的区别：
+///   · **不会走**，只会一下一下地蹦（没有走路帧）
+///   · 发现玩家先蹲下蓄力（有预警），再朝玩家扑出去咬一口
+///   · 飞扑用**左右侧视图**：往右扑就用朝右的图，往左就用朝左的
+///   · **死亡直接炸开**，不爆炸、不留毒圈
 ///
 /// 帧表（assets/hop_apple_sheet.png，32 帧，每帧 160×160）：
-///   0~3    呼吸（朝右）
-///   4~7    呼吸（朝左）
-///   8~13   蹦跳循环（朝右）
-///   14~19  蹦跳循环（朝左）
-///   20~25  飞扑撕咬（正视图，蓄力→前冲→张嘴→回收→站定）
+///   0~3    呼吸（朝右）      4~7    呼吸（朝左）
+///   8~12   蹦跳（朝右）      13~17  蹦跳（朝左）
+///   18~21  飞扑（朝右）      22~25  飞扑（朝左）
 ///   26~31  死亡炸开
 ///
-/// 挂法：CharacterBody2D（collision_layer=4）+ 子节点 Sprite2D（hframes=32）+ HurtArea。
+/// 挂法：CharacterBody2D（layer=4）+ Sprite2D（hframes=32）+ HurtArea
+///      + RayLeft / RayRight（基类硬取，缺了会抛异常）。
 /// </summary>
 public partial class HopAppleEnemy : Enemy
 {
     // ─────────────────────────── 帧表
     [ExportGroup("帧表")]
-    [Export] public int IdleRightStart = 0;    // 呼吸朝右：0~3
-    [Export] public int IdleLeftStart = 4;     // 呼吸朝左：4~7
-    [Export] public int HopRightStart = 8;     // 蹦跳朝右：8~13
-    [Export] public int HopLeftStart = 14;     // 蹦跳朝左：14~19
-    [Export] public int LungeStart = 20;       // 飞扑：20~25
-    [Export] public int DeathStart = 26;       // 死亡炸开：26~31
+    [Export] public int IdleRightStart = 0;      // 呼吸朝右：0~3
+    [Export] public int IdleLeftStart = 4;       // 呼吸朝左：4~7
+    [Export] public int HopRightStart = 8;       // 蹦跳朝右：8~12
+    [Export] public int HopLeftStart = 13;       // 蹦跳朝左：13~17
+    [Export] public int LungeRightStart = 18;    // 飞扑朝右：18~21
+    [Export] public int LungeLeftStart = 22;     // 飞扑朝左：22~25
+    [Export] public int DeathStart = 26;         // 死亡炸开：26~31
     [Export] public int DeathEnd = 31;
-    [Export] public float IdleAnimInterval = 0.18f;   // 呼吸帧间隔
-    [Export] public float HopAnimInterval = 0.07f;    // 蹦跳帧间隔
-    [Export] public float LungeAnimInterval = 0.06f;  // 飞扑帧间隔
-    [Export] public float DeathAnimInterval = 0.07f;  // 死亡帧间隔
+    [Export] public float IdleAnimInterval = 0.18f;
+    [Export] public float DeathAnimInterval = 0.07f;
 
     // ─────────────────────────── 蹦跳
     [ExportGroup("蹦跳")]
-    [Export] public float HopInterval = 0.85f;      // 落地后停多久再跳下一次
-    [Export] public float HopSpeed = 130f;          // 跳跃时的水平速度
-    [Export] public float HopImpulse = 420f;        // 起跳的向上初速度
+    [Export] public float HopInterval = 0.55f;   // 落地后停多久再跳下一次
+    [Export] public float HopSpeed = 190f;       // 跳跃时的水平速度
+    [Export] public float HopImpulse = 560f;     // 起跳的向上初速度（越大跳越高）
+    [Export] public float LandHoldTime = 0.12f;  // 落地压扁保持多久
 
     // ─────────────────────────── 侦测与飞扑
     [ExportGroup("侦测与飞扑")]
-    [Export] public float DetectRangeX = 300f;      // 水平多近能发现玩家
-    [Export] public float DetectRangeY = 140f;      // 垂直高度差容忍（太小就只打同一层的）
-    [Export] public float LungeChargeTime = 0.5f;   // 蓄力预警时长——玩家的反应窗口
-    [Export] public float LungeSpeed = 430f;        // 扑出去的速度（玩家 300，稍快但能躲）
-    [Export] public float LungeTime = 0.26f;        // 冲出去多久
-    [Export] public float RecoverTime = 0.55f;      // 扑完喘气，这段时间不设防也不追
-    [Export] public float LungeCooldown = 1.4f;     // 两次飞扑之间至少隔多久
+    [Export] public float DetectRangeX = 300f;   // 水平多近能发现玩家
+    [Export] public float DetectRangeY = 140f;   // 垂直高度差容忍
+    [Export] public float LungeChargeTime = 0.38f; // 蓄力预警时长——玩家的反应窗口
+    [Export] public float LungeSpeed = 560f;     // 扑出去的速度（玩家 300）
+    [Export] public float LungeTime = 0.22f;     // 冲出去多久
+    [Export] public float RecoverTime = 0.5f;    // 扑完喘气
+    [Export] public float LungeCooldown = 1.1f;  // 两次飞扑之间至少隔多久
 
     private enum St { Idle, Hop, Charge, Lunge, Recover }
     private St _st = St.Idle;
 
-    private float _timer;          // 状态计时
-    private float _lungeCd;        // 飞扑冷却
+    private float _timer;
+    private float _lungeCd;
+    private float _landHold;
     private Box _player;
     private Vector2 _lungeDir = Vector2.Right;
-    private bool _landedOnce;      // 这一跳是否已经落地过（避免起跳瞬间被判定落地）
-    private int _frameOffset;      // 当前帧段内的偏移
+    private bool _landedOnce;
 
     public override void _Ready()
     {
         base._Ready();
         _player = GetTree().Root.FindChild("box", true, false) as Box;
         _timer = HopInterval;
-        // 第一关的苹果怪是走路帧在循环，这里换成 32 帧表，必须自己指定
         if (_sprite != null)
         {
             _sprite.Hframes = 32;
             _sprite.Frame = IdleRightStart;
-        }
-    }
-
-    /// <summary>父类每帧会拿这个覆盖 Velocity.X，所以水平速度必须在这里给。</summary>
-    protected override float ComputeHorizontalVelocity(float dt)
-    {
-        switch (_st)
-        {
-            case St.Hop:
-                return Direction * HopSpeed;
-            case St.Lunge:
-                return _lungeDir.X * LungeSpeed;
-            case St.Charge:
-                return 0f;                 // 蓄力时站定，给玩家看清楚的信号
-            default:
-                return 0f;
         }
     }
 
@@ -95,36 +78,33 @@ public partial class HopAppleEnemy : Enemy
 
         if (_dead)
         {
-            base._PhysicsProcess(delta);   // 父类负责死亡计时与隐藏
+            base._PhysicsProcess(delta);
             return;
         }
 
-        base._PhysicsProcess(delta);       // 重力、移动、接触伤害都交给父类
+        base._PhysicsProcess(delta);   // 重力、移动、接触伤害都交给父类
 
         _timer -= dt;
         _lungeCd = Mathf.Max(0f, _lungeCd - dt);
+        _landHold = Mathf.Max(0f, _landHold - dt);
 
         bool onFloor = IsOnFloor();
 
         switch (_st)
         {
             case St.Idle:
-                // 站定的时候才找玩家，跳在半空中不改变主意
                 if (TryStartLunge()) break;
-                if (_timer <= 0f)
-                {
-                    StartHop();
-                }
+                if (_timer <= 0f) StartHop();
                 break;
 
             case St.Hop:
-                // 起跳那一帧可能还在上一帧的地面状态，先等离地再判断落地
                 if (!onFloor) _landedOnce = true;
                 else if (_landedOnce)
                 {
+                    _landedOnce = false;
                     _st = St.Idle;
                     _timer = HopInterval;
-                    _landedOnce = false;
+                    _landHold = LandHoldTime;
                     Velocity = new Vector2(0f, Velocity.Y);
                 }
                 break;
@@ -134,7 +114,6 @@ public partial class HopAppleEnemy : Enemy
                 {
                     _st = St.Lunge;
                     _timer = LungeTime;
-                    _frameOffset = 0;
                 }
                 break;
 
@@ -143,7 +122,6 @@ public partial class HopAppleEnemy : Enemy
                 {
                     _st = St.Recover;
                     _timer = RecoverTime;
-                    _frameOffset = 0;
                     Velocity = new Vector2(Velocity.X * 0.3f, Velocity.Y);
                 }
                 break;
@@ -158,7 +136,17 @@ public partial class HopAppleEnemy : Enemy
         }
     }
 
-    /// <summary>发现玩家就蹲下蓄力。返回 true 表示已经进入蓄力。</summary>
+    /// <summary>父类每帧用这个覆盖 Velocity.X。</summary>
+    protected override float ComputeHorizontalVelocity(float dt)
+    {
+        switch (_st)
+        {
+            case St.Hop:   return Direction * HopSpeed;
+            case St.Lunge: return _lungeDir.X * LungeSpeed;
+            default:       return 0f;      // 蓄力时站定，给玩家看清信号
+        }
+    }
+
     private bool TryStartLunge()
     {
         if (_lungeCd > 0f) return false;
@@ -169,15 +157,12 @@ public partial class HopAppleEnemy : Enemy
         if (Mathf.Abs(dx) > DetectRangeX) return false;
         if (dy > DetectRangeY) return false;
 
-        // 只有背对玩家时才转身，免得面对玩家还先转一圈
         Direction = dx >= 0f ? 1 : -1;
-        _lungeDir = new Vector2(Mathf.Sign(dx), 0f);
-        if (_lungeDir.X == 0f) _lungeDir = Vector2.Right;
+        _lungeDir = new Vector2(Direction, 0f);
 
         _st = St.Charge;
         _timer = LungeChargeTime;
         _lungeCd = LungeChargeTime + LungeTime + RecoverTime + LungeCooldown;
-        _frameOffset = 0;
         Velocity = new Vector2(0f, Velocity.Y);
         return true;
     }
@@ -186,11 +171,12 @@ public partial class HopAppleEnemy : Enemy
     {
         if (!IsOnFloor())
         {
-            _timer = 0.1f;      // 还没落地，稍后再试
+            _timer = 0.1f;
             return;
         }
         _st = St.Hop;
         _landedOnce = false;
+        _landHold = 0f;
         Velocity = new Vector2(Direction * HopSpeed, -HopImpulse);
     }
 
@@ -199,7 +185,6 @@ public partial class HopAppleEnemy : Enemy
     {
         if (_sprite == null) return;
 
-        // 死亡优先，帧率单独控制
         if (_dead)
         {
             if (_sprite.Frame < DeathStart) { _sprite.Frame = DeathStart; _animTimer = 0f; return; }
@@ -210,61 +195,68 @@ public partial class HopAppleEnemy : Enemy
             return;
         }
 
+        _sprite.FlipH = false;   // 贴图自带左右两套，不需要镜像
+
         switch (_st)
         {
             case St.Hop:
-                PlaySegment(HopRightStart, HopLeftStart, 6, HopAnimInterval, dt);
+                UpdateHopFrame();
                 break;
 
             case St.Charge:
-                // 蓄力：用飞扑段的前两帧（后仰 → 压紧）
-                _animTimer += dt;
-                _frameOffset = _timer > LungeChargeTime * 0.5f ? 0 : 1;
-                _sprite.Frame = LungeStart + _frameOffset;
+                // 蓄力：前半段后仰，后半段压紧，给玩家一个「要来了」的读条感
+                _sprite.Frame = LungeStartFor(0) + (_timer < LungeChargeTime * 0.5f ? 1 : 0);
                 break;
 
             case St.Lunge:
-                // 冲出去的三帧：拉伸 → 张嘴 → 咬合
-                _animTimer += dt;
-                if (_animTimer >= LungeAnimInterval)
-                {
-                    _animTimer = 0f;
-                    _frameOffset = Mathf.Min(_frameOffset + 1, 2);
-                }
-                _sprite.Frame = LungeStart + 2 + _frameOffset;
+                _sprite.Frame = LungeStartFor(2);   // 拉最长、嘴张最大的那一帧
                 break;
 
             case St.Recover:
-                _sprite.Frame = LungeStart + 4;
-                _animTimer = 0f;
+                _sprite.Frame = LungeStartFor(3);
                 break;
 
             default:
-                PlaySegment(IdleRightStart, IdleLeftStart, 4, IdleAnimInterval, dt);
+                if (_landHold > 0f)
+                    _sprite.Frame = HopStartFor() + 4;   // 落地压扁
+                else
+                    PlayIdleBreath(dt);
                 break;
         }
     }
 
-    /// <summary>按朝向播一段循环帧。</summary>
-    private void PlaySegment(int rightStart, int leftStart, int count, float interval, float dt)
+    /// <summary>蹦跳帧按物理状态选，不循环播——循环播放会像在扑腾翅膀。</summary>
+    private void UpdateHopFrame()
     {
-        int start = Direction > 0 ? rightStart : leftStart;
-        _sprite.FlipH = false;                 // 贴图自带左右，不需要镜像
+        int start = HopStartFor();
+        if (Velocity.Y < -220f)      _sprite.Frame = start + 1;   // 刚起跳：拉长
+        else if (Velocity.Y < 0f)    _sprite.Frame = start + 2;   // 接近顶点
+        else                         _sprite.Frame = start + 3;   // 下落
+    }
+
+    private void PlayIdleBreath(float dt)
+    {
+        int start = Direction > 0 ? IdleRightStart : IdleLeftStart;
         _animTimer += dt;
-        if (_animTimer < interval) return;
+        if (_animTimer < IdleAnimInterval) return;
         _animTimer = 0f;
 
         int f = _sprite.Frame;
-        if (f < start || f >= start + count) f = start;
-        else f = start + (f - start + 1) % count;
+        if (f < start || f >= start + 4) f = start;
+        else f = start + (f - start + 1) % 4;
         _sprite.Frame = f;
     }
 
+    private int HopStartFor() => Direction > 0 ? HopRightStart : HopLeftStart;
+
+    /// <summary>飞扑帧段按「往哪扑」选：往右用朝右的图，往左用朝左的图。</summary>
+    private int LungeStartFor(int offset)
+    {
+        int start = _lungeDir.X >= 0f ? LungeRightStart : LungeLeftStart;
+        return start + offset;
+    }
+
     // ─────────────────────────── 死亡
-    /// <summary>
-    /// 死亡瞬间关掉碰撞并进入 Idle，让炸开动画自己播完。
-    /// 父类要等动画播完才关碰撞，那样碎片还在飞的时候子弹会被挡住。
-    /// </summary>
     protected override void OnDeath()
     {
         base.OnDeath();
@@ -288,6 +280,7 @@ public partial class HopAppleEnemy : Enemy
         _timer = HopInterval;
         _lungeCd = 0f;
         _landedOnce = false;
+        _landHold = 0f;
         _animTimer = 0f;
         if (_sprite != null) _sprite.Frame = IdleRightStart;
     }
