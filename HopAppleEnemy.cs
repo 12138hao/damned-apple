@@ -53,6 +53,8 @@ public partial class HopAppleEnemy : Enemy
     [Export] public float LungeJumpImpulse = 286f; // 向上初速度：405×√0.5，高度再降 50%（现 34px）
     [Export] public float LungeTime = 1.2f;      // 最长滞空时间（落地就提前结束，要比空中时间留余量）
     [Export] public float RecoverTime = 0.5f;    // 扑完喘气
+    [Export] public float LungeHitWidth = 70f;    // 飞扑命中判定：水平半宽
+    [Export] public float LungeHitHeight = 80f;   // 飞扑命中判定：垂直半高
     [Export] public float LungeCooldown = 1.1f;  // 两次飞扑之间至少隔多久
 
     private enum St { Idle, Hop, Charge, Lunge, Recover }
@@ -64,6 +66,7 @@ public partial class HopAppleEnemy : Enemy
     private bool _lungeAirborne;   // 飞扑时是否已经离地（避免起跳当帧就被判定落地）
     private float _lungeVx;        // 本次扑击的水平速度（按距离算，保证落在玩家身上）
     private float _targetDx;       // 起跳瞬间和玩家的水平距离
+    private bool _lungeHitDone;    // 本次飞扑是否已经结算过伤害
     private Box _player;
     private Vector2 _lungeDir = Vector2.Right;
     private bool _landedOnce;
@@ -91,6 +94,8 @@ public partial class HopAppleEnemy : Enemy
         }
 
         base._PhysicsProcess(delta);   // 重力、移动、接触伤害都交给父类
+
+        if (Engine.GetPhysicsFrames() % 20 == 0 && _player != null && IsInstanceValid(_player))
 
         _timer -= dt;
         _lungeCd = Mathf.Max(0f, _lungeCd - dt);
@@ -124,6 +129,7 @@ public partial class HopAppleEnemy : Enemy
                     _st = St.Lunge;
                     _timer = LungeTime;
                     _lungeAirborne = false;
+                    _lungeHitDone = false;
                     // 按滞空时间反算水平速度，让落点大致压在玩家身上；
                     // 再乘 LungeSpeedBias 让它更凶（会略微冲过头，这是「更快」的代价）
                     float air = 2f * LungeJumpImpulse / Mathf.Max(1f, Gravity);
@@ -135,6 +141,7 @@ public partial class HopAppleEnemy : Enemy
                 break;
 
             case St.Lunge:
+                TryLungeHit();
                 if (!onFloor) _lungeAirborne = true;
                 // 落地 或 超时就收
                 if (_timer <= 0f || (_lungeAirborne && onFloor))
@@ -214,6 +221,24 @@ public partial class HopAppleEnemy : Enemy
         _landedOnce = false;
         _landHold = 0f;
         Velocity = new Vector2(Direction * HopSpeed, -HopImpulse);
+    }
+
+    /// <summary>
+    /// 飞扑命中判定：自己算一次矩形范围，不完全依赖 HurtArea 的重叠事件。
+    /// 1000 px/s 穿过去时每帧走 17px，Area2D 有可能在两次物理帧之间擦身而过漏判，
+    /// 主动判定能保证「扑中了就掉血」。
+    /// </summary>
+    private void TryLungeHit()
+    {
+        if (_lungeHitDone) return;
+        if (_player == null || !IsInstanceValid(_player)) return;
+
+        Vector2 d = _player.GlobalPosition - GlobalPosition;
+        if (Mathf.Abs(d.X) > LungeHitWidth) return;
+        if (Mathf.Abs(d.Y) > LungeHitHeight) return;
+
+        _lungeHitDone = true;
+        _player.TakeDamage(Damage, GlobalPosition);
     }
 
     /// <summary>朝 dir 方向 HopProbeDistance 处往下探，有地面返回 true，悬空（坑）返回 false。</summary>
