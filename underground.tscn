@@ -10,6 +10,9 @@
 [ext_resource type="Texture2D" uid="uid://06cun7xp5j10" path="res://assets/cave.png" id="8_xggcg"]
 [ext_resource type="Texture2D" uid="uid://8y3qr3225sps" path="res://assets/cave_floor_transparent.png" id="9_6xgwd"]
 [ext_resource type="Script" uid="uid://xj40k62qt5mj" path="res://SpawnSavePoint.cs" id="9_pvodk"]
+[ext_resource type="Texture2D" uid="uid://djeptrihf5lm4" path="res://assets/hop_apple_sheet.png" id="12_hopsheet"]
+[ext_resource type="Script" uid="uid://bpuxw5twn8t8w" path="res://HopAppleEnemy.cs" id="13_hopscript"]
+[ext_resource type="Texture2D" uid="uid://b0tvvtdnn8lhy" path="res://cliff_filled_dark.png" id="11_xdn7w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0boax"]
 size = Vector2(32, 32)
@@ -18,7 +21,13 @@ size = Vector2(32, 32)
 size = Vector2(26, 42)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_btfou"]
-size = Vector2(4363.5, 20)
+size = Vector2(1122.75, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hopbody"]
+size = Vector2(54, 68)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hoptouch"]
+radius = 38.0
 
 [node name="Main2" type="Node2D" unique_id=1867660586]
 
@@ -108,7 +117,7 @@ position = Vector2(-44, 406)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="road" unique_id=1089853058]
 z_index = -100
-position = Vector2(2222, 97)
+position = Vector2(601.625, 97)
 shape = SubResource("RectangleShape2D_btfou")
 
 [node name="Sprite2D" type="Sprite2D" parent="road" unique_id=1607880520]
@@ -120,3 +129,52 @@ texture = ExtResource("9_6xgwd")
 [node name="SpawnSave" type="Node2D" parent="." unique_id=1556134010]
 position = Vector2(255, 493)
 script = ExtResource("9_pvodk")
+
+[node name="road2" type="StaticBody2D" parent="." unique_id=979146628]
+position = Vector2(1500, 406)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="road2" unique_id=1044831117]
+z_index = -100
+position = Vector2(601.625, 97)
+shape = SubResource("RectangleShape2D_btfou")
+
+[node name="Sprite2D" type="Sprite2D" parent="road2" unique_id=1483370915]
+z_index = -90
+position = Vector2(595, 292)
+scale = Vector2(0.78453046, 0.74723756)
+texture = ExtResource("9_6xgwd")
+
+[node name="background2" type="Sprite2D" parent="." unique_id=44940973]
+z_index = -96
+position = Vector2(1315, 892)
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("11_xdn7w")
+
+[node name="hopapple" type="CharacterBody2D" parent="." unique_id=590638028]
+position = Vector2(620, 448)
+collision_layer = 4
+script = ExtResource("13_hopscript")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="hopapple" unique_id=206386564]
+position = Vector2(0, 11)
+shape = SubResource("RectangleShape2D_hopbody")
+
+[node name="Sprite2D" type="Sprite2D" parent="hopapple" unique_id=1152971059]
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("12_hopsheet")
+hframes = 32
+
+[node name="RayLeft" type="RayCast2D" parent="hopapple" unique_id=1000101]
+position = Vector2(-22, 10)
+target_position = Vector2(0, 30)
+
+[node name="RayRight" type="RayCast2D" parent="hopapple" unique_id=1000102]
+position = Vector2(22, 10)
+target_position = Vector2(0, 30)
+
+[node name="HurtArea" type="Area2D" parent="hopapple" unique_id=668022351]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="hopapple/HurtArea" unique_id=625553319]
+position = Vector2(0, 8)
+shape = SubResource("CircleShape2D_hoptouch")
