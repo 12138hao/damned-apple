@@ -27,7 +27,7 @@ size = Vector2(1122.75, 20)
 size = Vector2(54, 68)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hoptouch"]
-radius = 38.0
+radius = 30.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uv0j0"]
 size = Vector2(20, 1214)

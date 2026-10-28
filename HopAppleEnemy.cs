@@ -53,8 +53,9 @@ public partial class HopAppleEnemy : Enemy
     [Export] public float LungeJumpImpulse = 286f; // 向上初速度：405×√0.5，高度再降 50%（现 34px）
     [Export] public float LungeTime = 1.2f;      // 最长滞空时间（落地就提前结束，要比空中时间留余量）
     [Export] public float RecoverTime = 0.5f;    // 扑完喘气
-    [Export] public float LungeHitWidth = 70f;    // 飞扑命中判定：水平半宽
-    [Export] public float LungeHitHeight = 80f;   // 飞扑命中判定：垂直半高
+    [Export] public float LungeHitWidth = 43f;    // 命中判定半宽 = 怪半宽27 + 玩家半宽16
+    [Export] public float LungeHitHeight = 50f;   // 命中判定半高 = 怪半高34 + 玩家半高16
+    [Export] public float LungeHitCenterY = 11f;  // 怪物身体中心相对节点的偏移（和碰撞体一致）
     [Export] public float LungeCooldown = 1.1f;  // 两次飞扑之间至少隔多久
 
     private enum St { Idle, Hop, Charge, Lunge, Recover }
@@ -70,12 +71,14 @@ public partial class HopAppleEnemy : Enemy
     private Box _player;
     private Vector2 _lungeDir = Vector2.Right;
     private bool _landedOnce;
+    private Vector2 _prevPos;      // 上一物理帧的位置，扫掠判定用
 
     public override void _Ready()
     {
         base._Ready();
         _player = GetTree().Root.FindChild("box", true, false) as Box;
         _timer = HopInterval;
+        _prevPos = GlobalPosition;
         if (_sprite != null)
         {
             _sprite.Hframes = 32;
@@ -93,6 +96,7 @@ public partial class HopAppleEnemy : Enemy
             return;
         }
 
+        _prevPos = GlobalPosition;     // 记录移动前的位置，扫掠判定要用这一段
         base._PhysicsProcess(delta);   // 重力、移动、接触伤害都交给父类
 
 
@@ -223,16 +227,29 @@ public partial class HopAppleEnemy : Enemy
     }
 
     /// <summary>
-    /// 飞扑命中判定：自己算一次矩形范围，不完全依赖 HurtArea 的重叠事件。
-    /// 1000 px/s 穿过去时每帧走 17px，Area2D 有可能在两次物理帧之间擦身而过漏判，
-    /// 主动判定能保证「扑中了就掉血」。
+    /// 飞扑命中判定：把「上一帧位置 → 本帧位置」连成线段，算玩家到线段的最近距离。
+    ///
+    /// 为什么不是简单的圆/矩形判定：
+    ///   · 圆/矩形判定框开大一点就会「没碰到也扣血」
+    ///   · 框贴紧体积又会在 1000 px/s 穿过去时漏判（每帧走 17px，可能直接跨过玩家）
+    /// 用扫掠线段 + 贴着体积的框，两个问题一起解决。
     /// </summary>
     private void TryLungeHit()
     {
         if (_lungeHitDone) return;
         if (_player == null || !IsInstanceValid(_player)) return;
 
-        Vector2 d = _player.GlobalPosition - GlobalPosition;
+        Vector2 off = new Vector2(0f, LungeHitCenterY);
+        Vector2 a = _prevPos + off;
+        Vector2 b = GlobalPosition + off;
+        Vector2 c = _player.GlobalPosition;
+
+        Vector2 ab = b - a;
+        float len2 = ab.LengthSquared();
+        float t = len2 <= 0.0001f ? 0f : Mathf.Clamp((c - a).Dot(ab) / len2, 0f, 1f);
+        Vector2 closest = a + ab * t;
+
+        Vector2 d = c - closest;
         if (Mathf.Abs(d.X) > LungeHitWidth) return;
         if (Mathf.Abs(d.Y) > LungeHitHeight) return;
 
