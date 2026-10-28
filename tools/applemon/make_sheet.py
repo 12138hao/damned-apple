@@ -16,6 +16,9 @@
 import os
 import math
 import subprocess
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from explosion import render_explosion
 
 FFMPEG = r"C:\Users\leader\.workbuddy-ai\binaries\node\workspace\node_modules\@ffmpeg-installer\win32-x64\ffmpeg.exe"
 D = r"D:\h\my-game\tools\applemon"
@@ -170,15 +173,17 @@ def lunge_frames():
             ("center", 1.00, 1.000, 0, 0, 1.0, 0, 1.0)]
 
 
-def death_frames():
-    # 6 帧。位移不能大：格子只有 160 宽、内容 130 高，飞太远会被格子切掉。
-    # 所以同时让本体逐步缩小，既解释成「炸碎了」，也给碎片腾出空间。
-    return [("right", 1.08, 1.080, 0, 0, 1.00, 0,  1.00),
-            ("right", 1.02, 1.020, 0, 0, 1.00, 6,  0.96),
-            ("right", 0.98, 0.980, 0, 0, 1.00, 12, 0.90),
-            ("right", 0.94, 0.940, 0, 0, 0.90, 18, 0.80),
-            ("right", 0.90, 0.900, 0, 0, 0.60, 24, 0.66),
-            ("right", 0.86, 0.860, 0, 0, 0.25, 28, 0.52)]
+# 死亡 6 帧：(内容缩放, 飞散距离, 碎块缩放, 自转角度, 透明度, 爆点闪光)
+# 缩放逐步变小，是为了给碎片腾出飞散空间——格子只有 160 宽，飞太远会被裁掉。
+DEATH = [
+    # (内容缩放, 飞散距离, 碎块缩放, 自转°, 透明度, 爆点闪光, 拖影长度)
+    (1.08,  0, 1.00,  0, 1.00, 0.00, 0),
+    (1.04,  6, 0.97,  2, 1.00, 0.28, 0),
+    (1.00, 14, 0.90,  6, 1.00, 0.42, 2),
+    (0.96, 22, 0.78, 11, 0.95, 0.20, 4),
+    (0.92, 30, 0.60, 17, 0.62, 0.07, 5),
+    (0.86, 40, 0.46, 26, 0.32, 0.00, 6),
+]
 
 
 frames = []
@@ -186,19 +191,47 @@ frames += breathe_frames("right")   # 0~3
 frames += breathe_frames("left")    # 4~7
 frames += hop_frames("right")       # 8~13
 frames += hop_frames("left")        # 14~19
-frames += lunge_frames()            # 20~27
-frames += death_frames()            # 28~31
-assert len(frames) == FRAMES, len(frames)
+frames += lunge_frames()            # 20~25
+
+assert len(frames) == FRAMES - len(DEATH), (len(frames), len(DEATH))
 
 sheet = bytearray(CELL * FRAMES * CELL * 4)
-for idx, (view, sx, sy, dx, dy, al, ex, sk) in enumerate(frames):
-    cell = render(view, sx, sy, dx, dy, al, ex, sk)
+def put_cell(idx, cell):
     for y in range(CELL):
         dst = (y * CELL * FRAMES + idx * CELL) * 4
         src_off = y * CELL * 4
         sheet[dst:dst + CELL * 4] = cell[src_off:src_off + CELL * 4]
+
+
+for idx, (view, sx, sy, dx, dy, al, ex, sk) in enumerate(frames):
+    cell = render(view, sx, sy, dx, dy, al, ex, sk)
+    put_cell(idx, cell)
     print(f"  帧 {idx:2d}  {view:6s} sx={sx:.2f} sy={sy:.2f} dy={dy:+d} "
           f"alpha={al:.2f} explode={ex:.0f}")
+
+# 死亡段
+base_idx = len(frames)
+for k, (cs, dist, shrink, rot, alpha, flash, blur) in enumerate(DEATH):
+    view = "right"
+    box = BOXES[view]
+    cw = box[2] - box[0] + 1
+    ch = box[3] - box[1] + 1
+    base = CONTENT_H * cs / ch
+    kx = base
+    ky = base
+    src_cx = (box[0] + box[2]) * 0.5
+    src_cy = (box[1] + box[3]) * 0.5
+    src = SOURCES[view]
+
+    def smp(x, y, _src=src, _box=box):
+        return sample(_src, _box, x, y)
+
+    cell = render_explosion(smp, box, CELL, CONTENT_H, FOOT,
+                            dist, shrink, rot, alpha, flash, blur,
+                            src_cx, src_cy, kx, ky, CELL * 0.5, FOOT)
+    put_cell(base_idx + k, cell)
+    print(f"  帧 {base_idx + k:2d}  死亡 cs={cs:.2f} 飞散={dist:2d} "
+          f"碎缩={shrink:.2f} 自转={rot:2d}° α={alpha:.2f} 闪光={flash:.2f}")
 
 raw = os.path.join(D, "sheet.raw")
 open(raw, "wb").write(bytes(sheet))
