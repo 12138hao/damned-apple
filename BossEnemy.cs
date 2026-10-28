@@ -59,7 +59,7 @@ public partial class BossEnemy : Enemy
     [Export] public Vector2 SpitOriginOffset = new Vector2(0f, -46f);  // 抛物线起点，相对 Boss 位置
 
     [ExportGroup("概率")]
-    [Export] public float JumpChance = 0.55f;  // 跳砸概率，剩下是喷毒
+    [Export] public float JumpChance = 0.715f;  // 跳砸概率，剩下是喷毒（原 0.55，提高 30%）
 
     private enum Phase { Idle, Airborne, SpitCharge, Spitting }
 
