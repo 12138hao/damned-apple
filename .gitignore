@@ -35,3 +35,7 @@ desktop.ini
 
 # 图标生成中间产物（可由 ffmpeg 从 pixel-128-transparent.png 重新生成）
 tools/icon/
+
+# 精灵表生成的中间产物（.py 脚本保留，可复现）
+tools/applemon/*.raw
+tools/applemon/*.rgba
