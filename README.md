@@ -6,6 +6,8 @@
 
 一个用 **Godot 4 + C#** 从零手写的横版动作 demo。没有用任何现成的角色控制器或战斗框架，移动、平台、战斗、Boss、对话全部是自己一行行写出来的。
 
+▶ **[演示视频（B 站）](https://b23.tv/L69BoxH)** — 第一关通关演示　·　📐 **[架构说明](docs/ARCHITECTURE.md)** — 代码怎么分层、怎么设计的
+
 ## 直接下载游玩
 
 不想装引擎的话，去 **[Releases](https://github.com/12138hao/damned-apple/releases)** 下载 `damned-apple-v0.1.0-win64.zip`：
@@ -59,7 +61,7 @@ Windows 可能弹出 SmartScreen 蓝色提示（exe 没有代码签名），点�
 | 引擎 | Godot 4.7.2（**.NET / C# 版本**） |
 | 语言 | C#（`net8.0`） |
 | 渲染 | GL Compatibility |
-| 规模 | 34 个脚本 / 7 个场景 / 约 5600 行 C# |
+| 规模 | 42 个脚本 / 8 个场景 / 约 4,900 行 C# |
 
 几个自己写得比较得意的地方：
 
@@ -67,6 +69,10 @@ Windows 可能弹出 SmartScreen 蓝色提示（exe 没有代码签名），点�
 - **音频系统**：`AudioManager` 作为 autoload 单例，8 路音效播放器轮换 + BGM 淡入淡出，音效按名字查找文件，**文件缺失时静默跳过**，所以可以先搭系统后补素材
 - **对话打字机**：利用 `Label.VisibleCharacters` 逐字显示，每 N 个字触发一次音效，音高带随机抖动
 - **状态管理**：`GameState` 统一处理跨场景的血量、武器、载具、已读对话、已拾取道具、存档点
+- **按模块拆分的玩家控制器**：按移动 / 战斗 / 载具 / 生命 / 视觉切成 7 个 `partial` 文件，单个文件不再动辄上千行
+- **可测试的纯逻辑 + CI**：状态记录抽成不依赖 Godot 的 `GameRecords`，配套 xUnit 测试与 GitHub Actions，每次 push 自动跑
+
+详细的模块划分、跨场景状态契约、动画帧段约定和逐帧更新顺序，见 **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**。
 
 ---
 
@@ -74,7 +80,13 @@ Windows 可能弹出 SmartScreen 蓝色提示（exe 没有代码签名），点�
 
 ```
 .
-├── Box.cs                 玩家控制器（移动 / 跳跃 / 蓄力攻击 / 载具）
+├── Box.cs                 玩家控制器（模块拆分后的主文件）
+├── Box.Move.cs            移动 / 跳跃 / 单向平台
+├── Box.Combat.cs          攻击 / 蓄力 / 连段
+├── Box.Weapon.cs          武器槽与切换
+├── Box.Vehicle.cs         载具上/下车
+├── Box.Life.cs            血量 / 受击 / 死亡
+├── Box.Visual.cs          贴图与表现
 ├── Enemy.cs               敌人基类（受击 / 击退 / 死亡 / 巡逻）
 ├── AppleEnemy.cs          追踪型敌人：苹果怪
 ├── BossEnemy.cs           Boss：双血量阶段 + 行为状态机 + 技能
@@ -82,9 +94,11 @@ Windows 可能弹出 SmartScreen 蓝色提示（exe 没有代码签名），点�
 ├── AudioManager.cs        音频单例
 ├── DialogueUI.cs          气泡对话框 + 打字机
 ├── GameState.cs           跨场景状态
+├── GameRecords.cs         纯 C# 状态记录（可单元测试）
 ├── Hud.cs / hud.tscn      血条、武器槽
 ├── firstry.tscn           主城
 ├── house_inside.tscn      屋内
+├── tests/                 xUnit 测试工程
 └── tools/                 素材生成脚本（Python，纯标准库）
 ```
 

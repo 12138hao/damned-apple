@@ -24,11 +24,8 @@ public partial class GameState : Node
     /// <summary>对话进行中。门和拾取物要检查这个，避免按 E 时一边对话一边被传走。</summary>
     public bool DialogueActive { get; set; }
 
-    /// <summary>已经聊过的 NPC 名字。切场景后仍然记得，用来区分首次/再次对话。</summary>
-    private readonly HashSet<string> _talked = new();
-
-    /// <summary>已经捡过的物品（场景路径）。切场景回来不会再刷出来。</summary>
-    private readonly HashSet<string> _pickedUp = new();
+    /// <summary>跨场景的「聊过 / 捡过」记录。纯 C# 实现，可脱离引擎单元测试。</summary>
+    private readonly GameRecords _records = new();
 
     // ── 载具（跨场景保持）──
     public bool HasVehicle { get; set; }
@@ -51,28 +48,16 @@ public partial class GameState : Node
     }
 
     /// <summary>这个 NPC 是否已经聊过。</summary>
-    public bool HasTalked(string npcName)
-    {
-        return !string.IsNullOrEmpty(npcName) && _talked.Contains(npcName);
-    }
+    public bool HasTalked(string npcName) => _records.HasTalked(npcName);
 
     /// <summary>标记这个 NPC 已经聊过。</summary>
-    public void MarkTalked(string npcName)
-    {
-        if (!string.IsNullOrEmpty(npcName)) _talked.Add(npcName);
-    }
+    public void MarkTalked(string npcName) => _records.MarkTalked(npcName);
 
     /// <summary>这个物品是否已经捡过。</summary>
-    public bool HasPickedUp(string id)
-    {
-        return !string.IsNullOrEmpty(id) && _pickedUp.Contains(id);
-    }
+    public bool HasPickedUp(string id) => _records.HasPickedUp(id);
 
     /// <summary>标记物品已被捡走。</summary>
-    public void MarkPickedUp(string id)
-    {
-        if (!string.IsNullOrEmpty(id)) _pickedUp.Add(id);
-    }
+    public void MarkPickedUp(string id) => _records.MarkPickedUp(id);
 
     /// <summary>切场景前调用：记下血量 + 出生点 + 武器。</summary>
     /// <summary>切场景后要给玩家的受击无敌时长（跨场景复活用）。</summary>
@@ -142,7 +127,7 @@ public partial class GameState : Node
         PendingInvuln = 0f;
 
         // 新游戏：物品重新刷出来，载具也没了
-        _pickedUp.Clear();
+        _records.ClearPickedUp();
         HasVehicle = false;
         VehicleSheetPath = null;
         VehicleHframes = 1;

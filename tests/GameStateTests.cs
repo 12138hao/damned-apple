@@ -70,4 +70,21 @@ public class GameRecordsTests
         r.Reset();
         Assert.False(r.HasPickedUp("res://items/钥匙.tscn"));
     }
+
+    /// <summary>
+    /// GameState.Reset 的真实语义：回到存档点只重置「捡过的物品」，
+    /// 对话记录要保留，否则玩家会反复看到已经聊过的对话。
+    /// </summary>
+    [Fact]
+    public void ClearPickedUp_KeepsTalkedRecords()
+    {
+        var r = new GameRecords();
+        r.MarkTalked("小明");
+        r.MarkPickedUp("res://items/钥匙.tscn");
+
+        r.ClearPickedUp();
+
+        Assert.False(r.HasPickedUp("res://items/钥匙.tscn"));
+        Assert.True(r.HasTalked("小明"));
+    }
 }

@@ -31,6 +31,12 @@ public sealed class GameRecords
         if (!string.IsNullOrEmpty(id)) _pickedUp.Add(id);
     }
 
+    /// <summary>只清空「捡过的物品」，保留对话记录（回到存档点/新一关时用）。</summary>
+    public void ClearPickedUp()
+    {
+        _pickedUp.Clear();
+    }
+
     /// <summary>清空所有记录（新游戏用）。</summary>
     public void Reset()
     {
