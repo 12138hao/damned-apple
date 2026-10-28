@@ -95,7 +95,6 @@ public partial class HopAppleEnemy : Enemy
 
         base._PhysicsProcess(delta);   // 重力、移动、接触伤害都交给父类
 
-        if (Engine.GetPhysicsFrames() % 20 == 0 && _player != null && IsInstanceValid(_player))
 
         _timer -= dt;
         _lungeCd = Mathf.Max(0f, _lungeCd - dt);
