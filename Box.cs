@@ -1017,6 +1017,28 @@ public partial class Box : CharacterBody2D
             return;
         }
 
+        // 下面的顺序就是执行顺序，不许随便调换：
+        // 朝向要先于动画、攻击判定要先于贴图切换，否则会出现「朝右却播左走帧」。
+        UpdateTimers(dt);
+        HandleDropThrough(dt);
+        ApplyGravity(dt);
+        UpdateCameraLook(dt);
+        UpdateHorizontalMove(dt, inputLocked);
+        UpdateJump(dt, inputLocked);
+
+        MoveAndSlide();
+
+        LockCameraHeight();
+        HandleWeaponSwitch(inputLocked);
+        UpdateAim();
+        UpdateFacing();
+        HandleAttackInput(dt, inputLocked);
+        UpdateVisual(dt);
+    }
+
+    /// <summary>无敌帧 / 击退 / 土狼时间 / 跳跃缓冲的倒计时，以及受击闪红。</summary>
+    private void UpdateTimers(float dt)
+    {
         _hurtTimer = Mathf.Max(0f, _hurtTimer - dt);
         _knockTimer = Mathf.Max(0f, _knockTimer - dt);
         _sprite.Modulate = _hurtTimer > 0f ? new Color(1f, 0.45f, 0.45f) : Colors.White;
@@ -1031,7 +1053,11 @@ public partial class Box : CharacterBody2D
             _coyoteTimer = Mathf.Max(0f, _coyoteTimer - dt);
         }
         _jumpBufferTimer = Mathf.Max(0f, _jumpBufferTimer - dt);
+    }
 
+    /// <summary>单向平台：站在上面按 S 时临时把平台层从碰撞掩码里摘掉。</summary>
+    private void HandleDropThrough(float dt)
+    {
         // 单向平台：站在上面按 S 就穿下去
         if (Input.IsActionJustPressed("look_down") && IsOnFloor() && OnOneWayPlatform())
         {
@@ -1048,10 +1074,18 @@ public partial class Box : CharacterBody2D
         {
             CollisionMask = _baseMask;   // 恢复
         }
+    }
 
+    /// <summary>不在地面时加重力。必须乘 dt，否则下落速度跟帧率挂钩。</summary>
+    private void ApplyGravity(float dt)
+    {
         if (!IsOnFloor())
-        { Velocity += new Vector2(0, Gravity * (float)delta); }
+        { Velocity += new Vector2(0, Gravity * dt); }
+    }
 
+    /// <summary>上下看：W 抬头、S 低头，镜头平滑升降。</summary>
+    private void UpdateCameraLook(float dt)
+    {
         // 上下看：镜头平滑升降，W 上移、S 下移
         float lookY = 0f;
         if (Input.IsActionPressed("look_up")) lookY -= 1f;
@@ -1061,7 +1095,11 @@ public partial class Box : CharacterBody2D
             Mathf.MoveToward(_cam.Offset.Y,
                              _camBaseY + lookY * LookDistance,
                              LookSpeed * dt));
+    }
 
+    /// <summary>左右移动：方向键加速到 Speed，松手用 Friction 刹车。</summary>
+    private void UpdateHorizontalMove(float dt, bool inputLocked)
+    {
         if (_knockTimer <= 0f)
         {
             float dir = inputLocked ? 0f : Input.GetAxis("move_left", "move_right");
@@ -1069,13 +1107,18 @@ public partial class Box : CharacterBody2D
             {
                 _facingRight = dir > 0f;          // 按方向键才改朝向
                 float speedMult = _inVehicle ? VehicleSpeedMult : 1f;
-                Velocity = new Vector2(Mathf.MoveToward(Velocity.X, dir * Speed * speedMult, Acceleration * (float)delta), Velocity.Y);
+                Velocity = new Vector2(Mathf.MoveToward(Velocity.X, dir * Speed * speedMult, Acceleration * dt), Velocity.Y);
             }
             else
             {
-                Velocity = new Vector2(Mathf.MoveToward(Velocity.X, 0, Friction * (float)delta), Velocity.Y);
+                Velocity = new Vector2(Mathf.MoveToward(Velocity.X, 0, Friction * dt), Velocity.Y);
             }
         }
+    }
+
+    /// <summary>跳跃：跳跃缓冲 + 土狼时间 + 松手切跳跃（短按跳得矮）。</summary>
+    private void UpdateJump(float dt, bool inputLocked)
+    {
         if (_inVehicle)
         {
             _jumpBufferTimer = 0f;   // 载具不能跳
@@ -1096,15 +1139,22 @@ public partial class Box : CharacterBody2D
         {
             Velocity = new Vector2(Velocity.X, Velocity.Y * 0.45f);
         }
-        MoveAndSlide();
+    }
 
+    /// <summary>锁定镜头高度：把相机子节点的 local Y 反向补偿掉。</summary>
+    private void LockCameraHeight()
+    {
         // 锁定镜头 Y：Camera2D 是 box 的子节点，把 local Y 反向补偿掉，
         // 世界 Y 就固定了，X 仍然跟着玩家走。
         if (LockCameraY)
         {
             _cam.Position = new Vector2(_cam.Position.X, CameraFixedY - GlobalPosition.Y);
         }
+    }
 
+    /// <summary>1~4 切武器（同槽再按收起）、R 上下车。</summary>
+    private void HandleWeaponSwitch(bool inputLocked)
+    {
         // 1/2/3/4 切换武器：有武器的槽可以切，同一槽再按一次收起
         for (int i = 0; i < 4; i++)
         {
@@ -1152,10 +1202,11 @@ public partial class Box : CharacterBody2D
         {
             ToggleVehicle();
         }
+    }
 
-        // 瞄准方向每帧更新（攻击方向和角色朝向都依赖它）
-        UpdateAim();
-
+    /// <summary>朝向：挥击时锁定出招方向，持武器跟鼠标，空手跟方向键。</summary>
+    private void UpdateFacing()
+    {
         // 朝向：挥击过程中锁定在出招方向，避免鼠标乱动导致角色翻面；
         // 其他持武器状态下跟鼠标；空手走动还是跟移动方向。
         if (_attackTimer > 0f)
@@ -1171,7 +1222,11 @@ public partial class Box : CharacterBody2D
         {
             _facingRight = _aimDir.X >= 0f;
         }
+    }
 
+    /// <summary>攻击输入：载具射击 / 蓄力挥击 / 空手连击，含连击计时与蓄力条。</summary>
+    private void HandleAttackInput(float dt, bool inputLocked)
+    {
         // 对话中：把蓄力清掉，避免对话结束后"继续蓄着"
         if (inputLocked && _charging)
         {
@@ -1266,7 +1321,11 @@ public partial class Box : CharacterBody2D
         if (_comboTimer <= 0f) _combo = 0;
 
         UpdateAttack(dt);
+    }
 
+    /// <summary>贴图朝向与动画选帧（出拳 > 蓄力 > 挥击 > 上下看 > 空中 > 跑 > 站）。</summary>
+    private void UpdateVisual(float dt)
+    {
         // 贴图朝向：每帧无条件更新，不能只放在跑动分支里
         // （否则站着、蓄力、空中时转向不会翻面）
         // 载具的贴图分左右两套（0~3 朝右、4~7 朝左），不需要再镜像
@@ -1358,8 +1417,8 @@ public partial class Box : CharacterBody2D
             }
             _sprite.Frame = _breathFrame;
         }
-
     }
+
 
     // TODO ①：不在空中时才需要加重力
     //   判断条件：IsOnFloor() 返回 true 表示踩在地面上
