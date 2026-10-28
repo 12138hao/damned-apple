@@ -4,4 +4,8 @@
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
+  <!-- tests 目录是单元测试工程，不应被游戏工程编译 -->
+  <ItemGroup>
+    <Compile Remove="tests/**" />
+  </ItemGroup>
 </Project>

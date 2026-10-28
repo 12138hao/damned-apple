@@ -1,5 +1,7 @@
 # 该死的苹果
 
+[![test](https://github.com/12138hao/damned-apple/actions/workflows/test.yml/badge.svg)](https://github.com/12138hao/damned-apple/actions/workflows/test.yml)
+
 > 大二上独立开发的横版 2D 游戏 demo
 
 一个用 **Godot 4 + C#** 从零手写的横版动作 demo。没有用任何现成的角色控制器或战斗框架，移动、平台、战斗、Boss、对话全部是自己一行行写出来的。
@@ -45,7 +47,7 @@ Windows 可能弹出 SmartScreen 蓝色提示（exe 没有代码签名），点�
 ### Boss 战
 
 - 踏入战场边界自动封锁出口、拉近镜头、显示 Boss 血条
-- 三段血量阶段，技能分跳跃砸地、吐毒、咆哮
+- 两段血量阶段（掉到 50% 换形态，解锁吐毒），技能分跳跃砸地、吐毒
 - 击败后 Boss 倒地哭泣、播完剧情，地板塌陷把玩家送出场
 
 ---
@@ -75,7 +77,7 @@ Windows 可能弹出 SmartScreen 蓝色提示（exe 没有代码签名），点�
 ├── Box.cs                 玩家控制器（移动 / 跳跃 / 蓄力攻击 / 载具）
 ├── Enemy.cs               敌人基类（受击 / 击退 / 死亡 / 巡逻）
 ├── AppleEnemy.cs          追踪型敌人：苹果怪
-├── BossEnemy.cs           Boss：三阶段 AI + 技能
+├── BossEnemy.cs           Boss：双血量阶段 + 行为状态机 + 技能
 ├── BossArena.cs           战场：封锁、镜头、血条、战后剧情
 ├── AudioManager.cs        音频单例
 ├── DialogueUI.cs          气泡对话框 + 打字机

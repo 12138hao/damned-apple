@@ -30,6 +30,7 @@ public partial class AppleEnemy : Enemy
     [Export] public int IdleStart = 8;        // 待机/呼吸：Start ~ Start+2
     [Export] public int DeathStart = 11;      // 死亡碎裂：Start ~ DeathEnd
     [Export] public int DeathEnd = 15;
+    [Export] public float DeathAnimInterval = 0.05f;   // 碎裂帧率间隔（越小越快；活着用 AnimInterval）
 
     private Box _player;
     private bool _chasing;
@@ -110,6 +111,21 @@ public partial class AppleEnemy : Enemy
     // ---------------------------------------------------------- 死亡
 
     /// <summary>
+    /// 死亡瞬间就关掉本体碰撞。
+    /// 父类只在「动画播完」的 OnDeadFinished 里关（Enemy.cs:303），
+    /// 而这里 UpdateDead 被重写、碎裂动画要播 DeadTime 那么久，
+    /// 期间碰撞体一直开着 → 子弹和武器会打在这具还在碎的尸体上白白消失。
+    /// </summary>
+    protected override void OnDeath()
+    {
+        base.OnDeath();
+
+        // 用 SetDeferred：死亡是被物理回调触发的，物理帧内不能直接改碰撞状态
+        var body = GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+        if (body != null) body.SetDeferred("disabled", true);
+    }
+
+    /// <summary>
     /// 重写父类的死亡表现：不放大压扁、不淡出，保持原样停在那，
     /// 时间到直接消失（父类会一边缩放一边变透明）。
     /// </summary>
@@ -140,7 +156,7 @@ public partial class AppleEnemy : Enemy
             }
 
             _animTimer += dt;
-            if (_animTimer < AnimInterval) return;
+            if (_animTimer < DeathAnimInterval) return;
             _animTimer = 0f;
 
             if (_sprite.Frame < DeathEnd) _sprite.Frame++;   // 播到末帧就停住，不循环

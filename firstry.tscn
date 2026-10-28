@@ -471,7 +471,7 @@ KnockBack = 100.0
 LockCameraY = true
 CameraFixedY = 500.0
 VehicleSpeedMult = 1.3
-VehicleBulletDamage = 30
+VehicleBulletDamage = 10
 VehicleBulletKnockback = 50.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=223460591]
