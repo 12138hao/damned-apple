@@ -50,7 +50,7 @@ public partial class HopAppleEnemy : Enemy
     [Export] public float LungeSpeed = 1600f;    // 扑出去的水平速度上限（原来是 800，翻倍）
     [Export] public float LungeMinSpeed = 300f;  // 水平速度下限（玩家贴脸时也不至于慢吞吞）
     [Export] public float LungeSpeedBias = 1.65f; // 在「正好落到玩家身上」的基础上再加速（会略微冲过头）
-    [Export] public float LungeJumpImpulse = 405f; // 向上初速度：520 的平方根×0.6，即高度降 40%
+    [Export] public float LungeJumpImpulse = 286f; // 向上初速度：405×√0.5，高度再降 50%（现 34px）
     [Export] public float LungeTime = 1.2f;      // 最长滞空时间（落地就提前结束，要比空中时间留余量）
     [Export] public float RecoverTime = 0.5f;    // 扑完喘气
     [Export] public float LungeCooldown = 1.1f;  // 两次飞扑之间至少隔多久
