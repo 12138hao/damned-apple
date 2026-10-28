@@ -47,8 +47,10 @@ public partial class HopAppleEnemy : Enemy
     [Export] public float DetectRangeX = 300f;   // 水平多近能发现玩家
     [Export] public float DetectRangeY = 140f;   // 垂直高度差容忍
     [Export] public float LungeChargeTime = 0.5f;  // 蓄力预警时长——玩家的反应窗口
-    [Export] public float LungeSpeed = 800f;     // 扑出去的水平速度上限（原来的 2 倍）
-    [Export] public float LungeJumpImpulse = 520f; // 扑出去的向上初速度，和水平一合成就是抛物线
+    [Export] public float LungeSpeed = 1600f;    // 扑出去的水平速度上限（原来是 800，翻倍）
+    [Export] public float LungeMinSpeed = 300f;  // 水平速度下限（玩家贴脸时也不至于慢吞吞）
+    [Export] public float LungeSpeedBias = 1.65f; // 在「正好落到玩家身上」的基础上再加速（会略微冲过头）
+    [Export] public float LungeJumpImpulse = 405f; // 向上初速度：520 的平方根×0.6，即高度降 40%
     [Export] public float LungeTime = 1.2f;      // 最长滞空时间（落地就提前结束，要比空中时间留余量）
     [Export] public float RecoverTime = 0.5f;    // 扑完喘气
     [Export] public float LungeCooldown = 1.1f;  // 两次飞扑之间至少隔多久
@@ -122,11 +124,12 @@ public partial class HopAppleEnemy : Enemy
                     _st = St.Lunge;
                     _timer = LungeTime;
                     _lungeAirborne = false;
-                    // 按「抛物线滞空时间」反算水平速度，让落地位置正好压在玩家身上。
-                    // 不这么算的话固定速度会扑过头，玩家站着不动也会被扑到身后。
+                    // 按滞空时间反算水平速度，让落点大致压在玩家身上；
+                    // 再乘 LungeSpeedBias 让它更凶（会略微冲过头，这是「更快」的代价）
                     float air = 2f * LungeJumpImpulse / Mathf.Max(1f, Gravity);
                     float wantDx = Mathf.Abs(_targetDx);
-                    _lungeVx = Mathf.Clamp(wantDx / Mathf.Max(0.05f, air), LungeSpeed * 0.45f, LungeSpeed);
+                    float ideal = wantDx / Mathf.Max(0.05f, air) * LungeSpeedBias;
+                    _lungeVx = Mathf.Clamp(ideal, LungeMinSpeed, LungeSpeed);
                     Velocity = new Vector2(_lungeDir.X * _lungeVx, -LungeJumpImpulse);
                 }
                 break;
