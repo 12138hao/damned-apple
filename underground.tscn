@@ -118,5 +118,5 @@ scale = Vector2(0.78453046, 0.74723756)
 texture = ExtResource("9_6xgwd")
 
 [node name="SpawnSave" type="Node2D" parent="." unique_id=1556134010]
-position = Vector2(255, 111)
+position = Vector2(255, 493)
 script = ExtResource("9_pvodk")

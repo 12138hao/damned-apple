@@ -1093,6 +1093,8 @@ region_rect = Rect2(0, 0, 6000, 64)
 [node name="FallTrigger" type="Node2D" parent="." unique_id=1526371448]
 position = Vector2(9250, 0)
 script = ExtResource("91_fall")
+NextScene = "res://underground.tscn"
+NextSpawn = Vector2(250, 475)
 TeleportTo = Vector2(200, 400)
 
 [node name="cliff" type="StaticBody2D" parent="." unique_id=1324125321]

@@ -13,7 +13,13 @@ public partial class FallTrigger : Node2D
     [Export] public bool Enable = true;                             // 关掉就完全不生效
     [Export] public float TriggerY = 3500f;                         // 玩家 Y 超过这个值就触发
     [Export] public float RangeHalfWidth = 750f;                    // X 判定半宽（8500~10000 的一半）
-    [Export] public Vector2 TeleportTo = Vector2.Zero;              // 传送目标 (0, 0)
+
+    [ExportGroup("去向")]
+    [Export] public string NextScene = "";                          // 填场景路径就切场景（如 res://underground.tscn）
+    [Export] public Vector2 NextSpawn = Vector2.Zero;               // 切场景后玩家出现在哪里
+    [Export] public float NextInvuln = 0f;                          // 到新场景给多少秒无敌（0 = 不给）
+    [Export] public bool KeepWeapons = true;                        // 武器要不要带过去
+    [Export] public Vector2 TeleportTo = Vector2.Zero;              // NextScene 留空时才用：同场景瞬移到这
 
     private bool _armed;     // 只有地板塌了之后才开始监视
     private Box _player;
@@ -59,12 +65,19 @@ public partial class FallTrigger : Node2D
             return;
         }
 
-        GD.Print($"[Fall] 触发传送: X={_player.GlobalPosition.X:F0} Y={_player.GlobalPosition.Y:F0} → {TeleportTo}");
+        GD.Print($"[Fall] 触发: X={_player.GlobalPosition.X:F0} Y={_player.GlobalPosition.Y:F0} → {(string.IsNullOrEmpty(NextScene) ? TeleportTo.ToString() : NextScene)}");
 
-        // 到达触发深度 → 传送
+        // 到达触发深度 → 先关掉自己，避免重复触发
         _armed = false;
         SetProcess(false);
 
+        if (!string.IsNullOrEmpty(NextScene))
+        {
+            GoToScene();
+            return;
+        }
+
+        // 没填场景路径：老行为，同场景瞬移
         _player.GlobalPosition = TeleportTo;
         _player.Velocity = Vector2.Zero;
 
@@ -83,5 +96,36 @@ public partial class FallTrigger : Node2D
             cam.Offset = new Vector2(0f, cam.Offset.Y);   // 清掉可能残留的横向偏移
             cam.ResetSmoothing();
         }
+    }
+
+    /// <summary>
+    /// 切到下一个场景（第二关）。切场景会销毁玩家实例，
+    /// 所以血量、出生点、武器都要先打包进 GameState，新场景的 Box._Ready 会自己取回去。
+    /// </summary>
+    private void GoToScene()
+    {
+        if (!ResourceLoader.Exists(NextScene))
+        {
+            GD.PushWarning($"[Fall] 场景不存在：{NextScene}");
+            return;
+        }
+
+        if (_player == null || !IsInstanceValid(_player))
+        {
+            GD.PushWarning("[Fall] 玩家已失效，切场景取消");
+            return;
+        }
+
+        var gs = GameState.I;
+        if (gs != null)
+        {
+            gs.PrepareTravel(_player.Hp, NextSpawn,
+                             KeepWeapons ? _player.Weapons : null,
+                             KeepWeapons ? _player.CurrentSlot : -1,
+                             NextInvuln);
+        }
+
+        GD.Print($"[Fall] 切场景 → {NextScene}，血量 {_player.Hp}，出生点 {NextSpawn}");
+        GetTree().ChangeSceneToFile(NextScene);
     }
 }
