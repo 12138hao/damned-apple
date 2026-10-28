@@ -90,6 +90,9 @@ radius = 156.88
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uv0j0"]
 size = Vector2(149, 27.5)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_q5v2o"]
+size = Vector2(111, 1376)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_m3r2q"]
 size = Vector2(4000, 40)
 
@@ -100,7 +103,7 @@ size = Vector2(390, 60)
 size = Vector2(8628.5, 60)
 
 [sub_resource type="RectangleShape2D" id="Shape_Kill3"]
-size = Vector2(318, 60)
+size = Vector2(3563.5, 350)
 
 [sub_resource type="RectangleShape2D" id="Shape_Door"]
 size = Vector2(99, 80)
@@ -647,6 +650,13 @@ offset_right = 150.0
 offset_bottom = 30.0
 color = Color(0.98234254, 0.9823423, 0.9823424, 1)
 
+[node name="wall" type="StaticBody2D" parent="." unique_id=1033061240]
+position = Vector2(8463.414, -313.00195)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="wall" unique_id=1698630162]
+position = Vector2(1952.0859, 773.00195)
+shape = SubResource("RectangleShape2D_q5v2o")
+
 [node name="StaticBody2D3" type="StaticBody2D" parent="." unique_id=547715823]
 position = Vector2(4047, 531)
 
@@ -720,13 +730,13 @@ position = Vector2(4192.75, -114)
 shape = SubResource("Shape_Kill2")
 
 [node name="KillZone3" type="Area2D" parent="." unique_id=1060459403]
-position = Vector2(1989, 880)
+position = Vector2(10348, 1281)
 collision_layer = 0
 collision_mask = 6
 script = ExtResource("39_kill")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="KillZone3" unique_id=1060459413]
-position = Vector2(5, -157)
+position = Vector2(1578.25, -33)
 shape = SubResource("Shape_Kill3")
 
 [node name="HouseDoor" type="Area2D" parent="." unique_id=1060459300]
