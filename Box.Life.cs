@@ -4,19 +4,19 @@ using Godot;
 /// <remarks>Box 的 partial 部分，字段仍声明在 Box.cs 里。</remarks>
 public partial class Box
 {
-        /// <summary>持续伤害（毒圈、岩浆）：只扣血，不击退、不触发受击无敌。</summary>
-        public void TakeDotDamage(int amount)
-        {
-            if (_state != State.Alive) return;
-            if (amount <= 0) return;
+    /// <summary>持续伤害（毒圈、岩浆）：只扣血，不击退、不触发受击无敌。</summary>
+    public void TakeDotDamage(int amount)
+    {
+        if (_state != State.Alive) return;
+        if (amount <= 0) return;
 
-            Hp = Mathf.Max(0, Hp - amount);
-            EmitSignal(SignalName.HpChanged, Hp, MaxHp);
+        Hp = Mathf.Max(0, Hp - amount);
+        EmitSignal(SignalName.HpChanged, Hp, MaxHp);
 
-            if (Hp <= 0) Die(GlobalPosition + Vector2.Down);
-        }
+        if (Hp <= 0) Die(GlobalPosition + Vector2.Down);
+    }
 
-        public void TakeDamage(int amount, Vector2 from)
+    public void TakeDamage(int amount, Vector2 from)
     {
         if (_state != State.Alive) return;      // 死亡 / 复活期间完全免疫
         if (_hurtTimer > 0f) return;
