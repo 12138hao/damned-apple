@@ -19,6 +19,7 @@ import subprocess
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from explosion import render_explosion
+from death_images import build_death_frames
 
 FFMPEG = r"C:\Users\leader\.workbuddy-ai\binaries\node\workspace\node_modules\@ffmpeg-installer\win32-x64\ffmpeg.exe"
 D = r"D:\h\my-game\tools\applemon"
@@ -208,29 +209,12 @@ for idx, (view, sx, sy, dx, dy, al, ex, sk) in enumerate(frames):
     print(f"  帧 {idx:2d}  {view:6s} sx={sx:.2f} sy={sy:.2f} dy={dy:+d} "
           f"alpha={al:.2f} explode={ex:.0f}")
 
-# 死亡段
+# 死亡段：用三张「苹果碎裂」美术图 + 交叉溶解，不再程序化切割
 base_idx = len(frames)
-for k, (cs, dist, shrink, rot, alpha, flash, blur) in enumerate(DEATH):
-    view = "right"
-    box = BOXES[view]
-    cw = box[2] - box[0] + 1
-    ch = box[3] - box[1] + 1
-    base = CONTENT_H * cs / ch
-    kx = base
-    ky = base
-    src_cx = (box[0] + box[2]) * 0.5
-    src_cy = (box[1] + box[3]) * 0.5
-    src = SOURCES[view]
-
-    def smp(x, y, _src=src, _box=box):
-        return sample(_src, _box, x, y)
-
-    cell = render_explosion(smp, box, CELL, CONTENT_H, FOOT,
-                            dist, shrink, rot, alpha, flash, blur,
-                            src_cx, src_cy, kx, ky, CELL * 0.5, FOOT)
+death_frames = build_death_frames(CELL, CONTENT_H)
+for k, cell in enumerate(death_frames):
     put_cell(base_idx + k, cell)
-    print(f"  帧 {base_idx + k:2d}  死亡 cs={cs:.2f} 飞散={dist:2d} "
-          f"碎缩={shrink:.2f} 自转={rot:2d}° α={alpha:.2f} 闪光={flash:.2f}")
+    print(f"  帧 {base_idx + k:2d}  死亡（美术图第 {min(k // 2, 2) + 1} 张）")
 
 raw = os.path.join(D, "sheet.raw")
 open(raw, "wb").write(bytes(sheet))
