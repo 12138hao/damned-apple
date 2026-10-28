@@ -10,9 +10,9 @@
 [ext_resource type="Texture2D" uid="uid://06cun7xp5j10" path="res://assets/cave.png" id="8_xggcg"]
 [ext_resource type="Texture2D" uid="uid://8y3qr3225sps" path="res://assets/cave_floor_transparent.png" id="9_6xgwd"]
 [ext_resource type="Script" uid="uid://xj40k62qt5mj" path="res://SpawnSavePoint.cs" id="9_pvodk"]
+[ext_resource type="Texture2D" uid="uid://b0tvvtdnn8lhy" path="res://cliff_filled_dark.png" id="11_xdn7w"]
 [ext_resource type="Texture2D" uid="uid://djeptrihf5lm4" path="res://assets/hop_apple_sheet.png" id="12_hopsheet"]
 [ext_resource type="Script" uid="uid://bpuxw5twn8t8w" path="res://HopAppleEnemy.cs" id="13_hopscript"]
-[ext_resource type="Texture2D" uid="uid://b0tvvtdnn8lhy" path="res://cliff_filled_dark.png" id="11_xdn7w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0boax"]
 size = Vector2(32, 32)
@@ -28,6 +28,9 @@ size = Vector2(54, 68)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hoptouch"]
 radius = 38.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uv0j0"]
+size = Vector2(20, 1214)
 
 [node name="Main2" type="Node2D" unique_id=1867660586]
 
@@ -178,3 +181,9 @@ collision_mask = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hopapple/HurtArea" unique_id=625553319]
 position = Vector2(0, 8)
 shape = SubResource("CircleShape2D_hoptouch")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=794039561]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1413014858]
+position = Vector2(0, 597)
+shape = SubResource("RectangleShape2D_uv0j0")

@@ -37,17 +37,19 @@ public partial class HopAppleEnemy : Enemy
     [ExportGroup("蹦跳")]
     [Export] public float HopInterval = 0.55f;   // 落地后停多久再跳下一次
     [Export] public float HopSpeed = 190f;       // 跳跃时的水平速度
-    [Export] public float HopImpulse = 560f;     // 起跳的向上初速度（越大跳越高）
+    [Export] public float HopImpulse = 440f;     // 起跳的向上初速度（越大跳越高）
     [Export] public float LandHoldTime = 0.12f;  // 落地压扁保持多久
+    [Export] public float HopProbeDistance = 150f; // 跳跃前探测坑的距离（沿朝向前方）
+    [Export] public float HopProbeDepth = 180f;    // 探测向下多深算「有地面」
 
     // ─────────────────────────── 侦测与飞扑
     [ExportGroup("侦测与飞扑")]
     [Export] public float DetectRangeX = 300f;   // 水平多近能发现玩家
     [Export] public float DetectRangeY = 140f;   // 垂直高度差容忍
     [Export] public float LungeChargeTime = 0.5f;  // 蓄力预警时长——玩家的反应窗口
-    [Export] public float LungeSpeed = 400f;     // 扑出去的水平速度（玩家 300）
-    [Export] public float LungeJumpImpulse = 380f; // 扑出去的向上初速度，和水平一合成就是抛物线
-    [Export] public float LungeTime = 0.8f;      // 最长滞空时间（落地就提前结束）
+    [Export] public float LungeSpeed = 800f;     // 扑出去的水平速度上限（原来的 2 倍）
+    [Export] public float LungeJumpImpulse = 520f; // 扑出去的向上初速度，和水平一合成就是抛物线
+    [Export] public float LungeTime = 1.2f;      // 最长滞空时间（落地就提前结束，要比空中时间留余量）
     [Export] public float RecoverTime = 0.5f;    // 扑完喘气
     [Export] public float LungeCooldown = 1.1f;  // 两次飞扑之间至少隔多久
 
@@ -189,10 +191,38 @@ public partial class HopAppleEnemy : Enemy
             _timer = 0.1f;
             return;
         }
+
+        // 前方是坑就别蹦了。能掉头就掉头，两边都是坑就原地等。
+        // 只有「蹦」受这个限制；飞扑是主动攻击，允许往坑里扑。
+        if (!GroundAhead(Direction))
+        {
+            if (GroundAhead(-Direction))
+            {
+                Direction = -Direction;
+            }
+            else
+            {
+                _timer = 0.25f;      // 两边都没地，等一会儿再试
+                return;
+            }
+        }
+
         _st = St.Hop;
         _landedOnce = false;
         _landHold = 0f;
         Velocity = new Vector2(Direction * HopSpeed, -HopImpulse);
+    }
+
+    /// <summary>朝 dir 方向 HopProbeDistance 处往下探，有地面返回 true，悬空（坑）返回 false。</summary>
+    private bool GroundAhead(int dir)
+    {
+        var space = GetWorld2D().DirectSpaceState;
+        float x = GlobalPosition.X + dir * HopProbeDistance;
+        var from = new Vector2(x, GlobalPosition.Y);
+        var to = new Vector2(x, GlobalPosition.Y + HopProbeDepth);
+        // layer 1 = 地形；怪物本体在 layer 4，不会打到自己
+        var q = PhysicsRayQueryParameters2D.Create(from, to, 1);
+        return space.IntersectRay(q).Count > 0;
     }
 
     // ─────────────────────────── 动画
