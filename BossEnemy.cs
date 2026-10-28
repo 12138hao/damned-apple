@@ -12,7 +12,7 @@ public partial class BossEnemy : Enemy
     [Export] public bool Dormant = true;              // 待机：玩家进区域前不放技能
 
     [ExportGroup("节奏")]
-    [Export] public float IdleTime = 1.2f;            // 两次技能之间歇多久（秒）
+    [Export] public float IdleTime = 0.92f;             // 两次技能之间歇多久（秒，原 1.2 → 缩短 30%）
 
     [ExportGroup("阶段")]
     [Export] public Texture2D Phase1Texture;          // boss_jump.png（32 帧跳跃动画）
@@ -59,7 +59,7 @@ public partial class BossEnemy : Enemy
     [Export] public Vector2 SpitOriginOffset = new Vector2(0f, -46f);  // 抛物线起点，相对 Boss 位置
 
     [ExportGroup("概率")]
-    [Export] public float JumpChance = 0.715f;  // 跳砸概率，剩下是喷毒（原 0.55，提高 30%）
+    [Export] public float JumpChance = 0.55f;  // 跳砸概率，剩下是喷毒
 
     private enum Phase { Idle, Airborne, SpitCharge, Spitting }
 
