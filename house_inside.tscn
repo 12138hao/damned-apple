@@ -138,7 +138,7 @@ position_smoothing_speed = 8.0
 position = Vector2(4, -4)
 texture = ExtResource("2_player")
 offset = Vector2(0, -10)
-hframes = 20
+hframes = 21
 
 [node name="DialogueUI" type="Node2D" parent="box" unique_id=1060460100]
 z_index = 20

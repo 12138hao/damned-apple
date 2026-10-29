@@ -492,7 +492,7 @@ position_smoothing_speed = 22.0
 [node name="Sprite2D" type="Sprite2D" parent="box" unique_id=77773720]
 texture = ExtResource("3_player")
 offset = Vector2(0, -10)
-hframes = 20
+hframes = 21
 
 [node name="DialogueUI" type="Node2D" parent="box" unique_id=1060460000]
 z_index = 20

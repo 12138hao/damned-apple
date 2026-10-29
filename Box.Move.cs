@@ -84,6 +84,13 @@ public partial class Box
     /// <summary>左右移动：方向键加速到 Speed，松手用 Friction 刹车。</summary>
     private void UpdateHorizontalMove(float dt, bool inputLocked)
     {
+        // 蹲下期间不能走：原地刹车
+        if (IsCrouching)
+        {
+            Velocity = new Vector2(Mathf.MoveToward(Velocity.X, 0f, Friction * dt), Velocity.Y);
+            return;
+        }
+
         if (_knockTimer <= 0f)
         {
             float dir = inputLocked ? 0f : Input.GetAxis("move_left", "move_right");
@@ -106,6 +113,10 @@ public partial class Box
         if (_inVehicle)
         {
             _jumpBufferTimer = 0f;   // 载具不能跳
+        }
+        else if (IsCrouching)
+        {
+            _jumpBufferTimer = 0f;   // 蹲下也不能跳
         }
         else if (!inputLocked && Input.IsActionJustPressed("jump"))
         {

@@ -12,6 +12,14 @@ public partial class Box
         // 载具的贴图分左右两套（0~3 朝右、4~7 朝左），不需要再镜像
         _sprite.FlipH = _inVehicle ? false : !_facingRight;
 
+        // 蹲下优先于其它动画：按住 C 就一直是蹲姿
+        if (IsCrouching)
+        {
+            _sprite.Frame = CrouchFrame;
+            _animTimer = 0f;
+            return;
+        }
+
         // 载具：0~3 帧向右走，4~7 帧向左走（贴图不足 8 帧就只显示第 0 帧）
         if (_inVehicle)
         {

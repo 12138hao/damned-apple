@@ -66,7 +66,7 @@ position_smoothing_speed = 22.0
 [node name="Sprite2D" type="Sprite2D" parent="box" unique_id=1613019246]
 texture = ExtResource("2_xggcg")
 offset = Vector2(0, -10)
-hframes = 20
+hframes = 21
 
 [node name="DialogueUI" type="Node2D" parent="box" unique_id=2025897324]
 z_index = 20

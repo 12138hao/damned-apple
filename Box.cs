@@ -263,6 +263,7 @@ public partial class Box : CharacterBody2D
         // 下面的顺序就是执行顺序，不许随便调换：
         // 朝向要先于动画、攻击判定要先于贴图切换，否则会出现「朝右却播左走帧」。
         UpdateTimers(dt);
+        UpdateCrouch(inputLocked);   // 蹲下要在移动/跳跃之前决定，移动会读 IsCrouching
         HandleDropThrough(dt);
         ApplyGravity(dt);
         UpdateCameraLook(dt);
