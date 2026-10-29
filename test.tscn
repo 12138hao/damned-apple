@@ -1,0 +1,120 @@
+[gd_scene format=3 uid="uid://beqvk62toaic2"]
+
+[ext_resource type="Script" uid="uid://bho7bc45erddj" path="res://MovingPlatform.cs" id="1_xersf"]
+[ext_resource type="Texture2D" uid="uid://dc17mgafv1h0q" path="res://像素风小岩石平台生成 (1).png" id="2_6uqi0"]
+[ext_resource type="Script" uid="uid://ckfwsyc34ots7" path="res://Box.cs" id="3_xersf"]
+[ext_resource type="Texture2D" uid="uid://dsfapsyeiv41h" path="res://assets/player_sheet_v2.png" id="4_00tp4"]
+[ext_resource type="Script" uid="uid://dmq7nrftqx2qw" path="res://DialogueUI.cs" id="5_77dp3"]
+[ext_resource type="Script" uid="uid://bkvaedtmio4gf" path="res://SwingTrail.cs" id="6_5tkv4"]
+[ext_resource type="Script" uid="uid://bfk5suig6pucp" path="res://ChargeArc.cs" id="7_0m0f1"]
+[ext_resource type="Texture2D" uid="uid://c7irabu5sxp5h" path="res://assets/weapon.png" id="8_b0q6j"]
+[ext_resource type="Script" uid="uid://c57ocnohmulys" path="res://WeaponAura.cs" id="9_mhym6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ppyta"]
+size = Vector2(52, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_a3se8"]
+size = Vector2(32, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uty7l"]
+size = Vector2(26, 42)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_btfou"]
+size = Vector2(199.09851, 20)
+
+[node name="Node2D" type="Node2D" unique_id=1359572483]
+
+[node name="MovingPlatform" type="AnimatableBody2D" parent="." unique_id=1098119919]
+position = Vector2(304, 413)
+script = ExtResource("1_xersf")
+Travel = Vector2(100, 0)
+TripTime = 10.0
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="MovingPlatform" unique_id=416862363]
+position = Vector2(78, 5)
+shape = SubResource("RectangleShape2D_ppyta")
+
+[node name="Sprite2D" type="Sprite2D" parent="MovingPlatform" unique_id=435439431]
+position = Vector2(78, 46)
+scale = Vector2(0.05147059, 0.05376838)
+texture = ExtResource("2_6uqi0")
+
+[node name="box" type="CharacterBody2D" parent="." unique_id=494407133]
+z_index = 10
+position = Vector2(237.4, 332)
+collision_layer = 2
+collision_mask = 9
+script = ExtResource("3_xersf")
+Speed = 300.0
+jumpVelocity = 400.0
+KnockBack = 100.0
+LockCameraY = true
+CameraFixedY = 500.0
+VehicleSpeedMult = 1.3
+VehicleBulletDamage = 10
+VehicleBulletKnockback = 50.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=1103388388]
+shape = SubResource("RectangleShape2D_a3se8")
+
+[node name="Camera2D" type="Camera2D" parent="box" unique_id=454198429]
+offset = Vector2(0, -80)
+limit_left = 7
+limit_top = 1
+limit_right = 12791
+limit_bottom = 8252
+position_smoothing_enabled = true
+position_smoothing_speed = 22.0
+
+[node name="Sprite2D" type="Sprite2D" parent="box" unique_id=350043376]
+texture = ExtResource("4_00tp4")
+offset = Vector2(0, -10)
+hframes = 21
+
+[node name="DialogueUI" type="Node2D" parent="box" unique_id=1856022979]
+z_index = 20
+position = Vector2(-85, -114)
+script = ExtResource("5_77dp3")
+
+[node name="Text" type="Label" parent="box/DialogueUI" unique_id=739328437]
+offset_left = -109.0
+offset_top = -35.0
+offset_right = 97.0
+offset_bottom = 27.0
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="SwingTrail" type="Node2D" parent="box" unique_id=1750023717]
+z_index = 2
+script = ExtResource("6_5tkv4")
+
+[node name="ChargeArc" type="Node2D" parent="box" unique_id=713925320]
+position = Vector2(-41.301483, -0.5366974)
+script = ExtResource("7_0m0f1")
+Radius = 20.0
+SweepDeg = 120.0
+
+[node name="Weapon" type="Area2D" parent="box" unique_id=964741941]
+z_index = 100
+position = Vector2(18, -15)
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box/Weapon" unique_id=1649051244]
+shape = SubResource("RectangleShape2D_uty7l")
+
+[node name="Sprite2D" type="Sprite2D" parent="box/Weapon" unique_id=726585268]
+visible = false
+texture = ExtResource("8_b0q6j")
+
+[node name="Aura" type="Node2D" parent="box/Weapon" unique_id=1934652744]
+script = ExtResource("9_mhym6")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1656887524]
+position = Vector2(222, 369.4)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1198054748]
+position = Vector2(89.549255, 0)
+shape = SubResource("RectangleShape2D_btfou")

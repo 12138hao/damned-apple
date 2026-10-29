@@ -79,4 +79,19 @@ public partial class Box
             _bodyShape.Position = _standShapePos;
         }
     }
+
+    /// <summary>
+    /// 身体此刻占的世界矩形（读碰撞体的真实形状，所以蹲下时会自动矮一半）。
+    /// 给敌人的命中判定用——怪物该不该咬到人，按这个算才不会「没碰到也扣血」。
+    /// </summary>
+    public Rect2 BodyRect()
+    {
+        if (_bodyShape?.Shape is RectangleShape2D rect)
+        {
+            Vector2 center = _bodyShape.GlobalPosition;
+            return new Rect2(center - rect.Size * 0.5f, rect.Size);
+        }
+        // 没有碰撞体时退回一个 32×32 的方块，别让调用方拿到空矩形
+        return new Rect2(GlobalPosition - new Vector2(16f, 16f), new Vector2(32f, 32f));
+    }
 }

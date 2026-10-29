@@ -30,23 +30,26 @@ public partial class Enemy : CharacterBody2D
     [ExportGroup("巡逻区间")]
     [Export] public float PatrolRange = 150f;    // 离出生点多远就折返（像素，左右各这么多）
     [Export] public float AnimInterval = 0.12f; // 每帧动画间隔
-    
-    [Export] public int Damage =10;
+    [Export] public int LoopFrames = 0;         // 平时循环的帧数（0=全部）
+    [Export] public int DeathFrameStart = -1;   // 死亡动画从哪帧开始（-1 = 用 LoopFrames）
+
+    // ── 战斗数值：每只怪单独调，不用改代码 ──────────────────
+    [ExportGroup("战斗数值")]
+    [Export] public int Damage = 10;            // 咬到 / 碰到玩家扣多少血
+    [Export] public int MaxHp = 50;             // 血量上限（木棒 20 伤害 → 三下打死）
+    [Export] public float KnockbackUpRatio = 0.32f; // 击退的垂直分量比例，越大越往上飞
+    [Export] public bool ImmuneToKnockback = false; // 勾上后受击不会被推开（Boss 用）
+
+    [ExportGroup("接触判定")]
     // 玩家离开判定区后，还继续判定多久（秒）。
     // 高速穿过、或者被子弹击退的瞬间，"进入"和"离开"可能落在同一帧，
     // 只靠 _touchingPlayer 会漏掉这次接触。
     [Export] public float TouchGraceTime = 0.15f;
     // 超过这个距离才算"真的离开了"（判定距离 60 的两倍，留足余量）
     [Export] public float LeaveDistance = 120f;
-    [Export] public int LoopFrames = 0;         // 平时循环的帧数（0=全部）
-    [Export] public int DeathFrameStart = -1;   // 死亡动画从哪帧开始（-1 = 用 LoopFrames）
-
-    [Export] public int MaxHp = 50;             // 木棒 20 伤害，三下打死
 
     /// <summary>当前血量（只读，给 UI 用）。</summary>
     public int Hp => _hp;
-    [Export] public float KnockbackUpRatio = 0.32f; // 击退的垂直分量比例，越大越往上飞
-    [Export] public bool ImmuneToKnockback = false; // 勾上后受击不会被推开（Boss 用）
     protected Sprite2D _sprite;
     protected RayCast2D _rayLeft;
     protected RayCast2D _rayRight;
