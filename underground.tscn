@@ -13,6 +13,9 @@
 [ext_resource type="Texture2D" uid="uid://b0tvvtdnn8lhy" path="res://cliff_filled_dark.png" id="11_xdn7w"]
 [ext_resource type="Texture2D" uid="uid://djeptrihf5lm4" path="res://assets/hop_apple_sheet.png" id="12_hopsheet"]
 [ext_resource type="Script" uid="uid://bpuxw5twn8t8w" path="res://HopAppleEnemy.cs" id="13_hopscript"]
+[ext_resource type="Texture2D" uid="uid://cy8d8wluksx84" path="res://assets/ui/enemy_bar_bg.png" id="14_hpbg"]
+[ext_resource type="Texture2D" uid="uid://rcoouocy0qfd" path="res://assets/ui/enemy_bar_fill.png" id="15_hpfill"]
+[ext_resource type="Texture2D" uid="uid://ckbxmw15wu7ak" path="res://assets/ui/enemy_bar_border.png" id="16_hpborder"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0boax"]
 size = Vector2(32, 32)
@@ -166,6 +169,17 @@ shape = SubResource("RectangleShape2D_hopbody")
 scale = Vector2(0.65, 0.65)
 texture = ExtResource("12_hopsheet")
 hframes = 32
+
+[node name="HpBar" type="TextureProgressBar" parent="hopapple" unique_id=1000201]
+offset_left = -22.0
+offset_top = -52.0
+offset_right = 22.0
+offset_bottom = -44.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("14_hpbg")
+texture_over = ExtResource("16_hpborder")
+texture_progress = ExtResource("15_hpfill")
 
 [node name="RayLeft" type="RayCast2D" parent="hopapple" unique_id=1000101]
 position = Vector2(-22, 10)
