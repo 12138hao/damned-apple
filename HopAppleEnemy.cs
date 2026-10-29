@@ -70,6 +70,7 @@ public partial class HopAppleEnemy : Enemy
     private float _lungeVx;        // 本次扑击的水平速度（按距离算，保证落在玩家身上）
     private float _targetDx;       // 起跳瞬间和玩家的水平距离
     private bool _lungeHitDone;    // 本次飞扑是否已经结算过伤害
+    private float _lungeY;         // 飞扑起跳时的高度（命中判定沿这个高度做水平扫掠）
     private Box _player;
     private Vector2 _lungeDir = Vector2.Right;
     private bool _landedOnce;
@@ -135,6 +136,7 @@ public partial class HopAppleEnemy : Enemy
                     _timer = LungeTime;
                     _lungeAirborne = false;
                     _lungeHitDone = false;
+                    _lungeY = GlobalPosition.Y;
                     // 由「弧线高度」反算向上初速度：v = √(2gh)
                     float jumpImpulse = Mathf.Sqrt(2f * Gravity * Mathf.Max(1f, LungeHeight));
                     // 滞空时间 t = 2v/g；水平速度 = 距离/时间 × 距离倍率
@@ -244,9 +246,11 @@ public partial class HopAppleEnemy : Enemy
         if (_lungeHitDone) return;
         if (_player == null || !IsInstanceValid(_player)) return;
 
-        Vector2 off = new Vector2(0f, LungeHitCenterY);
-        Vector2 a = _prevPos + off;
-        Vector2 b = GlobalPosition + off;
+        // 线段 Y 用「起跳高度」而不是当前高度：飞扑是抛物线，空中最高抬升 34px，
+        // 正好从玩家头顶擦过去（差 2px）。用当前高度判定的话整段飞扑都落在判定窗之外。
+        // 起跳高度做水平扫掠，语义也更对——这一扑本来就是贴地扑的。
+        Vector2 a = new Vector2(_prevPos.X, _lungeY) + new Vector2(0f, LungeHitCenterY);
+        Vector2 b = new Vector2(GlobalPosition.X, _lungeY) + new Vector2(0f, LungeHitCenterY);
         Vector2 c = _player.GlobalPosition;
 
         Vector2 ab = b - a;
