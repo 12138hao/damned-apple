@@ -39,3 +39,5 @@ tools/icon/
 # 精灵表生成的中间产物（.py 脚本保留，可复现）
 tools/applemon/*.raw
 tools/applemon/*.rgba
+
+tools/crouch/*.raw
