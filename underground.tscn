@@ -29,8 +29,8 @@ size = Vector2(1122.75, 20)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hopbody"]
 size = Vector2(54, 68)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_hoptouch"]
-radius = 30.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hoptouch"]
+size = Vector2(64, 73)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uv0j0"]
 size = Vector2(20, 1214)
@@ -160,6 +160,8 @@ texture = ExtResource("11_xdn7w")
 position = Vector2(620, 448)
 collision_layer = 4
 script = ExtResource("13_hopscript")
+HopHeight = 100.0
+LungeHeight = 45.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hopapple" unique_id=206386564]
 position = Vector2(0, 11)
@@ -193,8 +195,8 @@ target_position = Vector2(0, 30)
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hopapple/HurtArea" unique_id=625553319]
-position = Vector2(0, 8)
-shape = SubResource("CircleShape2D_hoptouch")
+position = Vector2(0, 8.5)
+shape = SubResource("RectangleShape2D_hoptouch")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=794039561]
 

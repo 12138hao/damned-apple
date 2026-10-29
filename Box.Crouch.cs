@@ -15,6 +15,8 @@ public partial class Box
     [Export] public bool CanCrouch = true;
     [Export] public float CrouchHeightRatio = 0.5f;  // 蹲下后碰撞体占原来的多少
     [Export] public int CrouchFrame = 20;            // 蹲下用精灵表的第几帧
+    [Export] public float CrouchFallMultiplier = 1.9f; // 蹲着往下掉时重力倍数（加速下落）
+    [Export] public float CrouchKnockbackScale = 0.4f; // 蹲着被击退时，击退力打几折
 
     private bool _crouching;
     private Vector2 _standShapePos;      // 站立时碰撞体的本地位置
@@ -29,10 +31,10 @@ public partial class Box
         if (_bodyShape == null) return;
 
         // 载具里不蹲；死亡/复活期间不处理
+        // 不再要求站在地上：空中按 C 也要能蹲，才能吃到「加速下落」
         bool want = !inputLocked && !_inVehicle
                     && _state == State.Alive
-                    && Input.IsActionPressed("crouch")
-                    && IsOnFloor();
+                    && Input.IsActionPressed("crouch");
 
         if (want == _crouching) return;
 

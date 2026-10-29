@@ -32,7 +32,9 @@ public partial class Box
         }
 
         float dirX = GlobalPosition.X < from.X ? -1f : 1f;
-        Velocity = new Vector2(dirX * KnockBack, -KnockUp);
+        // 蹲着底盘低，击退和击飞都打折
+        float kbScale = IsCrouching ? CrouchKnockbackScale : 1f;
+        Velocity = new Vector2(dirX * KnockBack * kbScale, -KnockUp * kbScale);
         _hurtTimer = HurtCooldown;
         _knockTimer = KnockTime;
     }

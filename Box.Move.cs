@@ -64,7 +64,11 @@ public partial class Box
     private void ApplyGravity(float dt)
     {
         if (!IsOnFloor())
-        { Velocity += new Vector2(0, Gravity * dt); }
+        {
+            // 蹲着往下掉时重力加倍，做出「快速下坠」
+            float g = Gravity * (IsCrouching ? CrouchFallMultiplier : 1f);
+            Velocity += new Vector2(0, g * dt);
+        }
     }
 
     /// <summary>上下看：W 抬头、S 低头，镜头平滑升降。</summary>
