@@ -20,6 +20,18 @@
 [ext_resource type="Texture2D" uid="uid://dc17mgafv1h0q" path="res://像素风小岩石平台生成 (1).png" id="18_r4jq7"]
 [ext_resource type="Texture2D" uid="uid://d26t3lgd2vtqv" path="res://像素风小岩石平台生成 (3).png" id="19_r4jq7"]
 [ext_resource type="Script" uid="uid://bho7bc45erddj" path="res://MovingPlatform.cs" id="20_yyl7v"]
+[ext_resource type="PackedScene" uid="uid://cp4v7l1a2auik" path="res://RevivePoint.tscn" id="21_y3d7y"]
+[ext_resource type="Texture2D" uid="uid://b27td8wvf3ysy" path="res://像素风小岩石平台生成 (6).png" id="22_cb60e"]
+[ext_resource type="Texture2D" uid="uid://sqicrrj34ft2" path="res://破 (2).png" id="23_3fduj"]
+[ext_resource type="Texture2D" uid="uid://dt1n4twia1vjq" path="res://破 (3).png" id="24_rhpd1"]
+[ext_resource type="Texture2D" uid="uid://ct5xpcebyabof" path="res://破 (1).png" id="25_xb5gr"]
+[ext_resource type="PackedScene" uid="uid://beqvk62toaic2" path="res://test.tscn" id="26_rhpd1"]
+[ext_resource type="Texture2D" uid="uid://dcdjcae7gsgb6" path="res://像素风小岩石平台生成 (7).png" id="27_7pm6x"]
+[ext_resource type="Texture2D" uid="uid://b52p6gnmllw7r" path="res://像素风小岩石平台生成 (9).png" id="28_g1stl"]
+[ext_resource type="Texture2D" uid="uid://cphw7dwo2ljio" path="res://像素风小岩石平台生成 (8).png" id="29_q3agb"]
+[ext_resource type="Script" uid="uid://dpvcbm6kfba6x" path="res://Door.cs" id="30_mmd8o"]
+[ext_resource type="Texture2D" uid="uid://b4npt84rf7q3o" path="res://e-marker-64.png" id="31_7diw3"]
+[ext_resource type="Script" uid="uid://b3usr6w73hux2" path="res://EMarker.cs" id="32_enncu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0boax"]
 size = Vector2(32, 32)
@@ -28,7 +40,10 @@ size = Vector2(32, 32)
 size = Vector2(26, 42)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_btfou"]
-size = Vector2(1122.75, 20)
+size = Vector2(1130, 48)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vgssw"]
+size = Vector2(1967, 95)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hopbody"]
 size = Vector2(54, 68)
@@ -40,13 +55,16 @@ size = Vector2(64, 73)
 size = Vector2(20, 1214)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_yyl7v"]
-size = Vector2(9581, 60)
+size = Vector2(13693, 60)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_m3r2q"]
-size = Vector2(52, 45)
+size = Vector2(52, 32.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4q370"]
 size = Vector2(51.6958, 48.127556)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_e8kya"]
+size = Vector2(99, 80)
 
 [node name="Main2" type="Node2D" unique_id=1867660586]
 
@@ -71,7 +89,7 @@ shape = SubResource("RectangleShape2D_0boax")
 offset = Vector2(0, -80)
 limit_left = 2
 limit_top = 0
-limit_right = 12786
+limit_right = 17870
 limit_bottom = 8251
 position_smoothing_enabled = true
 position_smoothing_speed = 22.0
@@ -125,18 +143,18 @@ script = ExtResource("7_us87v")
 [node name="background" type="Sprite2D" parent="." unique_id=1133267646]
 z_index = -100
 texture_repeat = 2
-position = Vector2(4888, 278.00003)
+position = Vector2(6976, 265.00003)
 scale = Vector2(0.97882503, 1.11725)
 texture = ExtResource("8_xggcg")
 region_enabled = true
-region_rect = Rect2(0, 0, 10000, 500)
+region_rect = Rect2(0, 0, 15000, 500)
 
 [node name="road" type="StaticBody2D" parent="." unique_id=204918861]
 position = Vector2(-44, 406)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="road" unique_id=1089853058]
 z_index = -100
-position = Vector2(601.625, 97)
+position = Vector2(596, 106)
 shape = SubResource("RectangleShape2D_btfou")
 
 [node name="Sprite2D" type="Sprite2D" parent="road" unique_id=1607880520]
@@ -145,30 +163,33 @@ position = Vector2(595, 292)
 scale = Vector2(0.78453046, 0.74723756)
 texture = ExtResource("9_6xgwd")
 
-[node name="road2" type="StaticBody2D" parent="road" unique_id=780116507]
-position = Vector2(7700, -1)
+[node name="road3" type="StaticBody2D" parent="." unique_id=780116507]
+position = Vector2(7656, 405)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="road/road2" unique_id=976793792]
-z_index = -100
-position = Vector2(601.625, 97)
-shape = SubResource("RectangleShape2D_btfou")
-
-[node name="Sprite2D" type="Sprite2D" parent="road/road2" unique_id=597092015]
+[node name="Sprite2D" type="Sprite2D" parent="road3" unique_id=597092015]
 z_index = -90
-position = Vector2(595, 292)
+texture_repeat = 2
+position = Vector2(1021.00006, 256)
 scale = Vector2(0.78453046, 0.74723756)
 texture = ExtResource("9_6xgwd")
+region_enabled = true
+region_rect = Rect2(0, 0, 2500, 600)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="road3" unique_id=1347942300]
+position = Vector2(1023.5, 142.5)
+shape = SubResource("RectangleShape2D_vgssw")
 
 [node name="SpawnSave" type="Node2D" parent="." unique_id=1556134010]
 position = Vector2(255, 493)
 script = ExtResource("9_pvodk")
+MaxSaveDistance = 600.0
 
 [node name="road2" type="StaticBody2D" parent="." unique_id=979146628]
 position = Vector2(1500, 406)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="road2" unique_id=1044831117]
 z_index = -100
-position = Vector2(601.625, 97)
+position = Vector2(594, 106)
 shape = SubResource("RectangleShape2D_btfou")
 
 [node name="Sprite2D" type="Sprite2D" parent="road2" unique_id=1483370915]
@@ -177,15 +198,15 @@ position = Vector2(595, 292)
 scale = Vector2(0.78453046, 0.74723756)
 texture = ExtResource("9_6xgwd")
 
-[node name="road2" type="StaticBody2D" parent="road2" unique_id=163728697]
-position = Vector2(2700, -1)
+[node name="road4" type="StaticBody2D" parent="." unique_id=163728697]
+position = Vector2(4200, 405)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="road2/road2" unique_id=1228557605]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="road4" unique_id=1228557605]
 z_index = -100
-position = Vector2(601.625, 97)
+position = Vector2(598, 113)
 shape = SubResource("RectangleShape2D_btfou")
 
-[node name="Sprite2D" type="Sprite2D" parent="road2/road2" unique_id=180467101]
+[node name="Sprite2D" type="Sprite2D" parent="road4" unique_id=180467101]
 z_index = -90
 position = Vector2(595, 292)
 scale = Vector2(0.78453046, 0.74723756)
@@ -284,6 +305,8 @@ position = Vector2(4562.794, 394.8225)
 collision_layer = 4
 script = ExtResource("13_horrorscript")
 HopHeight = 100.0
+Damage = 15
+MaxHp = 100
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="horrorapple2" unique_id=1576038155]
 position = Vector2(0, 11)
@@ -333,14 +356,15 @@ collision_mask = 6
 script = ExtResource("17_c3syi")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="KillZone1" unique_id=2046336401]
-position = Vector2(4813.5, 77)
+z_index = -120
+position = Vector2(5732.5, 77)
 shape = SubResource("RectangleShape2D_yyl7v")
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="." unique_id=1478305213]
 position = Vector2(2804, 476)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1745837605]
-position = Vector2(56, -5)
+position = Vector2(56, 6)
 shape = SubResource("RectangleShape2D_m3r2q")
 
 [node name="Sprite2D" type="Sprite2D" parent="StaticBody2D2" unique_id=117560572]
@@ -352,7 +376,7 @@ texture = ExtResource("18_r4jq7")
 position = Vector2(232, -33)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2/StaticBody2D2" unique_id=1660109732]
-position = Vector2(56, -5)
+position = Vector2(55, 6)
 shape = SubResource("RectangleShape2D_m3r2q")
 
 [node name="Sprite2D" type="Sprite2D" parent="StaticBody2D2/StaticBody2D2" unique_id=1217293333]
@@ -364,7 +388,7 @@ texture = ExtResource("18_r4jq7")
 position = Vector2(202, 50)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2/StaticBody2D2/StaticBody2D2" unique_id=412625849]
-position = Vector2(56, -5)
+position = Vector2(56, 7)
 shape = SubResource("RectangleShape2D_m3r2q")
 
 [node name="Sprite2D" type="Sprite2D" parent="StaticBody2D2/StaticBody2D2/StaticBody2D2" unique_id=2143884747]
@@ -376,7 +400,7 @@ texture = ExtResource("18_r4jq7")
 position = Vector2(245, -25)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2/StaticBody2D2/StaticBody2D2/StaticBody2D2" unique_id=620892517]
-position = Vector2(56, -5)
+position = Vector2(56, 5)
 shape = SubResource("RectangleShape2D_m3r2q")
 
 [node name="Sprite2D" type="Sprite2D" parent="StaticBody2D2/StaticBody2D2/StaticBody2D2/StaticBody2D2" unique_id=218995527]
@@ -388,7 +412,7 @@ texture = ExtResource("18_r4jq7")
 position = Vector2(233, 47)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2/StaticBody2D2/StaticBody2D2/StaticBody2D2/StaticBody2D2" unique_id=2032101098]
-position = Vector2(56, -5)
+position = Vector2(57, 7)
 shape = SubResource("RectangleShape2D_m3r2q")
 
 [node name="Sprite2D" type="Sprite2D" parent="StaticBody2D2/StaticBody2D2/StaticBody2D2/StaticBody2D2/StaticBody2D2" unique_id=1106474440]
@@ -400,11 +424,11 @@ texture = ExtResource("18_r4jq7")
 position = Vector2(225, -83)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2/StaticBody2D2/StaticBody2D2/StaticBody2D2/StaticBody2D2/StaticBody2D2" unique_id=2063145724]
-position = Vector2(56, -5)
+position = Vector2(59, 16)
 shape = SubResource("RectangleShape2D_m3r2q")
 
 [node name="Sprite2D" type="Sprite2D" parent="StaticBody2D2/StaticBody2D2/StaticBody2D2/StaticBody2D2/StaticBody2D2/StaticBody2D2" unique_id=839811331]
-position = Vector2(56, 33)
+position = Vector2(59, 51)
 scale = Vector2(0.05147059, 0.05376838)
 texture = ExtResource("18_r4jq7")
 
@@ -416,7 +440,7 @@ position = Vector2(56, -5)
 shape = SubResource("RectangleShape2D_m3r2q")
 
 [node name="Sprite2D" type="Sprite2D" parent="StaticBody2D2/StaticBody2D3" unique_id=23548398]
-position = Vector2(56, 23)
+position = Vector2(56, 30)
 scale = Vector2(0.05147059, 0.05376838)
 texture = ExtResource("18_r4jq7")
 
@@ -440,7 +464,7 @@ position = Vector2(56, -5)
 shape = SubResource("RectangleShape2D_m3r2q")
 
 [node name="Sprite2D" type="Sprite2D" parent="StaticBody2D2/StaticBody2D3/StaticBody2D2/StaticBody2D2" unique_id=546987910]
-position = Vector2(57, 22)
+position = Vector2(57, 29)
 scale = Vector2(0.05147059, 0.05376838)
 texture = ExtResource("18_r4jq7")
 
@@ -452,23 +476,23 @@ position = Vector2(56, 7.5)
 shape = SubResource("RectangleShape2D_m3r2q")
 
 [node name="Sprite2D" type="Sprite2D" parent="StaticBody2D2/StaticBody2D3/StaticBody2D2/StaticBody2D2/StaticBody2D2" unique_id=596159781]
-position = Vector2(56, 33)
+position = Vector2(56, 41)
 scale = Vector2(0.05147059, 0.05376838)
 texture = ExtResource("18_r4jq7")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1494218245]
 z_index = -100
 texture_repeat = 2
-position = Vector2(3573.034, 1500)
+position = Vector2(3394, 1500)
 scale = Vector2(0.22799325, 0.19007568)
 texture = ExtResource("19_r4jq7")
 region_enabled = true
 region_rect = Rect2(0, 0, 10000, 10000)
 
 [node name="Spike" type="Sprite2D" parent="." unique_id=912503879]
-z_index = -100
+z_index = -101
 texture_repeat = 2
-position = Vector2(6501, 1500)
+position = Vector2(6351.9995, 1462)
 scale = Vector2(0.22799325, 0.19007568)
 texture = ExtResource("19_r4jq7")
 region_enabled = true
@@ -499,6 +523,346 @@ position = Vector2(78.1521, 19.063751)
 shape = SubResource("RectangleShape2D_4q370")
 
 [node name="Sprite2D" type="Sprite2D" parent="MovingPlatform2" unique_id=12773583]
-position = Vector2(78, 46)
+position = Vector2(79, 45)
 scale = Vector2(0.05147059, 0.05376838)
 texture = ExtResource("18_r4jq7")
+
+[node name="RevivePoint" parent="." unique_id=1585508078 instance=ExtResource("21_y3d7y")]
+position = Vector2(7954.446, 440.91425)
+
+[node name="spike2" type="Sprite2D" parent="." unique_id=1577025760]
+z_index = -100
+texture_repeat = 2
+position = Vector2(6543, 618)
+scale = Vector2(0.07283223, 0.09256614)
+texture = ExtResource("22_cb60e")
+region_enabled = true
+region_rect = Rect2(0, 0, 35000, 2300)
+
+[node name="spike3" type="Sprite2D" parent="." unique_id=1369962111]
+z_index = -100
+texture_repeat = 2
+position = Vector2(3566, 618)
+scale = Vector2(0.07283223, 0.09256614)
+texture = ExtResource("22_cb60e")
+region_enabled = true
+region_rect = Rect2(0, 0, 35000, 2300)
+
+[node name="Node2D" type="Node2D" parent="." unique_id=1552712419]
+
+[node name="break_build2" type="Sprite2D" parent="Node2D" unique_id=726181554]
+z_index = -10
+position = Vector2(8571.001, 276)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("23_3fduj")
+
+[node name="break_build" type="Sprite2D" parent="Node2D" unique_id=1389110283]
+position = Vector2(8276, 336)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("24_rhpd1")
+
+[node name="break_build3" type="Sprite2D" parent="Node2D" unique_id=1964770944]
+z_index = -10
+position = Vector2(8847, 341)
+scale = Vector2(0.28, 0.28)
+texture = ExtResource("25_xb5gr")
+
+[node name="horrorapple4" type="CharacterBody2D" parent="." unique_id=838429363]
+position = Vector2(8840.15, 449.0678)
+collision_layer = 4
+script = ExtResource("13_horrorscript")
+HopHeight = 100.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="horrorapple4" unique_id=2083761178]
+position = Vector2(0, 11)
+shape = SubResource("RectangleShape2D_hopbody")
+
+[node name="Sprite2D" type="Sprite2D" parent="horrorapple4" unique_id=1073741170]
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("12_hopsheet")
+hframes = 32
+
+[node name="HpBar" type="TextureProgressBar" parent="horrorapple4" unique_id=1760972945]
+offset_left = -22.0
+offset_top = -52.0
+offset_right = 22.0
+offset_bottom = -44.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("14_hpbg")
+texture_over = ExtResource("16_hpborder")
+texture_progress = ExtResource("15_hpfill")
+metadata/_edit_use_anchors_ = true
+
+[node name="RayLeft" type="RayCast2D" parent="horrorapple4" unique_id=447966162]
+position = Vector2(-22, 10)
+target_position = Vector2(0, 30)
+
+[node name="RayRight" type="RayCast2D" parent="horrorapple4" unique_id=1240352235]
+position = Vector2(22, 10)
+target_position = Vector2(0, 30)
+
+[node name="HurtArea" type="Area2D" parent="horrorapple4" unique_id=1201485729]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="horrorapple4/HurtArea" unique_id=737755969]
+position = Vector2(0, 8.5)
+shape = SubResource("RectangleShape2D_hoptouch")
+
+[node name="horrorapple8" type="CharacterBody2D" parent="." unique_id=1571176728]
+position = Vector2(9018.805, 436.612)
+collision_layer = 4
+script = ExtResource("13_horrorscript")
+HopHeight = 100.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="horrorapple8" unique_id=1769931407]
+position = Vector2(0, 11)
+shape = SubResource("RectangleShape2D_hopbody")
+
+[node name="Sprite2D" type="Sprite2D" parent="horrorapple8" unique_id=1583030093]
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("12_hopsheet")
+hframes = 32
+
+[node name="HpBar" type="TextureProgressBar" parent="horrorapple8" unique_id=767436578]
+offset_left = -22.0
+offset_top = -52.0
+offset_right = 22.0
+offset_bottom = -44.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("14_hpbg")
+texture_over = ExtResource("16_hpborder")
+texture_progress = ExtResource("15_hpfill")
+metadata/_edit_use_anchors_ = true
+
+[node name="RayLeft" type="RayCast2D" parent="horrorapple8" unique_id=148101888]
+position = Vector2(-22, 10)
+target_position = Vector2(0, 30)
+
+[node name="RayRight" type="RayCast2D" parent="horrorapple8" unique_id=1065835780]
+position = Vector2(22, 10)
+target_position = Vector2(0, 30)
+
+[node name="HurtArea" type="Area2D" parent="horrorapple8" unique_id=1001932560]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="horrorapple8/HurtArea" unique_id=583392167]
+position = Vector2(0, 8.5)
+shape = SubResource("RectangleShape2D_hoptouch")
+
+[node name="horrorapple7" type="CharacterBody2D" parent="." unique_id=499419058]
+position = Vector2(9185.096, 438.03043)
+collision_layer = 4
+script = ExtResource("13_horrorscript")
+HopHeight = 100.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="horrorapple7" unique_id=1679137669]
+position = Vector2(0, 11)
+shape = SubResource("RectangleShape2D_hopbody")
+
+[node name="Sprite2D" type="Sprite2D" parent="horrorapple7" unique_id=102484912]
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("12_hopsheet")
+hframes = 32
+
+[node name="HpBar" type="TextureProgressBar" parent="horrorapple7" unique_id=1197349993]
+offset_left = -22.0
+offset_top = -52.0
+offset_right = 22.0
+offset_bottom = -44.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("14_hpbg")
+texture_over = ExtResource("16_hpborder")
+texture_progress = ExtResource("15_hpfill")
+metadata/_edit_use_anchors_ = true
+
+[node name="RayLeft" type="RayCast2D" parent="horrorapple7" unique_id=1469287039]
+position = Vector2(-22, 10)
+target_position = Vector2(0, 30)
+
+[node name="RayRight" type="RayCast2D" parent="horrorapple7" unique_id=1057391245]
+position = Vector2(22, 10)
+target_position = Vector2(0, 30)
+
+[node name="HurtArea" type="Area2D" parent="horrorapple7" unique_id=1334689288]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="horrorapple7/HurtArea" unique_id=100411471]
+position = Vector2(0, 8.5)
+shape = SubResource("RectangleShape2D_hoptouch")
+
+[node name="horrorapple6" type="CharacterBody2D" parent="." unique_id=959740377]
+position = Vector2(9356.583, 431.53473)
+collision_layer = 4
+script = ExtResource("13_horrorscript")
+HopHeight = 100.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="horrorapple6" unique_id=75361760]
+position = Vector2(0, 11)
+shape = SubResource("RectangleShape2D_hopbody")
+
+[node name="Sprite2D" type="Sprite2D" parent="horrorapple6" unique_id=1178722501]
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("12_hopsheet")
+hframes = 32
+
+[node name="HpBar" type="TextureProgressBar" parent="horrorapple6" unique_id=1999538611]
+offset_left = -22.0
+offset_top = -52.0
+offset_right = 22.0
+offset_bottom = -44.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("14_hpbg")
+texture_over = ExtResource("16_hpborder")
+texture_progress = ExtResource("15_hpfill")
+metadata/_edit_use_anchors_ = true
+
+[node name="RayLeft" type="RayCast2D" parent="horrorapple6" unique_id=618278095]
+position = Vector2(-22, 10)
+target_position = Vector2(0, 30)
+
+[node name="RayRight" type="RayCast2D" parent="horrorapple6" unique_id=750769801]
+position = Vector2(22, 10)
+target_position = Vector2(0, 30)
+
+[node name="HurtArea" type="Area2D" parent="horrorapple6" unique_id=114578578]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="horrorapple6/HurtArea" unique_id=1807632202]
+position = Vector2(0, 8.5)
+shape = SubResource("RectangleShape2D_hoptouch")
+
+[node name="horrorapple5" type="CharacterBody2D" parent="." unique_id=1027901731]
+position = Vector2(9282.497, 434.885)
+collision_layer = 4
+script = ExtResource("13_horrorscript")
+HopHeight = 100.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="horrorapple5" unique_id=1830343195]
+position = Vector2(0, 11)
+shape = SubResource("RectangleShape2D_hopbody")
+
+[node name="Sprite2D" type="Sprite2D" parent="horrorapple5" unique_id=1086883338]
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("12_hopsheet")
+hframes = 32
+
+[node name="HpBar" type="TextureProgressBar" parent="horrorapple5" unique_id=375486406]
+offset_left = -22.0
+offset_top = -52.0
+offset_right = 22.0
+offset_bottom = -44.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("14_hpbg")
+texture_over = ExtResource("16_hpborder")
+texture_progress = ExtResource("15_hpfill")
+metadata/_edit_use_anchors_ = true
+
+[node name="RayLeft" type="RayCast2D" parent="horrorapple5" unique_id=1469030782]
+position = Vector2(-22, 10)
+target_position = Vector2(0, 30)
+
+[node name="RayRight" type="RayCast2D" parent="horrorapple5" unique_id=79447286]
+position = Vector2(22, 10)
+target_position = Vector2(0, 30)
+
+[node name="HurtArea" type="Area2D" parent="horrorapple5" unique_id=1316113427]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="horrorapple5/HurtArea" unique_id=467479572]
+position = Vector2(0, 8.5)
+shape = SubResource("RectangleShape2D_hoptouch")
+
+[node name="Spike2" type="Sprite2D" parent="." unique_id=1898721453]
+z_index = -101
+texture_repeat = 2
+position = Vector2(10888, 1453)
+scale = Vector2(0.22799325, 0.19007568)
+texture = ExtResource("19_r4jq7")
+region_enabled = true
+region_rect = Rect2(0, 0, 12000, 10000)
+
+[node name="spike4" type="Sprite2D" parent="." unique_id=6114466]
+z_index = -100
+texture_repeat = 2
+position = Vector2(10929, 622)
+scale = Vector2(0.07283223, 0.09256614)
+texture = ExtResource("22_cb60e")
+region_enabled = true
+region_rect = Rect2(0, 0, 35000, 2300)
+
+[node name="Node2D2" parent="." unique_id=1359572483 instance=ExtResource("26_rhpd1")]
+position = Vector2(9787, 30)
+
+[node name="road5" type="StaticBody2D" parent="." unique_id=1168422246]
+position = Vector2(11972, 405)
+
+[node name="Sprite2D" type="Sprite2D" parent="road5" unique_id=1723793580]
+z_index = -90
+texture_repeat = 2
+position = Vector2(1021.00006, 256)
+scale = Vector2(0.78453046, 0.74723756)
+texture = ExtResource("9_6xgwd")
+region_enabled = true
+region_rect = Rect2(0, 0, 2500, 600)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="road5" unique_id=349549796]
+position = Vector2(1024, 138)
+shape = SubResource("RectangleShape2D_vgssw")
+
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=990032067]
+position = Vector2(12396.999, 294)
+scale = Vector2(0.3294926, 0.3864583)
+texture = ExtResource("27_7pm6x")
+
+[node name="Sprite2D3" type="Sprite2D" parent="." unique_id=673303819]
+position = Vector2(13607, 291)
+scale = Vector2(0.3294926, 0.3864583)
+texture = ExtResource("27_7pm6x")
+
+[node name="Sprite2D4" type="Sprite2D" parent="." unique_id=126831836]
+position = Vector2(13258.001, 342)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("28_g1stl")
+
+[node name="Sprite2D5" type="Sprite2D" parent="." unique_id=1644742400]
+position = Vector2(12768, 342)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("29_q3agb")
+
+[node name="HouseDoor" type="Area2D" parent="." unique_id=335473973]
+position = Vector2(12776.6875, 466.33173)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("30_mmd8o")
+TargetScene = "res://rockhouseinside.tscn"
+TargetSpawn = Vector2(150, 294)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HouseDoor" unique_id=1652587313]
+shape = SubResource("RectangleShape2D_e8kya")
+
+[node name="EMarker" type="Sprite2D" parent="HouseDoor" unique_id=252686624]
+z_index = 20
+position = Vector2(0, -70)
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("31_7diw3")
+script = ExtResource("32_enncu")
+
+[node name="Hint" type="Label" parent="HouseDoor" unique_id=106199284]
+visible = false
+z_index = 20
+offset_left = -70.0
+offset_top = -74.0
+offset_right = 70.0
+offset_bottom = -48.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.09, 0.13, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 14
+text = "按 E 进入"
+horizontal_alignment = 1
+vertical_alignment = 1

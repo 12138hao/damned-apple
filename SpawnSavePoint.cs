@@ -19,6 +19,10 @@ public partial class SpawnSavePoint : Node2D
     [ExportGroup("自动存档")]
     [Export] public bool Enable = true;                 // 关掉就不生效
     [Export] public bool SaveOnEveryEnter = true;       // true = 每次进场景都覆盖存档
+    // >0 时：玩家出生点离这里超过这么远就**不存**（0 = 不限制）。
+    // 用来区分「从这里进入本场景」和「从别的地图走门回来」——
+    // 后者出生点离得远，不该把玩家在别处存的档覆盖成这个入口。
+    [Export] public float MaxSaveDistance = 0f;
     [Export] public bool ShowBubble = false;            // 存档时要不要冒个气泡提示
     [Export] public string SaveText = "已存档";          // 气泡内容（ShowBubble 打开才有效果）
 
@@ -56,6 +60,18 @@ public partial class SpawnSavePoint : Node2D
         {
             GD.PushWarning("[SpawnSave] 没找到玩家节点 box，自动存档跳过");
             return;
+        }
+
+        // 出生点离这里太远 = 玩家不是从这里进来的（比如从房间走门回到大地图），
+        // 这时不能覆盖他在别处存的档。
+        if (MaxSaveDistance > 0f)
+        {
+            float dist = player.GlobalPosition.DistanceTo(GlobalPosition);
+            if (dist > MaxSaveDistance)
+            {
+                GD.Print($"[SpawnSave] 出生点距存档点 {dist:F0}px（> {MaxSaveDistance}），保留原有存档");
+                return;
+            }
         }
 
         string scenePath = Owner?.SceneFilePath

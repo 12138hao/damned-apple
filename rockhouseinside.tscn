@@ -1,0 +1,188 @@
+[gd_scene format=3 uid="uid://cvl6fjm12orth"]
+
+[ext_resource type="Texture2D" uid="uid://8wbn1mwmufai" path="res://rockinside.png" id="1_1ylf6"]
+[ext_resource type="Script" uid="uid://ckfwsyc34ots7" path="res://Box.cs" id="2_wvll3"]
+[ext_resource type="Texture2D" uid="uid://dsfapsyeiv41h" path="res://assets/player_sheet_v2.png" id="3_wh51h"]
+[ext_resource type="Script" uid="uid://dmq7nrftqx2qw" path="res://DialogueUI.cs" id="4_i8ena"]
+[ext_resource type="Script" uid="uid://bkvaedtmio4gf" path="res://SwingTrail.cs" id="5_uk2p4"]
+[ext_resource type="Script" uid="uid://bfk5suig6pucp" path="res://ChargeArc.cs" id="6_xl4wg"]
+[ext_resource type="Texture2D" uid="uid://c7irabu5sxp5h" path="res://assets/weapon.png" id="7_oy5is"]
+[ext_resource type="Script" uid="uid://c57ocnohmulys" path="res://WeaponAura.cs" id="8_lmwom"]
+[ext_resource type="PackedScene" uid="uid://cp4v7l1a2auik" path="res://RevivePoint.tscn" id="9_wvll3"]
+[ext_resource type="Script" uid="uid://dpvcbm6kfba6x" path="res://Door.cs" id="10_door"]
+[ext_resource type="Texture2D" uid="uid://otk2vgn03rk1" path="res://QQ_1793287895084.png" id="10_udau4"]
+[ext_resource type="Script" uid="uid://b3usr6w73hux2" path="res://EMarker.cs" id="11_emarker"]
+[ext_resource type="Texture2D" uid="uid://b4npt84rf7q3o" path="res://e-marker-64.png" id="12_emarker"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
+size = Vector2(32, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_weapon"]
+size = Vector2(26, 42)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(440, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ceil"]
+size = Vector2(440, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(20, 300)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_upper"]
+size = Vector2(418, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
+size = Vector2(63, 80)
+
+[node name="RockHouseInside" type="Node2D" unique_id=6371583]
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1494660825]
+position = Vector2(262.75, 169.5)
+scale = Vector2(0.25512695, 0.29253468)
+texture = ExtResource("1_1ylf6")
+
+[node name="box" type="CharacterBody2D" parent="." unique_id=1729045681]
+z_index = 10
+position = Vector2(260, 270)
+collision_layer = 2
+collision_mask = 9
+script = ExtResource("2_wvll3")
+Speed = 300.0
+jumpVelocity = 400.0
+KnockBack = 100.0
+VehicleSpeedMult = 1.3
+VehicleBulletDamage = 30
+VehicleBulletKnockback = 50.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=561886425]
+shape = SubResource("RectangleShape2D_player")
+
+[node name="Camera2D" type="Camera2D" parent="box" unique_id=1482721828]
+zoom = Vector2(1.2, 1.2)
+limit_left = 54
+limit_top = 50
+limit_right = 472
+limit_bottom = 310
+position_smoothing_enabled = true
+position_smoothing_speed = 22.0
+
+[node name="Sprite2D" type="Sprite2D" parent="box" unique_id=1487953079]
+texture = ExtResource("3_wh51h")
+offset = Vector2(0, -10)
+hframes = 21
+
+[node name="DialogueUI" type="Node2D" parent="box" unique_id=1680451804]
+z_index = 20
+position = Vector2(-85, -114)
+script = ExtResource("4_i8ena")
+
+[node name="Text" type="Label" parent="box/DialogueUI" unique_id=2109942768]
+offset_left = -109.0
+offset_top = -35.0
+offset_right = 97.0
+offset_bottom = 27.0
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="SwingTrail" type="Node2D" parent="box" unique_id=478654383]
+z_index = 2
+script = ExtResource("5_uk2p4")
+
+[node name="ChargeArc" type="Node2D" parent="box" unique_id=1230821302]
+position = Vector2(-38, -6)
+script = ExtResource("6_xl4wg")
+Radius = 20.0
+SweepDeg = 120.0
+
+[node name="Weapon" type="Area2D" parent="box" unique_id=577395010]
+z_index = 100
+position = Vector2(18, -15)
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box/Weapon" unique_id=628631582]
+shape = SubResource("RectangleShape2D_weapon")
+
+[node name="Sprite2D" type="Sprite2D" parent="box/Weapon" unique_id=1259075218]
+visible = false
+texture = ExtResource("7_oy5is")
+
+[node name="Aura" type="Node2D" parent="box/Weapon" unique_id=712772529]
+script = ExtResource("8_lmwom")
+
+[node name="Level" type="Node2D" parent="." unique_id=2000001]
+
+[node name="Walls" type="StaticBody2D" parent="Level" unique_id=13230675]
+
+[node name="Floor" type="CollisionShape2D" parent="Level/Walls" unique_id=1478547767]
+position = Vector2(263, 320)
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="Ceiling" type="CollisionShape2D" parent="Level/Walls" unique_id=1494670834]
+position = Vector2(263, 40)
+shape = SubResource("RectangleShape2D_ceil")
+
+[node name="WallLeft" type="CollisionShape2D" parent="Level/Walls" unique_id=557177053]
+position = Vector2(44, 180)
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="WallRight" type="CollisionShape2D" parent="Level/Walls" unique_id=1644083920]
+position = Vector2(482, 180)
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="UpperFloor" type="StaticBody2D" parent="Level" unique_id=2000002]
+collision_layer = 8
+
+[node name="Beam" type="CollisionShape2D" parent="Level/UpperFloor" unique_id=368317078]
+position = Vector2(263, 186)
+shape = SubResource("RectangleShape2D_upper")
+one_way_collision = true
+one_way_collision_margin = 2.0
+
+[node name="RevivePoint" parent="." unique_id=1585508078 instance=ExtResource("9_wvll3")]
+z_index = 1
+position = Vector2(111.34093, 310)
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2114627367]
+z_index = -111
+position = Vector2(209.03775, 125.0284)
+scale = Vector2(8.924528, 5.943262)
+texture = ExtResource("10_udau4")
+
+[node name="ExitDoor" type="Area2D" parent="." unique_id=2000003]
+position = Vector2(254, 294)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("10_door")
+TargetScene = "res://underground.tscn"
+TargetSpawn = Vector2(12700, 479)
+HintText = "按 E 出去"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitDoor" unique_id=2000004]
+shape = SubResource("RectangleShape2D_door")
+
+[node name="EMarker" type="Sprite2D" parent="ExitDoor" unique_id=2000005]
+z_index = 20
+position = Vector2(0, -57)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("12_emarker")
+script = ExtResource("11_emarker")
+
+[node name="Hint" type="Label" parent="ExitDoor" unique_id=2000006]
+visible = false
+z_index = 20
+offset_left = -70.0
+offset_top = -74.0
+offset_right = 70.0
+offset_bottom = -48.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.09, 0.13, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 14
+text = "
+"
+horizontal_alignment = 1
+vertical_alignment = 1
