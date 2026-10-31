@@ -6,7 +6,7 @@
 
 一个用 **Godot 4 + C#** 从零手写的横版动作 demo。没有用任何现成的角色控制器或战斗框架，移动、平台、战斗、Boss、对话全部是自己一行行写出来的。
 
-▶ **[演示视频（B 站）](https://b23.tv/L69BoxH)** — 第一关通关演示　·　📐 **[架构说明](docs/ARCHITECTURE.md)** — 代码怎么分层、怎么设计的
+▶ **[演示视频（B 站）](https://b23.tv/L69BoxH)** — 第一关通关演示　·　📐 **[架构说明](docs/ARCHITECTURE.md)** — 代码怎么分层、怎么设计的　·　🍎 **[野兽苹果 Boss 架构](docs/野兽苹果Boss架构.md)** — 第二关 Boss 的状态机与设计取舍
 
 ## 直接下载游玩
 
@@ -73,6 +73,8 @@ Windows 可能弹出 SmartScreen 蓝色提示（exe 没有代码签名），点�
 - **可测试的纯逻辑 + CI**：状态记录抽成不依赖 Godot 的 `GameRecords`，配套 xUnit 测试与 GitHub Actions，每次 push 自动跑
 
 详细的模块划分、跨场景状态契约、动画帧段约定和逐帧更新顺序，见 **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**。
+
+第二关 Boss「野兽苹果」的状态机、技能判定和踩过的坑，见 **[docs/野兽苹果Boss架构.md](docs/野兽苹果Boss架构.md)**。
 
 ---
 
