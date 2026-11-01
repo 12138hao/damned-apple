@@ -76,6 +76,13 @@ public partial class Box : CharacterBody2D
     [Signal] public delegate void DiedEventHandler();
     [Signal] public delegate void RevivedEventHandler();
     public int Hp { get; private set; }
+
+    /// <summary>
+    /// 现在是不是「活着能操作」的状态。死亡动画和复活动画期间都是 false。
+    /// Boss 战要靠它判断：玩家躺下之后不能再触发开战，否则镜头会在
+    /// 「战场缩放」和「正常缩放」之间每帧来回切，屏幕上看起来就是疯狂闪屏。
+    /// </summary>
+    public bool IsAlive => _state == State.Alive;
     private float _coyoteTimer;
     private float _jumpBufferTimer;
     private int _jumpsLeft;
@@ -138,6 +145,13 @@ public partial class Box : CharacterBody2D
     private float _fistCd;            // 出拳冷却
     private readonly System.Collections.Generic.HashSet<Enemy> _hitThisSwing = new();
     private WeaponData Current;         // 当前手持武器的数据（空手时为 null）
+    // ── 远程武器（粉笔）
+    private bool _atkRanged;            // 这一招是远程挥动（不做近战判定，改在挥到一半时发射）
+    private bool _rangedFired;          // 本次挥动是否已经射出过（防止一帧连发）
+    private float _rangedCd;            // 内置发射冷却剩余时间
+    private float _rangedCdTotal;       // 这次冷却一共多长（画冷却弧要用它算弧长）
+    private Sprite2D _chalkBox;         // 左手那个粉笔盒（只有远程武器才显示）
+    private RangedCooldownArc _cdArc;   // 粉笔盒外面的那圈冷却弧（同样只有远程武器才显示）
     public int CurrentSlot => _currentSlot;
     private ChargeArc _chargeArc;
     private Camera2D _cam;
@@ -191,6 +205,18 @@ public partial class Box : CharacterBody2D
         _cam = GetNode<Camera2D>("Camera2D");
         _camBaseY = _cam.Offset.Y;   // 场景里摆的 offset 就是基准，代码不覆盖它
         _trail = GetNodeOrNull<SwingTrail>("SwingTrail");
+
+        // 远程武器（粉笔）左手那个盒子。
+        // 代码里建而不是在每个场景里加节点：只有拿着远程武器时才显示，
+        // 其他场景没有粉笔也不会有多余节点。
+        _chalkBox = new Sprite2D { Visible = false };
+        AddChild(_chalkBox);
+
+        // 粉笔盒外面那圈冷却弧。和盒子一样在代码里建：
+        // 只在拿着远程武器且有冷却时才画，其他场景不会多出节点。
+        _cdArc = new RangedCooldownArc();
+        AddChild(_cdArc);
+
         _fistShape = new CircleShape2D { Radius = FistRadius };
         _spawnPoint = GlobalPosition;
 

@@ -1,77 +1,63 @@
 using Godot;
 
 /// <summary>
-/// 进入场景即自动存档的出生点。
+/// 入口存档点：玩家从别的地图掉进来、**真正经过它**的时候自动存一次。
 ///
-/// 和 RevivePoint 的区别：
-///   RevivePoint  玩家走到跟前按 E 才存，存完自己消失
-///   SpawnSavePoint 玩家一进场景就自动存，不需要按键、不消失、可反复触发
+/// 和 RevivePoint 的分工（两者必须共存，不能互相顶掉）：
+///   SpawnSavePoint  只管「刚进这张图」这一下，保证死了不会被打回上一张图
+///   RevivePoint     管「本图内部推进」的进度，按 E 才存，存完消失
 ///
-/// 用法：在 underground 场景里加一个 Node2D 节点（命名随意，比如 SpawnSave），
-/// 挂上这个脚本，把它摆到出生点的地面上（不是玩家中心，是脚踩的那条线），
-/// 然后把玩家的初始 position 摆到差不多同一个位置。
+/// 用法：在 underground 场景里加一个 Node2D（比如 SpawnSave），
+/// 挂上这个脚本，摆在**入口落点的正下方**（脚踩的那条地面线，不是玩家中心），
+/// 然后把 TriggerRadius 调到「玩家从上面掉下来一定会进圈」的大小。
 ///
-/// 注意它只改「复活点」，不回血、不播音效——回血是 RevivePoint 的行为，
-/// 这里进场景时玩家本来就该是满血/带过来的血量。
+/// 三条硬规则（少一条就会和 RevivePoint 打架）：
+///   1. 不是「进场景就存」，而是「玩家进半径才存」——否则从存档点复活重载场景时也会被它覆盖
+///   2. 本场景已经在别的存档点存过 → 直接放弃，绝不覆盖
+///   3. 存完立刻 SetProcess(false)，一辈子只跑一次
+///
+/// 为什么第 2 条这么重要：RevivePoint 用「GameState.RevivePointKey 是不是自己」判断该不该显示。
+/// 如果这里把 key 改成自己的，RevivePoint 会以为「别的存档点被激活了」→ 重新亮起来。
 /// </summary>
 public partial class SpawnSavePoint : Node2D
 {
     [ExportGroup("自动存档")]
     [Export] public bool Enable = true;                 // 关掉就不生效
-    [Export] public bool SaveOnEveryEnter = true;       // true = 每次进场景都覆盖存档
-    // >0 时：玩家出生点离这里超过这么远就**不存**（0 = 不限制）。
-    // 用来区分「从这里进入本场景」和「从别的地图走门回来」——
-    // 后者出生点离得远，不该把玩家在别处存的档覆盖成这个入口。
+    [Export] public bool SaveOnEveryEnter = true;       // false = 本次生命周期内只存一次
+    // 玩家离存档点多近才算「碰到了」。入口落点在正上方，一般 90~140 够用。
+    // 设成 0 或负数 = 退回旧行为（进场景第一帧就存），不建议。
+    [Export] public float TriggerRadius = 120f;
+    // 【已由 TriggerRadius 取代】旧的距离保险，只在 TriggerRadius <= 0 时还起作用。
+    // 保留这个字段是因为 underground.tscn 里写了 MaxSaveDistance = 600，删掉会报属性不存在。
     [Export] public float MaxSaveDistance = 0f;
     [Export] public bool ShowBubble = false;            // 存档时要不要冒个气泡提示
     [Export] public string SaveText = "已存档";          // 气泡内容（ShowBubble 打开才有效果）
 
     private bool _saved;
-    private bool _pending = true;   // 等一帧再存，见 _Process
 
     public override void _Ready()
     {
-        if (!Enable)
-        {
-            SetProcess(false);
-            return;
-        }
+        if (!Enable) SetProcess(false);
     }
 
-    /// <summary>
-    /// 用一帧的延迟来「等玩家准备好」：
-    /// _Ready 里直接找 box，很可能它还没跑完自己的 _Ready（要从 GameState 读血量），
-    /// 而且这时 GetTree().CurrentScene 可能还没定下来，拿到的场景路径是空的。
-    /// </summary>
     public override void _Process(double delta)
     {
-        if (!_pending) return;
-        _pending = false;
-        DoSave();
-        SetProcess(false);   // 存完就不用每帧跑了
-    }
-
-    private void DoSave()
-    {
-        if (_saved && !SaveOnEveryEnter) return;
+        if (!Enable) { SetProcess(false); return; }
+        if (_saved && !SaveOnEveryEnter) { SetProcess(false); return; }
 
         var player = GetTree().Root.FindChild("box", true, false) as Box;
-        if (player == null || !IsInstanceValid(player))
-        {
-            GD.PushWarning("[SpawnSave] 没找到玩家节点 box，自动存档跳过");
-            return;
-        }
+        if (player == null || !IsInstanceValid(player)) return;   // 玩家还没准备好，下一帧再看
 
-        // 出生点离这里太远 = 玩家不是从这里进来的（比如从房间走门回到大地图），
-        // 这时不能覆盖他在别处存的档。
-        if (MaxSaveDistance > 0f)
+        // ① 必须真的走到跟前。玩家从入口掉下来的过程中会经过这里，
+        //    而从存档点复活时出生在别处，根本不会进圈。
+        float dist = player.GlobalPosition.DistanceTo(GlobalPosition);
+        if (TriggerRadius > 0f)
         {
-            float dist = player.GlobalPosition.DistanceTo(GlobalPosition);
-            if (dist > MaxSaveDistance)
-            {
-                GD.Print($"[SpawnSave] 出生点距存档点 {dist:F0}px（> {MaxSaveDistance}），保留原有存档");
-                return;
-            }
+            if (dist > TriggerRadius) return;
+        }
+        else if (MaxSaveDistance > 0f && dist > MaxSaveDistance)
+        {
+            return;   // 旧逻辑兜底
         }
 
         string scenePath = Owner?.SceneFilePath
@@ -80,9 +66,31 @@ public partial class SpawnSavePoint : Node2D
         if (string.IsNullOrEmpty(scenePath))
         {
             GD.PushWarning("[SpawnSave] 拿不到场景路径，自动存档跳过");
+            SetProcess(false);
             return;
         }
 
+        // ② 本场景已经在别的存档点存过了 → 绝不覆盖。
+        //    否则复活点被改回入口，RevivePoint 还会因为 key 变了重新亮起来。
+        var gs = GameState.I;
+        string myKey = scenePath + "::" + GetPath();
+        if (gs != null
+            && gs.ReviveScenePath == scenePath
+            && !string.IsNullOrEmpty(gs.RevivePointKey)
+            && gs.RevivePointKey != myKey)
+        {
+            GD.Print($"[SpawnSave] 本场景已在别处存档（{gs.RevivePointKey}），入口存档跳过");
+            SetProcess(false);
+            return;
+        }
+
+        DoSave(player, scenePath, myKey);
+        _saved = true;
+        SetProcess(false);   // ③ 一辈子只跑一次
+    }
+
+    private void DoSave(Box player, string scenePath, string myKey)
+    {
         // ① 本地复活点（本场景死亡时用）
         player.SetRevivePoint(GlobalPosition);
 
@@ -90,13 +98,12 @@ public partial class SpawnSavePoint : Node2D
         var gs = GameState.I;
         if (gs != null)
         {
-            gs.RevivePointKey = scenePath + "::" + GetPath();
+            gs.RevivePointKey = myKey;
             gs.ReviveScenePath = scenePath;
             gs.RevivePosition = GlobalPosition;
         }
 
-        _saved = true;
-        GD.Print($"[SpawnSave] 已在出生点自动存档：{scenePath} @ {GlobalPosition}");
+        GD.Print($"[SpawnSave] 已在入口自动存档：{scenePath} @ {GlobalPosition}");
 
         if (ShowBubble)
         {

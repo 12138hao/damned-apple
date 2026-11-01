@@ -116,7 +116,7 @@ public partial class Box
 
         _attackTimer = _atkTime;
         _attackCd = _atkTime + AttackCooldown;
-        _weaponSprite.Visible = ShowWeaponSprite;
+        _weaponSprite.Visible = HandSpriteVisible;
         _weapon.Monitoring = true;
     }
 
@@ -130,8 +130,14 @@ public partial class Box
 
         // 贴图大小按武器自己的 SpriteScale，突刺不额外拉伸
         // （横向贴图和斜向贴图的"长度方向"不一样，统一拉伸会变形）
-        float iconScale = Current != null ? Current.SpriteScale : 1f;
+        // 远程武器的"手上那张图"是投射物本身（粉笔），用 ProjectileScale
+        float iconScale = Current != null
+            ? (Current.IsRanged ? Current.ProjectileScale : Current.SpriteScale)
+            : 1f;
         _weaponSprite.Scale = Vector2.One * iconScale;
+
+        UpdateChalkBox();       // 左手粉笔盒（只有远程武器才显示）
+        UpdateRangedCdArc();    // 粉笔盒外面的冷却弧
 
         // 突刺：武器沿朝向往前送出去再收回（sin 曲线，出去一半再回来）
         float thrustExtend = 0f;
@@ -155,7 +161,7 @@ public partial class Box
         if (_attackTimer <= 0f)
         {
             // 非攻击（含蓄力）：武器始终指向鼠标
-            _weaponSprite.Visible = _holding && ShowWeaponSprite;
+            _weaponSprite.Visible = _holding && HandSpriteVisible;
             _weapon.Rotation = _aimAngle + Mathf.DegToRad(Current != null ? Current.AngleOffset : WeaponAngleOffset);
             _weapon.Monitoring = false;
             _trail?.Clear();
@@ -166,6 +172,8 @@ public partial class Box
                 _atkThrust = false;
                 ApplyWeaponShape(Current, false);
             }
+
+            _atkRanged = false;   // 远程挥动收招，交还给普通逻辑
             return;
         }
 
@@ -186,6 +194,9 @@ public partial class Box
         float aimOffset = Current != null ? Current.AngleOffset : WeaponAngleOffset;
         _weapon.Rotation = angle + Mathf.DegToRad(aimOffset);   // 旋转整个武器节点，碰撞体跟着转
 
+        // 远程武器：挥到 55% 时把粉笔甩出去
+        if (_atkRanged) UpdateRangedFire(k);
+
         // 气浪：从起始角画到当前角，越接近收招越淡（SwingTrail 用度数）
         // 突刺是一条直线，没有扇形气浪
         if (_trail != null && !_atkThrust)
@@ -198,32 +209,37 @@ public partial class Box
         }
 
         // 命中判定：直接用物理空间查形状重叠（不依赖 Area2D 的 monitoring 时序）
-        var space = GetWorld2D().DirectSpaceState;
-        var query = new PhysicsShapeQueryParameters2D
+        // 远程武器不做近战判定（伤害由投射物自己结算），整段跳过
+        if (!_atkRanged)
         {
-            Shape = _weaponShape.Shape,
-            Transform = _weaponShape.GlobalTransform,
-            CollisionMask = 4,
-            CollideWithBodies = true,
-            CollideWithAreas = false,
-        };
-        foreach (var hit in space.IntersectShape(query))
-        {
-            if (hit["collider"].As<Node>() is Enemy enemy)
+            var space = GetWorld2D().DirectSpaceState;
+            var query = new PhysicsShapeQueryParameters2D
             {
-                // 这一刀已经打过它了，跳过（防止一次挥击在多帧里反复结算）
-                if (!_hitThisSwing.Add(enemy)) continue;
-                // ignoreInvuln = true：让连续攻击的每一刀都能打中，
-                // 不会被敌人 0.25 秒的受击无敌吃掉
-                enemy.TryTakeHit(_pendingDamage, GlobalPosition, _pendingKnockback, _atkUpRatio, true);
+                Shape = _weaponShape.Shape,
+                Transform = _weaponShape.GlobalTransform,
+                CollisionMask = 4,
+                CollideWithBodies = true,
+                CollideWithAreas = false,
+            };
+            foreach (var hit in space.IntersectShape(query))
+            {
+                if (hit["collider"].As<Node>() is Enemy enemy)
+                {
+                    // 这一刀已经打过它了，跳过（防止一次挥击在多帧里反复结算）
+                    if (!_hitThisSwing.Add(enemy)) continue;
+                    // ignoreInvuln = true：让连续攻击的每一刀都能打中，
+                    // 不会被敌人 0.25 秒的受击无敌吃掉
+                    enemy.TryTakeHit(_pendingDamage, GlobalPosition, _pendingKnockback, _atkUpRatio, true);
+                }
             }
         }
 
         if (_attackTimer <= 0f)
         {
-            _weaponSprite.Visible = _holding && ShowWeaponSprite;
+            _weaponSprite.Visible = _holding && HandSpriteVisible;
             _weapon.Monitoring = false;
             _trail?.Clear();
+            _atkRanged = false;   // 挥完了，下一帧走普通待机
         }
     }
 
@@ -262,6 +278,11 @@ public partial class Box
         if (_inVehicle)
         {
             if (!inputLocked) UpdateVehicleAttack(dt);
+        }
+        // 远程武器：没有蓄力，按住左键就按内置 CD 一直发射
+        else if (!inputLocked && _holding && Current != null && Current.IsRanged)
+        {
+            UpdateRangedInput(dt);
         }
         // 蓄力挥击：按住蓄力、松开挥出，伤害随按住时间从 Min 涨到 Max
         else if (!inputLocked && _holding && Current != null)

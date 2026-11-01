@@ -30,6 +30,12 @@ public partial class Npc : CharacterBody2D
 
     [Export] public float TalkDistance = 130f;   // 玩家离多近可以对话（像素）
 
+    [ExportGroup("表情")]
+    // 关掉后这个 NPC 完全不切表情：一直播 Sprite2D 的呼吸动画，
+    // LineFaces / RepeatFaces 里的值全部失效（FaceA~FaceD 节点留着也不显示）。
+    // 想给某个 NPC 单独关掉，就在那个场景的节点上取消勾选，其他场景不受影响。
+    [Export] public bool UseFaces = true;
+
     // 每句台词对应的表情：-1 = 正常，0 = 微笑，1 = 生气，2 = 无奈，3 = 坚定。
     // 和 FirstLines 一一对应（长度不够时多出来的句子用 -1）
     [Export] public int[] LineFaces =
@@ -253,6 +259,9 @@ public partial class Npc : CharacterBody2D
 
     private void ApplyFace(int index)
     {
+        // 这个 NPC 不切表情 → 每句都回到呼吸动画，LineFaces 直接忽略
+        if (!UseFaces) { RestoreFace(); return; }
+
         int face = (_faces != null && index >= 0 && index < _faces.Length) ? _faces[index] : -1;
 
         if (_sprite != null) _sprite.Visible = (face < 0);

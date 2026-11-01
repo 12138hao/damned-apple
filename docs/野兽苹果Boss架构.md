@@ -29,13 +29,22 @@
 
 | 文件 | 行数 | 职责 |
 |---|---:|---|
-| `BeastAppleBoss.cs` | 1179 | 本体：状态机、位移、命中判定、半血召唤、死亡 |
-| `BeastArena.cs` | 329 | 战场：开战触发、镜头锁定、顶部血条、空气墙、震屏 |
+| `BeastAppleBoss.cs` | 536 | 本体：导出字段、状态枚举、`_Ready` / `_PhysicsProcess` 主循环、坠落吼叫、通用工具 |
+| `BeastAppleBoss.Lunge.cs` | 198 | 技能 1：走位 + 弧线飞扑（partial） |
+| `BeastAppleBoss.Charge.cs` | 159 | 技能 2：之字形穿梭冲锋（partial） |
+| `BeastAppleBoss.Phase.cs` | 221 | 半血：跳天花板倒挂 + 吐 horrorapple（partial） |
+| `BeastAppleBoss.Death.cs` | 152 | 死亡碎裂 + 爆开 + 重生复位（partial） |
+| `BeastArena.cs` | 260 | 战场：开战触发、镜头锁定、空气墙、震屏接线 |
+| `BossHealthBar.cs` | 104 | 顶部 Boss 血条（两个 Boss 共用） |
+| `CameraShaker.cs` | 72 | 相机震屏组件（纯 C# 类，两个 Arena 共用） |
+| `ArenaWalls.cs` | 84 | 空气墙建造 + 靠近渐显（两个 Arena 共用） |
 | `BeastSpitBall.cs` | 132 | 从嘴里吐出的弹道（抛物线下落 + 翻滚 + 红色残影） |
 | `BeastShockwave.cs` | 121 | 冲击波光圈 / 落地烟尘 / 爆炸碎片，一次性 |
 | `BeastLungeWarning.cs` | 110 | 技能 1 的地面安全圈（纯 `_Draw`） |
-| `BeastExplosion.cs` | 112 | 旧版火球爆炸（**当前未使用**，见 §9） |
 | `BeastShatter.cs` | 66 | 死亡碎裂序列播放 |
+
+> `BeastAppleBoss` 按「主循环 + 每个技能一个 partial 文件」拆开，和 `Box`（`Box.Move.cs` / `Box.Combat.cs` …）保持同一套写法。
+> 拆之前是一个 1227 行的单文件，改技能 2 要滚过整个技能 1。
 
 素材（`assets/boss/beast/`）：
 
@@ -343,13 +352,15 @@ float s = TargetHeight / Sheet.GetHeight();   // 200 / 750
 
 这样碎片和本体大小完全对得上，不会出现"200 高的 Boss 炸出 400 高的碎片"。
 
-### 9.5 `BeastExplosion.cs` 目前是死代码
+### 9.5 旧版火球爆炸已删除
 
 旧版死亡演出是一个 8 帧火球（`beast_explode.png`）。
 改成本体碎裂后，`PlayExplosion()` 不再创建 `BeastExplosion`，
 场景里的 `ExplosionSheet` 属性也变成了无效配置。
 
-文件保留着，想加回"碎裂 + 火光"的双层演出随时可以用。
+2026-11-01 做项目体检时确认全项目 0 引用，文件已移出项目
+（备份在 `D:\h\_backup_my-game_20261101\`）。想加回「碎裂 + 火光」的双层演出，
+`BeastShockwave` 也能拼出类似效果，不必再把这个文件搬回来。
 
 ---
 
@@ -480,7 +491,7 @@ BGM 目前仍复用 `boss_fight`。想给这只 Boss 单独一首，
 
 | 项 | 说明 |
 |---|---|
-| `BeastExplosion.cs` | 当前未被调用，保留备用 |
-| `beast_explode.png` | 同上 |
+| ~~`BeastExplosion.cs`~~ | 2026-11-01 体检确认 0 引用，已移出项目（备份在 `D:\h\_backup_my-game_20261101\`） |
+| ~~`beast_explode.png`~~ | 同上，不再需要 |
 | `ChargeXSpeed` 与 `ChargeJumpVelocity` 的比例 | 跳跃初速度调高后，每段横移距离变短，一次冲锋要弹 3~4 段才到对面；如果嫌碎，把 `ChargeXSpeed` 一起提上去 |
 | 战斗重置 | 玩家死亡时 `BeastArena.ResetFight()` 会把 Boss 满血送回倒挂状态，**已打掉的血量不保留** |

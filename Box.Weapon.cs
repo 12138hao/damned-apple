@@ -5,15 +5,20 @@ using Godot;
 public partial class Box
 {
     /// <summary>捡起武器（由 Pickup 调用）。slot 从 1 开始。</summary>
-    public void GiveWeapon(int slot, WeaponData data = null)
+    /// <param name="equip">true = 捡起来就举在手上（木棍的旧行为）；false = 只进背包，要按数字键才拿出来</param>
+    public void GiveWeapon(int slot, WeaponData data = null, bool equip = true)
     {
         int index = slot - 1;
         if (data != null && index >= 0 && index < Weapons.Length)
         {
             Weapons[index] = data;      // 把武器存进这一格
         }
-        EquipAt(index);
-        _holding = true;
+
+        if (equip)
+        {
+            EquipAt(index);
+            _holding = true;
+        }
     }
 
     /// <summary>从 from 开始往后找下一个有武器的槽，找不到返回 -1。</summary>
@@ -27,8 +32,26 @@ public partial class Box
         return -1;
     }
 
+    /// <summary>
+    /// 从 from 之后往后找下一个有武器的槽（**不绕回**），没有则返回 -1。
+    /// 和上面那个绕回版不同：绕回版永远能找到东西，这个版能判断"后面已经没有了"。
+    /// </summary>
+    private int FindNextWeaponSlotAfter(int from)
+    {
+        for (int idx = from + 1; idx < Weapons.Length; idx++)
+        {
+            if (Weapons[idx] != null) return idx;
+        }
+        return -1;
+    }
+
     private void EquipAt(int index)
     {
+        // 换武器时把远程的挥动状态清干净，
+        // 否则从粉笔切到木棍时 _atkRanged 还是 true，木棍会打不出判定
+        _atkRanged = false;
+        _rangedFired = false;
+
         if (index >= 0 && index < Weapons.Length && Weapons[index] != null)
         {
             _currentSlot = index;
@@ -53,12 +76,28 @@ public partial class Box
         if (_weaponSprite == null) return;                  // _Ready 之前调用时保护
         if (Current == null) return;
 
-        if (Current.Icon != null) _weaponSprite.Texture = Current.Icon;
+        // 远程武器手上拿的是投射物本身（粉笔），粉笔盒由 UpdateChalkBox 画在左手
+        Texture2D tex = (Current.IsRanged && Current.ProjectileIcon != null)
+            ? Current.ProjectileIcon
+            : Current.Icon;
+        if (tex != null) _weaponSprite.Texture = tex;
 
-        // 握把对齐节点原点：偏移也要乘缩放，否则放大后握把会跑偏
-        _weaponSprite.Scale = Vector2.One * Current.SpriteScale;
-        _weaponSprite.Position = Current.SpriteOffset * Current.SpriteScale;
+        float sc = Current.IsRanged ? Current.ProjectileScale : Current.SpriteScale;
+
+        // 握把对齐节点原点：偏移也要乘缩放，否则放大后握把会跑偏。
+        // 粉笔以中心为握把，不做偏移。
+        _weaponSprite.Scale = Vector2.One * sc;
+        _weaponSprite.Position = Current.IsRanged ? Vector2.Zero : Current.SpriteOffset * Current.SpriteScale;
     }
+
+    /// <summary>
+    /// 手上那张贴图该不该显示。
+    /// 远程武器（粉笔）手上不画粉笔，只留左手那个粉笔盒，
+    /// 所以远程一律返回 false，不管 ShowWeaponSprite 开没开。
+    /// 近战照旧听 ShowWeaponSprite。
+    /// </summary>
+    private bool HandSpriteVisible =>
+        ShowWeaponSprite && !(Current != null && Current.IsRanged);
 
     /// <summary>
     /// 按武器参数调整攻击判定框。
@@ -108,20 +147,34 @@ public partial class Box
 
             if (i == 0)
             {
-                // 1 键在「有武器的槽」之间循环：举起 → 收起 → 下一个 → 举起 → 收起…
-                // 例：木棒举起 → 收起 → 长枪举起 → 收起 → 木棒举起
-                // 只要手上举着东西就先收起，不管当前是哪个槽
-                if (_holding)
+                // 1 键在「空手 + 所有武器」之间循环，一圈只出现一次空手：
+                //   空手 → 槽1 → 槽2 → … → 空手 → 槽1 → …
+                // 例（木棍在槽1、尺子在槽2）：空手 → 木棍 → 尺子 → 空手 → 木棍…
+                // 和原来的区别：原来「举着就收起」，会在每两把之间插一个空手；
+                // 现在只有「后面没有武器了」才收起，所以两把武器是连着切的。
+                if (!_holding)
                 {
-                    _holding = false;
+                    // 空手 → 拿起第一把（槽位最小的那把）
+                    int first = FindNextWeaponSlot(-1);
+                    if (first >= 0)
+                    {
+                        EquipAt(first);
+                        _holding = true;
+                    }
                 }
                 else
                 {
-                    int next = FindNextWeaponSlot(_currentSlot);
+                    // 手上举着 → 换下一把；后面再没有了就收起，回到空手
+                    int next = FindNextWeaponSlotAfter(_currentSlot);
                     if (next >= 0)
                     {
                         EquipAt(next);
                         _holding = true;
+                    }
+                    else
+                    {
+                        _holding = false;
+                        _currentSlot = -1;   // 清掉，下一轮从第一把重新开始
                     }
                 }
             }

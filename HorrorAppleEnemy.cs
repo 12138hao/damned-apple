@@ -56,6 +56,14 @@ public partial class HorrorAppleEnemy : Enemy
     [Export] public float RecoverTime = 0.5f;    // 扑完喘气
     [Export] public float LungeCooldown = 1.1f;  // 两次飞扑之间至少隔多久
 
+    // ─────────────────────────── 追踪
+    // 勾上就变成「追着玩家蹦」的怪：每次起跳前把朝向改成玩家那一侧。
+    // 默认 false —— 场景里原有的 horrorapple 一个字都不用改，行为跟以前一模一样。
+    // 目前只有野兽苹果吐出来的那四只会打开它。
+    [ExportGroup("追踪")]
+    [Export] public bool ChasePlayer = false;
+    [Export] public float ChaseRange = 1400f;    // 玩家超出这个水平距离就先不追（防止隔着半个场景乱跳）
+
     private enum St { Idle, Hop, Charge, Lunge, Recover }
     private St _st = St.Idle;
 
@@ -125,6 +133,7 @@ public partial class HorrorAppleEnemy : Enemy
         switch (_st)
         {
             case St.Idle:
+                if (ChasePlayer) UpdateChaseDirection();   // 站着等的时候也一直盯着玩家
                 if (TryStartLunge()) break;
                 if (_timer <= 0f) StartHop();
                 break;
@@ -244,6 +253,22 @@ public partial class HorrorAppleEnemy : Enemy
         return true;
     }
 
+    /// <summary>
+    /// 追踪模式下把朝向转向玩家。只在「起跳前」和「站着等」这两个时机调，
+    /// 不在飞扑途中调——飞到一半突然转身会变成原地抽搐。
+    /// </summary>
+    private void UpdateChaseDirection()
+    {
+        if (_player == null || !IsInstanceValid(_player)) return;
+        if (!_player.IsAlive) return;
+
+        float dx = _player.GlobalPosition.X - GlobalPosition.X;
+        if (Mathf.Abs(dx) > ChaseRange) return;   // 离太远就不追了，免得它一路蹦出战场
+        if (Mathf.Abs(dx) < 24f) return;          // 贴身时别来回翻，否则左右两套帧会闪
+
+        Direction = dx >= 0f ? 1 : -1;
+    }
+
     private void StartHop()
     {
         if (!IsOnFloor())
@@ -251,6 +276,9 @@ public partial class HorrorAppleEnemy : Enemy
             _timer = 0.1f;
             return;
         }
+
+        // 追踪模式：每次起跳前重新选一次方向，朝着玩家那一侧蹦
+        if (ChasePlayer) UpdateChaseDirection();
 
         // 前方是坑就别蹦了。能掉头就掉头，两边都是坑就原地等。
         // 只有「蹦」受这个限制；飞扑是主动攻击，允许往坑里扑。

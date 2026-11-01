@@ -17,7 +17,6 @@ public partial class BossEnemy : Enemy
     [ExportGroup("阶段")]
     [Export] public Texture2D Phase1Texture;          // boss_jump.png（32 帧跳跃动画）
     [Export] public int Phase1Hframes = 32;
-    [Export] public float Phase1Scale = 1.2f;         // 贴图 128×160，放大到 154×192
     [Export] public Texture2D Phase2Texture;          // boss_phase2.png（单帧大脸）
     [Export] public float Phase2Scale = 0.42f;        // 512×512 → 约 215×215
     [Export] public int PhaseChangeHpPercent = 50;    // 血量降到这个百分比切二阶段
@@ -40,7 +39,6 @@ public partial class BossEnemy : Enemy
 
     [ExportGroup("毒液")]
     [Export] public int SpitCount = 3;                // 一次喷几滩
-    [Export] public float SpitSpread = 110f;          // 【已弃用】曾用于等间距排列，现改为区域内随机
     [Export] public float SpitDelay = 0.35f;          // 每滩之间的延迟
     [Export] public float SpitDropY = 40f;            // 找不到地面时的兜底落点（相对 Boss 脚下）
     [Export] public float PoisonRadius = 140f;        // 每滩毒液半径（图是 464 宽扁的，要大一点）

@@ -20,7 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://bkwrg8cpcrqhk" path="res://bubing.png" id="26_xquxt"]
 [ext_resource type="Script" uid="uid://25b5frpd6y4j" path="res://Pickup.cs" id="60_pickup"]
 [ext_resource type="Resource" path="res://assets/weapons/bat.tres" id="61_bat"]
-[ext_resource type="Resource" path="res://assets/weapons/ruler.tres" id="62_ruler"]
+[ext_resource type="Resource" uid="uid://besjbx8a8lehc" path="res://assets/weapons/ruler.tres" id="62_ruler"]
 [ext_resource type="Texture2D" uid="uid://f5aw7frl8dqs" path="res://assets/ruler.png" id="63_rulericon"]
 [ext_resource type="Script" uid="uid://hxrbxsjner5p" path="res://EnemyManager.cs" id="70_enemymgr"]
 [ext_resource type="Script" uid="uid://c57ocnohmulys" path="res://WeaponAura.cs" id="71_aura"]
@@ -290,7 +290,6 @@ script = ExtResource("8_emarker")
 position = Vector2(421, 44)
 collision_mask = 2
 script = ExtResource("60_pickup")
-Slot = 2
 Weapon = ExtResource("62_ruler")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RulerPickup" unique_id=1645816691]

@@ -26,13 +26,15 @@ public partial class BossArena : Area2D
     [Export] public float WallShowDistance = 140f;   // 玩家离墙多近开始显形
     [Export] public float WallMaxAlpha = 0.5f;       // 最大不透明度（0.5 = 50% 透明）
 
+    [ExportGroup("音乐")]
+    [Export] public string BattleBgm = "boss_fight";              // 第一关大苹果的战斗曲
+
     [ExportGroup("相机")]
     [Export] public float FightZoom = 0.7f;                       // 越小看到越多
 
     [ExportGroup("UI")]
     [Export] public string BossName = "大苹果";
     [Export] public float BarWidth = 560f;      // 血条宽度（逻辑分辨率 800 宽时居中）
-    [Export] public float BarHeight = 22f;
     [Export] public float BarTop = 74f;         // 距屏幕顶部多远（要给名字留空间）
 
     [ExportGroup("对话")]
@@ -58,16 +60,8 @@ public partial class BossArena : Area2D
     private Sprite2D _wallLVis, _wallRVis;
     private int _lineIdx;
 
-    private float _shakeTime;
-    private float _shakeStrength;
-
-    private CanvasLayer _ui;
-    private ColorRect _barBg;
-    private ColorRect _barFill;
-    private TextureRect _barFrame;
-    private TextureRect _barIcon;
-    private Label _nameLabel;
-    private float _barInnerW;   // 框内可填充宽度
+    private readonly CameraShaker _shaker = new();
+    private BossHealthBar _bar;
 
     public override void _Ready()
     {
@@ -81,7 +75,11 @@ public partial class BossArena : Area2D
 
         _boss = FindBoss();
         if (_boss == null) GD.PushWarning("[BossArena] 没找到 BossEnemy 子节点");
-        else _boss.Died += OnBossDied;
+        else
+        {
+            _boss.Died += OnBossDied;
+            _boss.Invulnerable = true;   // 开战前上锁：区域外的远程攻击打不掉血
+        }
     }
 
     public override void _ExitTree()
@@ -104,9 +102,12 @@ public partial class BossArena : Area2D
 
         _active = true;
         _player = p;
+        // 玩家踏进区域 → 解除无敌，正式开打
+        if (_boss != null && IsInstanceValid(_boss)) _boss.Invulnerable = false;
         // 开战：换战斗音乐（打完 / 挑战失败都会切回场景原曲）
-        AudioManager.Instance?.PlayBgm("boss_fight", 0.8f);
+        AudioManager.Instance?.PlayBgm(BattleBgm, 0.8f);
         _cam = p.GetNodeOrNull<Camera2D>("Camera2D");
+        _shaker.Cam = _cam;      // 震屏组件跟着开战一起接上
 
         if (_cam != null)
         {
@@ -135,81 +136,17 @@ public partial class BossArena : Area2D
     // ---------------------------------------------------------------- 顶部 Boss 血条
     private void BuildUi()
     {
-        _ui = new CanvasLayer { Layer = 10 };
-        AddChild(_ui);
-
-        // 逻辑分辨率 800×450，血条居中
-        float x = (800f - BarWidth) * 0.5f;
-        float frameH = BarWidth * 0.25f * 0.3f;   // 金框图 4:1，再压到 30% 高度（细长条）
-        float frameY = BarTop - 14f;
-        float pad = frameH * 0.16f;           // 边框厚度（填充往里缩这么多）
-
-        _barInnerW = BarWidth - pad * 2f;
-
-        // ① 红色填充（先加，在底层）
-        _barFill = new ColorRect
-        {
-            Color = new Color(0.82f, 0.17f, 0.20f),
-            Position = new Vector2(x + pad, frameY + pad),
-            Size = new Vector2(_barInnerW, frameH - pad * 2f),
-        };
-        _ui.AddChild(_barFill);
-
-        // ② 金色边框（后加，盖在填充上；中间透明所以能看见填充）
-        _barFrame = new TextureRect
-        {
-            Texture = GD.Load<Texture2D>("res://assets/ui/boss/boss_bar_frame.png"),
-            Position = new Vector2(x, frameY),
-            Size = new Vector2(BarWidth, frameH),
-            ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
-            StretchMode = TextureRect.StretchModeEnum.Scale,
-        };
-        _ui.AddChild(_barFrame);
-        _barFrame.Size = new Vector2(BarWidth, frameH);   // 加完再设，否则被贴图原始尺寸覆盖
-
-        // ③ 苹果图标（血条最左边）
-        _barIcon = new TextureRect
-        {
-            Texture = GD.Load<Texture2D>("res://assets/ui/boss/boss_icon_apple.png"),
-            Position = new Vector2(x - 50f, frameY + frameH * 0.5f - 23f),
-            Size = new Vector2(46f, 46f),
-            ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
-            StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
-        };
-        _ui.AddChild(_barIcon);
-        _barIcon.Size = new Vector2(46f, 46f);
-
-        // ④ 名字
-        _nameLabel = new Label
-        {
-            Text = BossName,
-            Position = new Vector2(x, frameY - 28f),
-        };
-        _nameLabel.AddThemeFontSizeOverride("font_size", 22);
-        _nameLabel.AddThemeColorOverride("font_color", new Color(1f, 0.92f, 0.72f));
-        _nameLabel.AddThemeColorOverride("font_outline_color", new Color(0.06f, 0.04f, 0.06f));
-        _nameLabel.AddThemeConstantOverride("outline_size", 7);
-        _ui.AddChild(_nameLabel);
+        _bar = new BossHealthBar();
+        AddChild(_bar);
+        _bar.Setup(_boss, BossName, BarWidth, BarTop);
     }
 
-    private void UpdateBar()
-    {
-        if (_barFill == null || !IsInstanceValid(_barFill)) return;
-        if (_boss == null || !IsInstanceValid(_boss)) return;
-
-        float ratio = Mathf.Clamp(_boss.Hp / (float)Mathf.Max(1, _boss.MaxHp), 0f, 1f);
-        _barFill.Size = new Vector2(_barInnerW * ratio, _barFill.Size.Y);
-    }
+    private void UpdateBar() => _bar?.Refresh();
 
     private void RemoveUi()
     {
-        if (_ui != null && IsInstanceValid(_ui)) _ui.QueueFree();
-        _ui = null;
-        _barBg = null;
-        _barFill = null;
-        _barFrame = null;
-        _barIcon = null;
-        _nameLabel = null;
+        if (_bar != null && IsInstanceValid(_bar)) _bar.QueueFree();
+        _bar = null;
     }
 
     public override void _Process(double delta)
@@ -251,40 +188,12 @@ public partial class BossArena : Area2D
 
     private void BuildWalls()
     {
-        _wallL = MakeWall(-ArenaSize.X * 0.5f);
-        _wallR = MakeWall(ArenaSize.X * 0.5f);
+        float h = ArenaSize.Y;
+        float halfW = ArenaSize.X * 0.5f;
+        _wallL = ArenaWalls.Make(this, new Vector2(-halfW, 0f), h, WallThickness, WallVisualWidth, h * 1.15f);
+        _wallR = ArenaWalls.Make(this, new Vector2(halfW, 0f), h, WallThickness, WallVisualWidth, h * 1.15f);
         _wallLVis = _wallL.GetNodeOrNull<Sprite2D>("Visual");
         _wallRVis = _wallR.GetNodeOrNull<Sprite2D>("Visual");
-    }
-
-    private StaticBody2D MakeWall(float offsetX)
-    {
-        var wall = new StaticBody2D
-        {
-            CollisionLayer = 1,      // 和地形同层，玩家/敌人都会被挡住
-            CollisionMask = 0,
-            Position = new Vector2(offsetX, 0f),
-        };
-        wall.AddChild(new CollisionShape2D
-        {
-            Shape = new RectangleShape2D
-            {
-                Size = new Vector2(WallThickness, ArenaSize.Y)
-            }
-        });
-
-        // 空气墙视觉：初始完全透明，玩家靠近才渐显
-        var vis = new Sprite2D
-        {
-            Name = "Visual",
-            Texture = GD.Load<Texture2D>("res://assets/ui/boss/air_wall.png"),
-            Modulate = new Color(1f, 1f, 1f, 0f),
-            Scale = new Vector2(WallVisualWidth / 512f, ArenaSize.Y / 2048f * 1.15f),
-        };
-        wall.AddChild(vis);
-
-        AddChild(wall);
-        return wall;
     }
 
     /// <summary>
@@ -308,6 +217,7 @@ public partial class BossArena : Area2D
         {
             _boss.Respawn();       // 回满血 + 回出生点 + 清死亡状态
             _boss.Dormant = true;  // 重新待机，等玩家再进来
+            _boss.Invulnerable = true;   // 重新上锁，等玩家再踏进来才解锁
         }
 
         RemoveUi();
@@ -337,65 +247,25 @@ public partial class BossArena : Area2D
     /// <summary>玩家靠近哪面墙，哪面墙就渐显（最多 50% 不透明度）。</summary>
     private void UpdateWallAlpha(float dt)
     {
-        if (_player == null || !IsInstanceValid(_player)) return;
-
         float halfW = ArenaSize.X * 0.5f;
-        float px = _player.GlobalPosition.X;
-        float dist = WallShowDistance <= 0.01f ? 1f : WallShowDistance;
-
-        float aL = Mathf.Clamp(1f - Mathf.Abs(px - (GlobalPosition.X - halfW)) / dist, 0f, 1f) * WallMaxAlpha;
-        float aR = Mathf.Clamp(1f - Mathf.Abs(px - (GlobalPosition.X + halfW)) / dist, 0f, 1f) * WallMaxAlpha;
-
-        FadeTo(_wallLVis, aL, dt);
-        FadeTo(_wallRVis, aR, dt);
-    }
-
-    private static void FadeTo(Sprite2D vis, float targetAlpha, float dt)
-    {
-        if (vis == null || !IsInstanceValid(vis)) return;
-        var c = vis.Modulate;
-        c.A = Mathf.Lerp(c.A, targetAlpha, Mathf.Min(1f, dt * 8f));
-        vis.Modulate = c;
+        ArenaWalls.UpdateAlpha(_player,
+            GlobalPosition.X - halfW, GlobalPosition.X + halfW,
+            WallShowDistance, WallMaxAlpha,
+            _wallLVis, _wallRVis, dt);
     }
 
 
     /// <summary>每帧推进震屏。独立于 _active，死亡演出的重砸也能震。</summary>
-    private void UpdateShake(float dt)
-    {
-        if (_cam == null || !IsInstanceValid(_cam)) return;
-
-        if (_shakeTime > 0f)
-        {
-            _shakeTime -= dt;
-
-            // 必须「赋值」而不是在上一帧基础上累加：
-            // 累加会留下残差，而 Box 每帧只重设 Offset.Y，Offset.X 没人管 → 永久偏移。
-            float sx = (GD.Randf() - 0.5f) * _shakeStrength * 2f;
-            _cam.Offset = new Vector2(sx, _cam.Offset.Y);
-
-            if (_shakeTime <= 0f)
-            {
-                _shakeStrength = 0f;
-                _cam.Offset = new Vector2(0f, _cam.Offset.Y);
-            }
-        }
-        else if (_cam.Offset.X != 0f)
-        {
-            _cam.Offset = new Vector2(0f, _cam.Offset.Y);
-        }
-    }
+    private void UpdateShake(float dt) => _shaker.Update(dt);
 
     /// <summary>震屏：叠加在相机的 Offset 上（Box 每帧会重设 Offset，所以不会累积）。</summary>
-    public void Shake(float strength, float duration)
-    {
-        _shakeStrength = Mathf.Max(_shakeStrength, strength);
-        _shakeTime = Mathf.Max(_shakeTime, duration);
-    }
+    public void Shake(float strength, float duration) => _shaker.Shake(strength, duration);
 
     private void RestoreCamera()
     {
         if (_cam == null || !IsInstanceValid(_cam)) return;
 
+        _shaker.Reset();
         _cam.PositionSmoothingEnabled = true;   // 恢复跟随平滑
         _cam.Zoom = Vector2.One;
         _cam.Position = Vector2.Zero;

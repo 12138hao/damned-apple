@@ -57,4 +57,58 @@ public partial class WeaponData : Resource
     // AuraLength = 0 就不画。
     [Export] public float AuraLength = 0f;      // 剑气长度
     [Export] public float AuraStartDist = 38f;  // 从武器尖端往外多少像素开始
+
+    // ─────────────────────────── 远程武器（粉笔这类）
+    // 勾上 IsRanged 后，这把武器**不再走挥击判定**（不用 RangeScale / 蓄力 / 突刺），
+    // 改成：按住左键 → 按 Cooldown 节奏发射投射物，投射物飞满 MaxDistance 消失。
+    [ExportGroup("远程武器")]
+    // 勾上 = 远程武器。这里写成属性而不是普通字段，是为了在勾选的瞬间刷新检查器：
+    // 远程武器根本不读 DamageMin / DamageMax，勾上后这两个字段会被下面的
+    // _ValidateProperty 直接藏掉，避免改了没反应还以为伤害没导出。
+    private bool _isRanged = false;
+    [Export]
+    public bool IsRanged
+    {
+        get => _isRanged;
+        set
+        {
+            if (_isRanged == value) return;
+            _isRanged = value;
+            NotifyPropertyListChanged();
+        }
+    }
+    [Export] public int RangedDamage = 30;          // 每一发的伤害
+    [Export] public float RangedSpeed = 900f;       // 投射物飞行速度（px/s）
+    [Export] public float RangedMaxDistance = 400f; // 最远飞多远就消失（px）
+    /// <summary>
+    /// 内置发射冷却（秒）。从「起手」那一刻开始计时，所以实际射速就等于这个数，
+    /// 不会变成「冷却 + 挥臂时长」。
+    /// 填到 RangedWindup 以下没有意义：会被 Mathf.Max 自动抬回 RangedWindup（动作还没做完发不出下一发）。
+    /// 粉笔盒外面那圈冷却弧的长度也按它算：弧长 = 冷却秒数 × RangedCooldownArc.DegPerSecond。
+    /// </summary>
+    [Export] public float RangedCooldown = 1.5f;
+    [Export] public float RangedWindup = 0.22f;     // 挥臂动作时长（到 55% 时射出）
+    [Export] public Texture2D ProjectileIcon;       // 投射物贴图（留空则用 Icon）
+    [Export] public float ProjectileScale = 0.5f;   // 投射物贴图缩放（同时决定长度和基础粗细）
+    [Export] public float ProjectileThickness = 1.4f; // 只加粗不加长：横向额外放大这么多倍
+    [Export] public float ProjectileRadius = 5f;    // 投射物命中判定半径
+    [Export] public float ProjectileKnockback = 160f; // 命中后把敌人推多远
+    [Export] public float ProjectileSpawnDist = 22f;  // 从手前方多远处生成（避免贴脸时生成在身后）
+
+    /// <summary>
+    /// 检查器里显示哪些字段的最后一道闸。
+    /// 远程武器（IsRanged = true）走的是 RangedDamage，不读 DamageMin / DamageMax，
+    /// 所以把这两个从检查器里去掉——留着只会让人改了没反应。
+    /// 只摘掉 Editor 标志位，Storage 保留，.tres 里已经写好的值不受影响。
+    /// </summary>
+    public override void _ValidateProperty(Godot.Collections.Dictionary property)
+    {
+        if (!_isRanged) return;
+
+        string name = property["name"].AsString();
+        if (name != "DamageMin" && name != "DamageMax") return;
+
+        long usage = property["usage"].AsInt64();
+        property["usage"] = usage & ~(long)PropertyUsageFlags.Editor;
+    }
 }

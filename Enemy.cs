@@ -40,6 +40,12 @@ public partial class Enemy : CharacterBody2D
     [Export] public float KnockbackUpRatio = 0.32f; // 击退的垂直分量比例，越大越往上飞
     [Export] public bool ImmuneToKnockback = false; // 勾上后受击不会被推开（Boss 用）
 
+    [ExportGroup("音效")]
+    // 每种怪可以有自己的受击 / 死亡音。默认沿用通用的 enemy_hurt，
+    // 所以老怪一个字都不用改；新 Boss 想跟别人区分开就填自己的名字。
+    [Export] public string HurtSfx = "enemy_hurt";
+    [Export] public string DeathSfx = "enemy_hurt";
+
     [ExportGroup("接触判定")]
     // 玩家离开判定区后，还继续判定多久（秒）。
     // 高速穿过、或者被子弹击退的瞬间，"进入"和"离开"可能落在同一帧，
@@ -50,6 +56,15 @@ public partial class Enemy : CharacterBody2D
 
     /// <summary>当前血量（只读，给 UI 用）。</summary>
     public int Hp => _hp;
+
+    /// <summary>
+    /// 无敌：为 true 时任何攻击都不掉血、不击退、不播受击音，也不会被「打一下就苏醒」。
+    /// 由 BossArena / BeastArena 在「玩家还没踏进战斗区域」时打开，开战瞬间关掉。
+    /// 目的是防止玩家站在区域外远程偷袭，把 Boss 提前唤醒甚至直接打残。
+    /// 默认 false —— 普通小怪完全不受影响。
+    /// </summary>
+    public bool Invulnerable { get; set; }
+
     protected Sprite2D _sprite;
     protected RayCast2D _rayLeft;
     protected RayCast2D _rayRight;
@@ -62,7 +77,7 @@ public partial class Enemy : CharacterBody2D
     private bool _leftSinceEnter;  // 是否已经"真的离开"过（超过宽限时间）
 
     private int _hp;
-    private float _hitInvuln;
+    protected float _hitInvuln;
     private Vector2 _knockVel;
     private float _knockTimer;
     private float _knockRecover;   // 击退刚结束的恢复期，期间不判断掉头
@@ -247,6 +262,9 @@ public partial class Enemy : CharacterBody2D
     public bool TryTakeHit(int dmg, Vector2 from, float knockback, float upRatio = -1f, bool ignoreInvuln = false)
     {
         if (_dead) return false;
+        // 开战前的 Boss：免疫一切伤害。放在最前面，
+        // 连「受击无敌计时」都不会被刷新，所以不存在「无敌期间蹭出无敌帧」的问题。
+        if (Invulnerable) return false;
         // 受击无敌用来防止「一次挥击打多段」。
         // 空手出拳是单帧判定，天然只命中一次，所以可以传 ignoreInvuln = true 让连击打得出来。
         if (!ignoreInvuln && _hitInvuln > 0f) return false;
@@ -261,7 +279,7 @@ public partial class Enemy : CharacterBody2D
             return true;
         }
 
-        AudioManager.Instance?.PlaySfx("enemy_hurt", 0.8f, 1f + GD.Randf() * 0.1f);
+        AudioManager.Instance?.PlaySfx(HurtSfx, 0.8f, 1f + GD.Randf() * 0.1f);
 
         // 被打退：从受击方向反着弹开（Boss 免疫击退，否则会被硬控到死）
         if (!ImmuneToKnockback)
@@ -356,7 +374,7 @@ public partial class Enemy : CharacterBody2D
 
         _hp = 0;
         _dead = true;
-        AudioManager.Instance?.PlaySfx("enemy_hurt", 0.9f, 0.95f + GD.Randf() * 0.1f);
+        AudioManager.Instance?.PlaySfx(DeathSfx, 0.9f, 0.95f + GD.Randf() * 0.1f);
         _deadTimer = DeadTime;
         if (_bar != null) _bar.Visible = false;
         UpdateBar();

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://0fg700tciwp8"]
+
+[ext_resource type="Script" uid="uid://b1ju6mifrgffb" path="res://WeaponData.cs" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://can7tta74pr3m" path="res://assets/weapons/chalk_box.png" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://bxtpb37fhp82a" path="res://assets/weapons/chalk_stick.png" id="3_proj"]
+
+[resource]
+script = ExtResource("1_script")
+DisplayName = "粉笔"
+DamageMin = 50
+DamageMax = 50
+KnockbackMin = 160.0
+KnockbackMax = 160.0
+AttackTime = 0.22
+RangeScale = 3.0
+Icon = ExtResource("2_icon")
+AngleOffset = 90.0
+SpriteOffset = Vector2(0, 0)
+SpriteScale = 0.42
+IsRanged = true
+RangedDamage = 50
+RangedWindup = 0.22
+ProjectileIcon = ExtResource("3_proj")
+ProjectileThickness = 1.4

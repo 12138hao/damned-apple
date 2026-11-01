@@ -1,0 +1,108 @@
+[gd_scene format=3 uid="uid://pejwog47igpt"]
+
+[ext_resource type="Script" uid="uid://bho7bc45erddj" path="res://MovingPlatform.cs" id="1_tiqs3"]
+[ext_resource type="Texture2D" uid="uid://dc17mgafv1h0q" path="res://像素风小岩石平台生成 (1).png" id="2_bmjtd"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6dmkw"]
+size = Vector2(52, 45)
+
+[node name="Node2D" type="Node2D" unique_id=733665224]
+
+[node name="MovingPlatform" type="AnimatableBody2D" parent="." unique_id=640146379]
+position = Vector2(-80, 432)
+script = ExtResource("1_tiqs3")
+Travel = Vector2(320, 0)
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="MovingPlatform" unique_id=359110389]
+position = Vector2(78, 17.5)
+shape = SubResource("RectangleShape2D_6dmkw")
+
+[node name="Sprite2D" type="Sprite2D" parent="MovingPlatform" unique_id=1236570540]
+position = Vector2(78, 46)
+scale = Vector2(0.05147059, 0.05376838)
+texture = ExtResource("2_bmjtd")
+
+[node name="MovingPlatform2" type="AnimatableBody2D" parent="." unique_id=1005313920]
+position = Vector2(512, 256)
+script = ExtResource("1_tiqs3")
+Travel = Vector2(-192, 128)
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="MovingPlatform2" unique_id=1159027146]
+position = Vector2(78, 17.5)
+shape = SubResource("RectangleShape2D_6dmkw")
+
+[node name="Sprite2D" type="Sprite2D" parent="MovingPlatform2" unique_id=401669660]
+position = Vector2(78, 46)
+scale = Vector2(0.05147059, 0.05376838)
+texture = ExtResource("2_bmjtd")
+
+[node name="MovingPlatform3" type="AnimatableBody2D" parent="." unique_id=1136076028]
+position = Vector2(704, 256)
+script = ExtResource("1_tiqs3")
+Travel = Vector2(192, 192)
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="MovingPlatform3" unique_id=722921578]
+position = Vector2(78, 17.5)
+shape = SubResource("RectangleShape2D_6dmkw")
+
+[node name="Sprite2D" type="Sprite2D" parent="MovingPlatform3" unique_id=895586047]
+position = Vector2(78, 46)
+scale = Vector2(0.05147059, 0.05376838)
+texture = ExtResource("2_bmjtd")
+
+[node name="MovingPlatform4" type="AnimatableBody2D" parent="." unique_id=390256750]
+position = Vector2(960, 320)
+script = ExtResource("1_tiqs3")
+Travel = Vector2(-192, -192)
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="MovingPlatform4" unique_id=803491082]
+position = Vector2(78, 17.5)
+shape = SubResource("RectangleShape2D_6dmkw")
+
+[node name="Sprite2D" type="Sprite2D" parent="MovingPlatform4" unique_id=395316919]
+position = Vector2(78, 46)
+scale = Vector2(0.05147059, 0.05376838)
+texture = ExtResource("2_bmjtd")
+
+[node name="MovingPlatform5" type="AnimatableBody2D" parent="." unique_id=1403796246]
+position = Vector2(1344, 192)
+script = ExtResource("1_tiqs3")
+Travel = Vector2(-512, 0)
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="MovingPlatform5" unique_id=135792552]
+position = Vector2(78, 17.5)
+shape = SubResource("RectangleShape2D_6dmkw")
+
+[node name="Sprite2D" type="Sprite2D" parent="MovingPlatform5" unique_id=297194318]
+position = Vector2(78, 46)
+scale = Vector2(0.05147059, 0.05376838)
+texture = ExtResource("2_bmjtd")
+
+[node name="MovingPlatform6" type="AnimatableBody2D" parent="." unique_id=1469529695]
+position = Vector2(1600, 264)
+script = ExtResource("1_tiqs3")
+Travel = Vector2(-192, 64)
+TripTime = 1.0
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="MovingPlatform6" unique_id=493618128]
+position = Vector2(78, 17.5)
+shape = SubResource("RectangleShape2D_6dmkw")
+
+[node name="Sprite2D" type="Sprite2D" parent="MovingPlatform6" unique_id=272669980]
+position = Vector2(78, 46)
+scale = Vector2(0.05147059, 0.05376838)
+texture = ExtResource("2_bmjtd")
+
+[node name="MovingPlatform7" type="AnimatableBody2D" parent="." unique_id=1851346399]
+position = Vector2(2112, 384)
+script = ExtResource("1_tiqs3")
+Travel = Vector2(-512, 0)
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="MovingPlatform7" unique_id=955069963]
+position = Vector2(78, 17.5)
+shape = SubResource("RectangleShape2D_6dmkw")
+
+[node name="Sprite2D" type="Sprite2D" parent="MovingPlatform7" unique_id=1017895779]
+position = Vector2(78, 46)
+scale = Vector2(0.05147059, 0.05376838)
+texture = ExtResource("2_bmjtd")
