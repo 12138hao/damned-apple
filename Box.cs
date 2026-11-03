@@ -42,7 +42,8 @@ public partial class Box : CharacterBody2D
     [Export] public float VehicleMuzzleIconY = 2f;
     [Export] public int VehicleBulletPerShot = 1;       // 点一次鼠标发几发
     [Export] public float VehicleBulletSpreadY = 10f;   // 多发时每发纵向间隔
-    [Export] public float VehicleBulletKnockback = 120f; // 子弹把敌人推多远
+    [Export] public float VehicleBulletKnockback = 0f;  // 子弹把敌人推多远（0 = 完全不推，只掉血）
+    [Export] public float VehicleFireCooldown = 0.3f;   // 内置射击冷却（秒）：两次开火之间至少隔这么久
     [Export] public float VehicleFootTweakY = 0f;       // 车轮对齐后如果还想微调，正数往下
     [Export] public float VehicleBodyWidth = 56f;
     [Export] public float VehicleBodyHeight = 48f;
@@ -122,6 +123,9 @@ public partial class Box : CharacterBody2D
     private bool _chargeSfxPlayed;    // 这一轮蓄力是否已经响过起手音（短按不响）
     private bool _hasVehicle;                 // 捡到载具没有
     private bool _inVehicle;                  // 正在乘坐
+    private float _vehicleCd;                 // 载具内置射击冷却剩余时间
+    private float _vehicleCdTotal;            // 这次冷却一共多长（画冷却弧要用它算弧长）
+    private RangedCooldownArc _vehicleCdArc;  // 炮口那圈冷却弧（只有坐在车里才显示）
     private Texture2D _vehicleSheet;
     private int _vehicleHframes = 1;
     private Texture2D _baseTexture;           // 原来的角色贴图
@@ -133,6 +137,13 @@ public partial class Box : CharacterBody2D
     public bool HasVehicle => _hasVehicle;
     public bool InVehicle => _inVehicle;
     private WeaponAura _aura;                 // 剑气特效（Weapon 下的子节点）
+    // ── 攀爬（绳索）──
+    // 绳子自己管「玩家在不在范围内」，这里只记当前碰到的是哪根绳。
+    // 真正上下移动在 Box.Move.cs 的 UpdateClimb 里。
+    public Rope CurrentRope { get; set; }
+    public bool IsClimbing => _climbing;
+    private bool _climbing;                   // 正在爬绳
+    private float _grabCooldown;              // 松手后的短暂锁定，防止在绳顶反复抓/松
     private Shape2D _baseWeaponShape;
     private Vector2 _baseWeaponShapePos = new Vector2(17f, -16f);
     private CircleShape2D _fistShape;
@@ -153,6 +164,9 @@ public partial class Box : CharacterBody2D
     private Sprite2D _chalkBox;         // 左手那个粉笔盒（只有远程武器才显示）
     private RangedCooldownArc _cdArc;   // 粉笔盒外面的那圈冷却弧（同样只有远程武器才显示）
     public int CurrentSlot => _currentSlot;
+
+    /// <summary>武器是真的举在手上（true）还是只躺在背包里（false）。HUD 的武器架靠它高亮。</summary>
+    public bool Holding => _holding;
     private ChargeArc _chargeArc;
     private Camera2D _cam;
     private float _camBaseY;      // 镜头基准高度，从场景里 Camera2D.offset.Y 读进来
@@ -216,6 +230,12 @@ public partial class Box : CharacterBody2D
         // 只在拿着远程武器且有冷却时才画，其他场景不会多出节点。
         _cdArc = new RangedCooldownArc();
         AddChild(_cdArc);
+
+        // 载具背后的那圈冷却弧。同样在代码里建：
+        // 弧长 = 冷却秒数 × DegPerSecond，0.3 × 300 = 90°（比粉笔的 120° 短一截）。
+        // 想再短/再长就只改这个数：600 → 180°、300 → 90°、200 → 60°。
+        _vehicleCdArc = new RangedCooldownArc { DegPerSecond = 300f };
+        AddChild(_vehicleCdArc);
 
         _fistShape = new CircleShape2D { Radius = FistRadius };
         _spawnPoint = GlobalPosition;
@@ -291,6 +311,7 @@ public partial class Box : CharacterBody2D
         UpdateTimers(dt);
         UpdateCrouch(inputLocked);   // 蹲下要在移动/跳跃之前决定，移动会读 IsCrouching
         HandleDropThrough(dt);
+        UpdateClimb(dt, inputLocked);   // 攀爬要排在重力和移动之前，它自己设 Velocity
         ApplyGravity(dt);
         UpdateCameraLook(dt);
         UpdateHorizontalMove(dt, inputLocked);

@@ -78,6 +78,8 @@ public partial class Pickup : Area2D
 
         var copy = (WeaponData)Weapon.Duplicate();
         copy.RangedCooldown = RangedCooldownOverride;
+        // 副本的 ResourcePath 是空字符串（实测），存档靠 SourcePath 回查原 .tres
+        copy.SourcePath = Weapon.ResourcePath;
         return copy;
     }
 

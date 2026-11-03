@@ -125,6 +125,7 @@ public partial class Box
         _stateTimer = DeathTime;
         _hurtTimer = 0f;
         _knockTimer = 0f;
+        _climbing = false;                       // 爬绳时被打死/摔死要松手，否则复活后还卡在攀爬状态
         Hp = 0;                                  // 掉崖自杀时血条也要归零
         EmitSignal(SignalName.HpChanged, Hp, MaxHp);
 

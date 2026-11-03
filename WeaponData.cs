@@ -7,6 +7,13 @@ using Godot;
 [GlobalClass]
 public partial class WeaponData : Resource
 {
+    /// <summary>
+    /// 这把武器来自哪个 .tres。运行时 Duplicate 出来的副本 ResourcePath 是空字符串
+    /// （Godot 行为，实测确认），存档只能靠这个字段回查原资源。
+    /// 由 Pickup.BuildWeapon 负责填；原资源自己不用填，ResourcePath 就是有效的。
+    /// </summary>
+    public string SourcePath;
+
     [ExportGroup("基本信息")]
     [Export] public string DisplayName = "武器";
 

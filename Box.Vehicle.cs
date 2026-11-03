@@ -92,23 +92,36 @@ public partial class Box
         }
     }
 
+    /// <summary>炮口在 Box 局部坐标里的位置（朝左时自动镜像）。</summary>
+    private Vector2 GetVehicleMuzzleLocal()
+    {
+        bool toRight = _aimDir.X >= 0f;
+        // 炮口跟着贴图走：贴图中心在 Offset，炮口相对中心 (iconX, iconY)，整体再乘缩放
+        float iconCenterY = _sprite.Offset.Y;
+        float muzzleX = (toRight ? VehicleMuzzleIconX : -VehicleMuzzleIconX) * _vehicleSpriteScale;
+        float muzzleY = (iconCenterY + VehicleMuzzleIconY) * _vehicleSpriteScale;
+        return new Vector2(muzzleX, muzzleY);
+    }
+
     /// <summary>
     /// 载具状态下的左键：从炮管水平发射一发子弹。
     /// 鼠标在左边就从左炮口往左打，在右边就从右炮口往右打（不做 360 度瞄准）。
+    /// 按住连发，两次之间由 VehicleFireCooldown 卡节奏（内置 CD，不是动画冷却）。
     /// </summary>
-    private void UpdateVehicleAttack(float dt)
+    private void UpdateVehicleAttack()
     {
-        if (!Input.IsActionJustPressed("attack")) return;
+        if (_vehicleCd > 0f) return;                      // 还在内置冷却里
+        if (!Input.IsActionPressed("attack")) return;     // 按住才连发，点一下只发一发
+
+        // 起手立刻打上冷却，避免同一帧被重复调用时连发两发
+        _vehicleCd = Mathf.Max(0.01f, VehicleFireCooldown);
+        _vehicleCdTotal = _vehicleCd;   // 冷却弧按这个总时长算弧长
 
         AudioManager.Instance?.PlaySfx("vehicle_shoot", 0.8f, 1f + GD.Randf() * 0.06f);
 
         bool toRight = _aimDir.X >= 0f;
         Vector2 dir = toRight ? Vector2.Right : Vector2.Left;
-
-        // 炮口跟着贴图走：贴图中心在 Offset，炮口相对中心 (iconX, iconY)，整体再乘缩放
-        float iconCenterY = _sprite.Offset.Y;
-        float muzzleX = (toRight ? VehicleMuzzleIconX : -VehicleMuzzleIconX) * _vehicleSpriteScale;
-        float muzzleY = (iconCenterY + VehicleMuzzleIconY) * _vehicleSpriteScale;
+        Vector2 muzzle = GetVehicleMuzzleLocal();
 
         // 子弹加到场景根，不然会跟着玩家一起动
         Node root = GetTree().CurrentScene ?? GetTree().Root;
@@ -128,8 +141,31 @@ public partial class Box
             };
 
             root.AddChild(bullet);
-            bullet.GlobalPosition = GlobalPosition + new Vector2(muzzleX, muzzleY + offsetY);
+            bullet.GlobalPosition = GlobalPosition + new Vector2(muzzle.X, muzzle.Y + offsetY);
             bullet.Launch(dir);
         }
+    }
+
+    /// <summary>
+    /// 主角背后那圈内置冷却弧（和粉笔盒外面那圈同一个类）。
+    /// 只在「坐在车里 + 冷却还没走完」时显示，下车或者冷却结束就整条消失。
+    /// </summary>
+    private void UpdateVehicleCdArc()
+    {
+        if (_vehicleCdArc == null) return;
+
+        if (!_inVehicle || _vehicleCd <= 0.001f || _vehicleCdTotal <= 0.001f)
+        {
+            _vehicleCdArc.Clear();
+            return;
+        }
+
+        _vehicleCdArc.SetCooldown(_vehicleCdTotal, _vehicleCd);
+
+        // 位置：炮口的**反方向**（X 取负），高度和炮口一样 —— 也就是车屁股那一侧。
+        // 朝左时用 Scale.X = -1 把整条弧镜像过去，省得在脚本里算反向角度。
+        Vector2 muzzle = GetVehicleMuzzleLocal();
+        _vehicleCdArc.Position = new Vector2(-muzzle.X, muzzle.Y);
+        _vehicleCdArc.Scale = new Vector2(_aimDir.X >= 0f ? 1f : -1f, 1f);
     }
 }

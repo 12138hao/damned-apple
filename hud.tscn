@@ -1,9 +1,21 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" uid="uid://x4ix41t4c7x0" path="res://Hud.cs" id="1_hud"]
 [ext_resource type="Texture2D" uid="uid://dablfatrsgdr8" path="res://assets/ui/hp_bar_bg.png" id="2_hpbg"]
 [ext_resource type="Texture2D" uid="uid://d0laxjl2l4vxg" path="res://assets/ui/hp_bar_fill.png" id="3_hpfill"]
 [ext_resource type="Texture2D" uid="uid://c8jujlwtbv8mu" path="res://assets/ui/hp_bar_border.png" id="4_hpborder"]
+[ext_resource type="Texture2D" path="res://assets/ui/weapon_rack_frame.png" id="5_rack"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rack"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+texture = ExtResource("5_rack")
+texture_margin_left = 10.0
+texture_margin_top = 10.0
+texture_margin_right = 10.0
+texture_margin_bottom = 10.0
 
 [node name="Hud" type="CanvasLayer"]
 script = ExtResource("1_hud")
@@ -29,6 +41,13 @@ theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 20
 text = "100 / 100"
 vertical_alignment = 1
+
+[node name="WeaponRack" type="Panel" parent="."]
+offset_left = 20.0
+offset_top = 38.0
+offset_right = 82.0
+offset_bottom = 100.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_rack")
 
 [node name="DeathLabel" type="Label" parent="."]
 visible = false

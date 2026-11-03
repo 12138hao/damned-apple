@@ -83,7 +83,10 @@ public partial class RevivePoint : Area2D
                 GameState.I.RevivePosition = GlobalPosition;
             }
 
-            // ④ 自己消失
+            // ④ 写盘：跨进程能读到的存档
+            SaveSystem.Save();
+
+            // ⑤ 自己消失
             ApplyTaken(true);
         }
     }

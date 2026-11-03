@@ -138,6 +138,10 @@ public partial class Box
 
         UpdateChalkBox();       // 左手粉笔盒（只有远程武器才显示）
         UpdateRangedCdArc();    // 粉笔盒外面的冷却弧
+        // 载具的射击冷却每帧都走（不在车里也在走，下车再上车不会卡着不放），
+        // 这样冷却弧也能在冷却结束的那一帧及时消失。
+        _vehicleCd = Mathf.Max(0f, _vehicleCd - dt);
+        UpdateVehicleCdArc();
 
         // 突刺：武器沿朝向往前送出去再收回（sin 曲线，出去一半再回来）
         float thrustExtend = 0f;
@@ -277,7 +281,7 @@ public partial class Box
         // 载具：左键发射子弹，不处理武器攻击（对话中不响应）
         if (_inVehicle)
         {
-            if (!inputLocked) UpdateVehicleAttack(dt);
+            if (!inputLocked) UpdateVehicleAttack();
         }
         // 远程武器：没有蓄力，按住左键就按内置 CD 一直发射
         else if (!inputLocked && _holding && Current != null && Current.IsRanged)

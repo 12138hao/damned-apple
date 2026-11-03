@@ -59,6 +59,16 @@ public partial class GameState : Node
     /// <summary>标记物品已被捡走。</summary>
     public void MarkPickedUp(string id) => _records.MarkPickedUp(id);
 
+    /// <summary>已聊过的 NPC 键（存档序列化用）。</summary>
+    public IEnumerable<string> TalkedKeys => _records.Talked;
+
+    /// <summary>已捡过的物品键（存档序列化用）。</summary>
+    public IEnumerable<string> PickedKeys => _records.PickedUp;
+
+    /// <summary>从存档恢复「聊过 / 捡过」记录。</summary>
+    public void RestoreRecords(IEnumerable<string> talked, IEnumerable<string> picked)
+        => _records.Restore(talked, picked);
+
     /// <summary>切场景前调用：记下血量 + 出生点 + 武器。</summary>
     /// <summary>切场景后要给玩家的受击无敌时长（跨场景复活用）。</summary>
     public float PendingInvuln = 0f;
@@ -135,5 +145,17 @@ public partial class GameState : Node
         RevivePointKey = null;
         ReviveScenePath = null;
         RevivePosition = Vector2.Zero;
+    }
+
+    /// <summary>
+    /// 开新游戏：清空全部进度。
+    /// 和 <see cref="Reset"/> 的区别是连「聊过的 NPC」也清掉——
+    /// Reset 保留对话记录（回存档点时要保留），新游戏则应该全清。
+    /// </summary>
+    public void NewGame()
+    {
+        Reset();
+        _records.Reset();
+        DialogueActive = false;
     }
 }

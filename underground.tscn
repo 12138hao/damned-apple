@@ -53,6 +53,10 @@
 [ext_resource type="Texture2D" uid="uid://b14qqkihdwqri" path="res://assets/boss/beast/beast_left.png" id="51_beastleft"]
 [ext_resource type="Texture2D" uid="uid://uib0qlolnnjd" path="res://assets/boss/beast/beast_roar.png" id="52_beastroar"]
 [ext_resource type="Texture2D" uid="uid://dwqtf3gujbp6x" path="res://assets/boss/beast/beast_explode.png" id="53_beastexplode"]
+[ext_resource type="Script" uid="uid://bsbl1hc1i2iua" path="res://Rope.cs" id="54_rope"]
+[ext_resource type="Texture2D" uid="uid://cvpuxp1mdns42" path="res://assets/rope.png" id="55_ropetex"]
+[ext_resource type="Texture2D" uid="uid://5qupia6vu86g" path="res://w-marker-64.png" id="56_wtex"]
+[ext_resource type="Script" uid="uid://cfbu78v7hq1ko" path="res://AutoPortal.cs" id="57_portal"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0boax"]
 size = Vector2(32, 32)
@@ -117,6 +121,12 @@ size = Vector2(334, 410)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_aj463"]
 size = Vector2(25.999756, 567)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ropezone"]
+size = Vector2(44, 500)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_portal"]
+size = Vector2(60, 30)
+
 [node name="Main2" type="Node2D" unique_id=1867660586]
 
 [node name="box" type="CharacterBody2D" parent="." unique_id=1214255906]
@@ -130,8 +140,7 @@ jumpVelocity = 400.0
 KnockBack = 100.0
 LockCameraY = true
 VehicleSpeedMult = 1.3
-VehicleBulletDamage = 30
-VehicleBulletKnockback = 50.0
+VehicleBulletDamage = 15
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=1866583936]
 shape = SubResource("RectangleShape2D_0boax")
@@ -1196,3 +1205,31 @@ position = Vector2(25145.602, 255.48517)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D7" unique_id=1187330820]
 position = Vector2(-326.60156, -12.485168)
 shape = SubResource("RectangleShape2D_aj463")
+
+[node name="Rope" type="Area2D" parent="." unique_id=825109846]
+position = Vector2(24500, 250)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("54_rope")
+
+[node name="Sprite2D" type="Sprite2D" parent="Rope" unique_id=1874859786]
+texture = ExtResource("55_ropetex")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Rope" unique_id=2047910697]
+shape = SubResource("RectangleShape2D_ropezone")
+
+[node name="WMarker" type="Sprite2D" parent="Rope" unique_id=362982160]
+z_index = 20
+position = Vector2(-55.500595, 140)
+scale = Vector2(0.5156064, 0.46875)
+texture = ExtResource("56_wtex")
+script = ExtResource("32_enncu")
+
+[node name="RopePortal" type="Area2D" parent="." unique_id=297920232]
+position = Vector2(24500, 10)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("57_portal")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RopePortal" unique_id=1142563373]
+shape = SubResource("RectangleShape2D_portal")

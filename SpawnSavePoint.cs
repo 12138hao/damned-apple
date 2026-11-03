@@ -84,6 +84,10 @@ public partial class SpawnSavePoint : Node2D
             return;
         }
 
+        // 落地后才存。入口存档点经常在玩家还在下落的瞬间就进入触发半径，
+        // 那样存下来的是半空坐标，读档会从空中开始掉。
+        if (!player.IsOnFloor()) return;
+
         DoSave(player, scenePath, myKey);
         _saved = true;
         SetProcess(false);   // ③ 一辈子只跑一次
@@ -104,6 +108,9 @@ public partial class SpawnSavePoint : Node2D
         }
 
         GD.Print($"[SpawnSave] 已在入口自动存档：{scenePath} @ {GlobalPosition}");
+
+        // ③ 写盘：这才是跨进程能读到的存档（上面的只是内存状态）
+        SaveSystem.Save();
 
         if (ShowBubble)
         {

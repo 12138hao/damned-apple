@@ -37,6 +37,27 @@ public sealed class GameRecords
         _pickedUp.Clear();
     }
 
+    /// <summary>已聊过的键（只读视图，存档序列化用）。</summary>
+    public IEnumerable<string> Talked => _talked;
+
+    /// <summary>已捡过的键（只读视图，存档序列化用）。</summary>
+    public IEnumerable<string> PickedUp => _pickedUp;
+
+    /// <summary>从存档恢复两个集合（会先清空现有内容）。</summary>
+    public void Restore(IEnumerable<string> talked, IEnumerable<string> picked)
+    {
+        _talked.Clear();
+        _pickedUp.Clear();
+
+        if (talked != null)
+            foreach (var s in talked)
+                if (!string.IsNullOrEmpty(s)) _talked.Add(s);
+
+        if (picked != null)
+            foreach (var s in picked)
+                if (!string.IsNullOrEmpty(s)) _pickedUp.Add(s);
+    }
+
     /// <summary>清空所有记录（新游戏用）。</summary>
     public void Reset()
     {

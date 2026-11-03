@@ -137,9 +137,28 @@ public partial class Npc : CharacterBody2D
 
     // ---------------------------------------------------------------- 对话流程
 
+    /// <summary>
+    /// 对话记录的键 = 场景路径 + 节点路径。
+    ///
+    /// 不能只用节点名：firstry 和 underground 里都有一个叫 naiwa 的节点，
+    /// 光用名字的话两边共用同一条记录 —— 在第一关聊过，第二关的奶蛙一开口
+    /// 就直接是 RepeatLines（表现是"只播第二段对话"）。
+    /// 规则和 RevivePoint 的存档点 key 一致：一个 NPC 只在自己的场景里算"聊过"。
+    /// </summary>
+    private string TalkKey
+    {
+        get
+        {
+            string scenePath = Owner?.SceneFilePath
+                               ?? GetTree().CurrentScene?.SceneFilePath
+                               ?? "";
+            return scenePath + "::" + GetPath();
+        }
+    }
+
     private void StartTalk()
     {
-        bool talked = GameState.I != null && GameState.I.HasTalked(Name);
+        bool talked = GameState.I != null && GameState.I.HasTalked(TalkKey);
         _lines = talked ? RepeatLines : FirstLines;
         _faces = talked ? RepeatFaces : LineFaces;
 
@@ -196,8 +215,8 @@ public partial class Npc : CharacterBody2D
         _playerBubble?.HideBubble();
         RestoreFace();
 
-        // 记下来，下次就是 RepeatLines
-        GameState.I?.MarkTalked(Name);
+        // 记下来，下次就是 RepeatLines（key 带场景路径，不会串到别的关卡）
+        GameState.I?.MarkTalked(TalkKey);
     }
 
     /// <summary>显示第 i 句：按前缀决定谁说话、用哪个气泡。</summary>

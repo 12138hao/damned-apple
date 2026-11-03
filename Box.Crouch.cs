@@ -30,9 +30,9 @@ public partial class Box
         if (!CanCrouch) return;
         if (_bodyShape == null) return;
 
-        // 载具里不蹲；死亡/复活期间不处理
+        // 载具里不蹲；爬绳时不蹲；死亡/复活期间不处理
         // 不再要求站在地上：空中按 C 也要能蹲，才能吃到「加速下落」
-        bool want = !inputLocked && !_inVehicle
+        bool want = !inputLocked && !_inVehicle && !_climbing
                     && _state == State.Alive
                     && Input.IsActionPressed("crouch");
 
