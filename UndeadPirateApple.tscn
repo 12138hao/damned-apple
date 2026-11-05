@@ -1,0 +1,66 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://UndeadPirateApple.cs" id="1_apple"]
+[ext_resource type="Texture2D" path="res://assets/enemies/undead_apple/undead_apple_body.png" id="2_body"]
+[ext_resource type="Texture2D" path="res://assets/enemies/undead_apple/undead_apple_hand_l.png" id="3_hl"]
+[ext_resource type="Texture2D" path="res://assets/enemies/undead_apple/undead_apple_hand_r.png" id="4_hr"]
+[ext_resource type="Texture2D" path="res://assets/ui/enemy_bar_bg.png" id="5_bg"]
+[ext_resource type="Texture2D" path="res://assets/ui/enemy_bar_fill.png" id="6_fill"]
+[ext_resource type="Texture2D" path="res://assets/ui/enemy_bar_border.png" id="7_border"]
+
+[sub_resource type="RectangleShape2D" id="Shape_body"]
+size = Vector2(46, 58)
+
+[sub_resource type="RectangleShape2D" id="Shape_hurt"]
+size = Vector2(74, 76)
+
+[node name="UndeadPirateApple" type="CharacterBody2D"]
+collision_layer = 4
+script = ExtResource("1_apple")
+Damage = 20
+MaxHp = 80
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -29)
+shape = SubResource("Shape_body")
+
+[node name="Visual" type="Node2D" parent="."]
+scale = Vector2(0.55, 0.55)
+
+[node name="Sprite2D" type="Sprite2D" parent="Visual"]
+position = Vector2(0, -61.5)
+texture = ExtResource("2_body")
+
+[node name="HandL" type="Sprite2D" parent="Visual"]
+position = Vector2(-47.5, -9)
+texture = ExtResource("3_hl")
+
+[node name="HandR" type="Sprite2D" parent="Visual"]
+position = Vector2(48, -9)
+texture = ExtResource("4_hr")
+
+[node name="HpBar" type="TextureProgressBar" parent="."]
+offset_left = -20.0
+offset_top = -84.0
+offset_right = 20.0
+offset_bottom = -76.0
+max_value = 80.0
+value = 80.0
+texture_under = ExtResource("5_bg")
+texture_over = ExtResource("7_border")
+texture_progress = ExtResource("6_fill")
+
+[node name="RayLeft" type="RayCast2D" parent="."]
+position = Vector2(-20, -8)
+target_position = Vector2(0, 40)
+
+[node name="RayRight" type="RayCast2D" parent="."]
+position = Vector2(20, -8)
+target_position = Vector2(0, 40)
+
+[node name="HurtArea" type="Area2D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtArea"]
+position = Vector2(0, -38)
+shape = SubResource("Shape_hurt")

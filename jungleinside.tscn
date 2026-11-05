@@ -1,0 +1,154 @@
+[gd_scene format=3 uid="uid://dc84qgjeevbtn"]
+
+[ext_resource type="Texture2D" uid="uid://c5l3gkjvsdcvg" path="res://image-0d953c43.jpg" id="1_jmvxo"]
+[ext_resource type="Script" uid="uid://ckfwsyc34ots7" path="res://Box.cs" id="2_1d04t"]
+[ext_resource type="Texture2D" uid="uid://dsfapsyeiv41h" path="res://assets/player_sheet_v2.png" id="3_a8aii"]
+[ext_resource type="Script" uid="uid://dmq7nrftqx2qw" path="res://DialogueUI.cs" id="4_cwihn"]
+[ext_resource type="Script" uid="uid://bkvaedtmio4gf" path="res://SwingTrail.cs" id="5_c61bm"]
+[ext_resource type="Script" uid="uid://bfk5suig6pucp" path="res://ChargeArc.cs" id="6_3f42i"]
+[ext_resource type="Texture2D" uid="uid://c7irabu5sxp5h" path="res://assets/weapon.png" id="7_wagf8"]
+[ext_resource type="Script" uid="uid://c57ocnohmulys" path="res://WeaponAura.cs" id="8_xf0u6"]
+[ext_resource type="Texture2D" uid="uid://b4npt84rf7q3o" path="res://e-marker-64.png" id="9_a8aii"]
+[ext_resource type="Script" uid="uid://b3usr6w73hux2" path="res://EMarker.cs" id="10_cwihn"]
+[ext_resource type="Script" uid="uid://dpvcbm6kfba6x" path="res://Door.cs" id="11_door"]
+[ext_resource type="PackedScene" path="res://OldApple.tscn" id="12_oldapple"]
+[ext_resource type="PackedScene" uid="uid://cp4v7l1a2auik" path="res://RevivePoint.tscn" id="13_3f42i"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_20t38"]
+size = Vector2(32, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qqk1d"]
+size = Vector2(26, 42)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_btfou"]
+size = Vector2(2857.2808, 80)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uv0j0"]
+size = Vector2(20, 550)
+
+[node name="Node2D" type="Node2D" unique_id=1836124988]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1395303997]
+position = Vector2(424, 238.00002)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("1_jmvxo")
+
+[node name="box" type="CharacterBody2D" parent="." unique_id=965006919]
+z_index = 10
+position = Vector2(223.91833, 252.57265)
+collision_layer = 2
+collision_mask = 9
+script = ExtResource("2_1d04t")
+Speed = 300.0
+jumpVelocity = 400.0
+KnockBack = 100.0
+VehicleSpeedMult = 1.3
+VehicleBulletDamage = 30
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=2088231314]
+shape = SubResource("RectangleShape2D_20t38")
+
+[node name="Camera2D" type="Camera2D" parent="box" unique_id=589803655]
+zoom = Vector2(0.95, 0.95)
+limit_left = 3
+limit_top = 1
+limit_right = 845
+limit_bottom = 475
+position_smoothing_enabled = true
+position_smoothing_speed = 22.0
+
+[node name="Sprite2D" type="Sprite2D" parent="box" unique_id=423369044]
+texture = ExtResource("3_a8aii")
+offset = Vector2(0, -10)
+hframes = 21
+
+[node name="DialogueUI" type="Node2D" parent="box" unique_id=1244182965]
+z_index = 20
+position = Vector2(-85, -114)
+script = ExtResource("4_cwihn")
+
+[node name="Text" type="Label" parent="box/DialogueUI" unique_id=277105055]
+offset_left = -109.0
+offset_top = -35.0
+offset_right = 97.0
+offset_bottom = 27.0
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="SwingTrail" type="Node2D" parent="box" unique_id=1579962934]
+z_index = 2
+script = ExtResource("5_c61bm")
+
+[node name="ChargeArc" type="Node2D" parent="box" unique_id=1982117928]
+position = Vector2(-38, -6)
+script = ExtResource("6_3f42i")
+Radius = 20.0
+SweepDeg = 120.0
+
+[node name="Weapon" type="Area2D" parent="box" unique_id=467486569]
+z_index = 100
+position = Vector2(18, -15)
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box/Weapon" unique_id=1745657376]
+shape = SubResource("RectangleShape2D_qqk1d")
+
+[node name="Sprite2D" type="Sprite2D" parent="box/Weapon" unique_id=468409840]
+visible = false
+texture = ExtResource("7_wagf8")
+
+[node name="Aura" type="Node2D" parent="box/Weapon" unique_id=1067753744]
+script = ExtResource("8_xf0u6")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=123217556]
+position = Vector2(323.13602, 371.70343)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=190389687]
+position = Vector2(98.86398, -2.7034302)
+scale = Vector2(0.3, 0.3)
+shape = SubResource("RectangleShape2D_btfou")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D" unique_id=1334512287]
+position = Vector2(-314.13602, -148.70343)
+shape = SubResource("RectangleShape2D_uv0j0")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D" unique_id=2031397085]
+position = Vector2(510.86398, -163.70343)
+shape = SubResource("RectangleShape2D_uv0j0")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D" unique_id=1497059985]
+position = Vector2(91.86398, -367.70343)
+scale = Vector2(0.3, 0.3)
+shape = SubResource("RectangleShape2D_btfou")
+
+[node name="EMarker" type="Sprite2D" parent="StaticBody2D" unique_id=1836367857]
+z_index = 20
+position = Vector2(-159.13602, -171.70343)
+scale = Vector2(0.225, 0.225)
+texture = ExtResource("9_a8aii")
+script = ExtResource("10_cwihn")
+
+[node name="DoorToJungle" type="Area2D" parent="." unique_id=1662496132]
+position = Vector2(170, 250)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("11_door")
+TargetScene = "res://jungle.tscn"
+TargetSpawn = Vector2(7330, 345)
+InteractDistance = 110.0
+HintText = "按 E 出去"
+
+[node name="OldApple" parent="." unique_id=423994948 instance=ExtResource("12_oldapple")]
+position = Vector2(560, 356)
+FirstLines = PackedStringArray("npc:……哦？好久没见过活人走进这间屋子了。", "me:卧槽苹果！！！", "npc:别那么大惊小怪的", "npc:我可不会伤人", "me:这样吗真奇怪", "npc:哈哈哈哈哈哈哈", "npc:你可有什么问题问我吗")
+TopicTitles = PackedStringArray("外面的苹果灾是怎么回事啊！！", "这里的果子为什么这么吓人呢？", "为什么你不会伤人", "你能帮我解决苹果灾吗")
+Topic1Lines = PackedStringArray("npc:这可说来话长了", "npc:其实我们都是伊甸园里善恶树的果子", "npc:想当初亚当和夏娃被蛇蛊惑，吃下了果子", "npc:才有了人类", "npc:如今那蛇不满人类发展到今天的地步", "npc:回到了果树下，不断地将果子甩下人间，还混入了他的邪气", "npc:这才导致了这场苹果灾啊", "me:沃德发。。。")
+Topic2Lines = PackedStringArray("npc:哈哈哈哈哈哈哈", "npc:这也是你们人间的问题呀", "npc:这片热带雨林细菌太多了", "npc:果子们来到这不久就被腐蚀成现在的样子了", "又因为抗邪气的外表皮没了", "npc:变得更加邪恶恐怖了呢", "me:那你怎么没事啊？？", "npc:哈哈哈哈哈哈哈哈哈哈", "npc:这间房子原是个巨大的鹅颈瓶，大概是个试验基地吧", "npc:细菌可进不来这种地方", "me:纳尼？？？！！！", "me:你懂的还挺多。。", "me:那你是怎么进来的？", "npc:我既然都是天上的果子了", "npc:当然是靠法力进来的")
+Topic3Lines = PackedStringArray("npc:在树上我也算是个老家伙了", "npc:论修为也能当个长老", "npc:那点邪气对我算不上什么", "me:那你也很厉害了")
+Topic4Lines = PackedStringArray("npc:这到底是你们人类的灾祸", "npc:自然需要你们人类去解决", "me:。。。。。。。。。。", "npc：别灰心", "npc:再往前走走有我之前留下的魔茎，你往上爬可以去到天界", "npc:只要解决了那只蛇，苹果灾也就结束了", "me:听上去并不容易啊喂。")
+
+[node name="RevivePoint" parent="." unique_id=1585508078 instance=ExtResource("13_3f42i")]
+position = Vector2(266, 342)

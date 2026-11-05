@@ -1230,6 +1230,8 @@ position = Vector2(24500, 10)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("57_portal")
+TargetScene = "res://jungle.tscn"
+WellEntry = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RopePortal" unique_id=1142563373]
 shape = SubResource("RectangleShape2D_portal")

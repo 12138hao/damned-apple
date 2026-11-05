@@ -24,6 +24,18 @@ public partial class EMarker : Sprite2D
         ApplyAlpha(MaxAlpha);
     }
 
+    /// <summary>
+    /// 换一个浮动基准点。
+    /// 给「父节点在 _Ready 里才知道该摆哪」的场合用（比如藤蔓要按长度算底端位置）：
+    /// 子节点先 _Ready，这时候 _basePos 已经记成场景里的老位置了，
+    /// 只改 Position 没用 —— 下一帧 _Process 会用 _basePos 把它写回去。
+    /// </summary>
+    public void SetBasePosition(Vector2 pos)
+    {
+        _basePos = pos;
+        Position = pos;
+    }
+
     public override void _Process(double delta)
     {
         _t += (float)delta;

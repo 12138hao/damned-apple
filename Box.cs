@@ -29,6 +29,11 @@ public partial class Box : CharacterBody2D
     [Export] public float KnockTime = 0.2f;
     [Export] public float KnockBack = 400f;
     [Export] public float KnockUp = 300f;
+    [ExportGroup("投技挣脱")]
+    [Export] public int StrugglePresses = 6;      // 被抓时按几次跳跃能挣脱（0 = 挣不脱）
+    [Export] public float StruggleJumpUp = 340f;  // 挣脱成功时往上弹的速度
+    [Export] public float StruggleKnockback = 320f;// 挣脱时往背离怪的方向弹开
+    [Export] public float StruggleHurtGrace = 0.5f;// 挣脱后无敌多久（秒），防止刚落地又挨打
     [Export] public float DeathTime = 2.0f;      // 躺平展示多久
     [ExportGroup("相机")]
     [Export] public bool LockCameraY = false;      // 勾上：镜头只跟 X，Y 固定在 CameraFixedY
@@ -144,6 +149,46 @@ public partial class Box : CharacterBody2D
     public bool IsClimbing => _climbing;
     private bool _climbing;                   // 正在爬绳
     private float _grabCooldown;              // 松手后的短暂锁定，防止在绳顶反复抓/松
+    private Rope _grabIgnore;                 // 刚蹬开的那根绳/藤：短时间内不许再抓
+    private float _grabIgnoreTimer;
+    private float _climbSlideSpeed;           // 当前下滑速度（下滑是加速的，所以要记住）
+
+    // ── 剧情演出 ──
+    /// <summary>
+    /// 剧情锁：入场动画期间玩家不能操作，位置由演出脚本每帧写。
+    /// 和对话锁分开，是因为对话锁会连带影响门/拾取物的判定，演出不该有那些副作用。
+    /// </summary>
+    public bool InCutscene { get; private set; }
+
+    /// <summary>开始演出：清掉一切会跟演出抢位置的状态。</summary>
+    public void BeginCutscene()
+    {
+        InCutscene = true;
+        Velocity = Vector2.Zero;
+        _climbing = false;
+        _climbSlideSpeed = 0f;
+        _knockTimer = 0f;
+        _dropTimer = 0f;
+    }
+
+    /// <summary>演出结束，交还操作。</summary>
+    public void EndCutscene()
+    {
+        InCutscene = false;
+        Velocity = Vector2.Zero;
+    }
+
+    /// <summary>
+    /// 演出脚本每帧调用：直接摆位置（不走 MoveAndSlide，免得被重力拖下去）。
+    /// 顺手补一次镜头高度锁 —— 演出期间 _PhysicsProcess 提前 return，
+    /// 平时每帧调用的 LockCameraHeight 就没人管了，镜头会跟着人一起飘。
+    /// </summary>
+    public void SetCutscenePosition(Vector2 pos)
+    {
+        GlobalPosition = pos;
+        Velocity = Vector2.Zero;
+        LockCameraHeight();
+    }
     private Shape2D _baseWeaponShape;
     private Vector2 _baseWeaponShapePos = new Vector2(17f, -16f);
     private CircleShape2D _fistShape;
@@ -167,6 +212,57 @@ public partial class Box : CharacterBody2D
 
     /// <summary>武器是真的举在手上（true）还是只躺在背包里（false）。HUD 的武器架靠它高亮。</summary>
     public bool Holding => _holding;
+
+    // ── 泥潭 ──
+    // 用列表而不是 bool：以后可能有泥潭套沼泽，退出一个时如果还踩在另一个里，
+    // 状态不能立刻解除。倍率放在 MudPit 上而不是这里，因为不同泥潭黏度不同。
+    private readonly System.Collections.Generic.List<MudPit> _mudSources = new();
+
+    /// <summary>现在是否踩在泥潭里。</summary>
+    public bool InMud => _mudSources.Count > 0;
+
+    /// <summary>进入某个泥潭的判定区。由 MudPit 调用，别手动调。</summary>
+    public void EnterMud(MudPit pit)
+    {
+        if (pit == null || _mudSources.Contains(pit)) return;
+        _mudSources.Add(pit);
+    }
+
+    /// <summary>离开某个泥潭的判定区。由 MudPit 调用。</summary>
+    public void ExitMud(MudPit pit)
+    {
+        _mudSources.Remove(pit);
+    }
+
+    /// <summary>
+    /// 取当前生效的三个倍率：同时踩着多个泥潭时按「最黏的那个」算。
+    /// 顺手把已销毁的泥潭剔掉，免得切场景后残留导致玩家永远走不动。
+    /// <para>
+    /// 坐着载具时自动换成泥潭的「载具专用」那一组倍率（VehicleSpeedMult /
+    /// VehicleAccelMult）—— 车比人重得多，同一片泥里人还能趟着走，车基本就陷住了。
+    /// 调用方不用关心这件事，照常乘上去就行。
+    /// </para>
+    /// </summary>
+    public void GetMudModifiers(out float speed, out float jump, out float accel)
+    {
+        speed = 1f;
+        jump = 1f;
+        accel = 1f;
+
+        for (int i = _mudSources.Count - 1; i >= 0; i--)
+        {
+            var pit = _mudSources[i];
+            if (pit == null || !IsInstanceValid(pit))
+            {
+                _mudSources.RemoveAt(i);
+                continue;
+            }
+            speed = Mathf.Min(speed, _inVehicle ? pit.VehicleSpeedMult : pit.SpeedMult);
+            jump = Mathf.Min(jump, pit.JumpMult);
+            accel = Mathf.Min(accel, _inVehicle ? pit.VehicleAccelMult : pit.AccelMult);
+        }
+    }
+
     private ChargeArc _chargeArc;
     private Camera2D _cam;
     private float _camBaseY;      // 镜头基准高度，从场景里 Camera2D.offset.Y 读进来
@@ -303,6 +399,24 @@ public partial class Box : CharacterBody2D
         if (_state != State.Alive)
         {
             UpdateSpecialState(dt);
+            return;
+        }
+
+        // 被投技抓住：位置由怪物每帧写，输入/重力/攻击全部跳过。
+        // 唯一保留的输入是「跳跃」—— 狂按它可以挣脱（SpacePrompt 会提示）。
+        if (Grabbed)
+        {
+            if (Input.IsActionJustPressed("jump")) TryStruggle();
+            UpdateVisual(dt);
+            UpdateGrabFlash(dt);     // 投技持续受击：红白闪烁（只改 Modulate，不给无敌）
+            return;
+        }
+
+        // 剧情演出（古井入场等）：位置由演出脚本每帧写。
+        // 必须整段跳过物理，否则重力和 MoveAndSlide 会把玩家从井里拽下来。
+        if (InCutscene)
+        {
+            UpdateVisual(dt);
             return;
         }
 

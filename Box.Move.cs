@@ -27,6 +27,22 @@ public partial class Box
         return 16f;
     }
 
+    /// <summary>给外部（演出脚本）用的半身高，把地面坐标换算成玩家中心坐标。</summary>
+    public float HalfHeight => GetHalfHeight();
+
+    /// <summary>
+    /// 瞬移之后让镜头立刻到位。
+    /// 注意不能直接写 _cam.GlobalPosition = GlobalPosition —— Camera2D 是 box 的子节点，
+    /// 还带着 offset 和「锁定高度」的补偿，硬怼会把那两样都抹掉。
+    /// 正确做法是先按正常逻辑算好位置，再清掉平滑状态让它立刻贴上去。
+    /// </summary>
+    public void SnapCamera()
+    {
+        if (_cam == null) return;
+        LockCameraHeight();
+        _cam.ResetSmoothing();
+    }
+
     /// <summary>判断脚底下踩的是不是单向平台（看它是否在 OneWayLayerBit 这一层）。</summary>
     private bool OnOneWayPlatform()
     {
@@ -76,13 +92,20 @@ public partial class Box
         }
     }
 
-    /// <summary>上下看：W 抬头、S 低头，镜头平滑升降。</summary>
+    /// <summary>上下看：W 抬头、S 低头，镜头平滑升降。爬藤/爬绳时禁用（那时 W/S 是上下爬）。</summary>
     private void UpdateCameraLook(float dt)
     {
-        // 上下看：镜头平滑升降，W 上移、S 下移
         float lookY = 0f;
-        if (Input.IsActionPressed("look_up")) lookY -= 1f;
-        if (Input.IsActionPressed("look_down")) lookY += 1f;
+
+        // 挂在绳子/藤蔓上时，W/S 已经被攀爬吃掉了。
+        // 如果这里还跟着抬镜头，就会出现「往上爬、画面同时往上飘」的叠加运动，
+        // 玩家会觉得画面在乱晃 —— 而且爬到顶时镜头会先撞到上限。
+        if (!_climbing)
+        {
+            if (Input.IsActionPressed("look_up")) lookY -= 1f;
+            if (Input.IsActionPressed("look_down")) lookY += 1f;
+        }
+
         _cam.Offset = new Vector2(
             _cam.Offset.X,
             Mathf.MoveToward(_cam.Offset.Y,
@@ -110,7 +133,18 @@ public partial class Box
             {
                 _facingRight = dir > 0f;          // 按方向键才改朝向
                 float speedMult = _inVehicle ? VehicleSpeedMult : 1f;
-                Velocity = new Vector2(Mathf.MoveToward(Velocity.X, dir * Speed * speedMult, Acceleration * dt), Velocity.Y);
+                float accel = Acceleration;
+
+                // 泥潭：速度和加速度一起压。只压速度的话，起步那一下还是窜得很快，
+                // 感觉像「滑过泥面」而不是「被泥拖着」。
+                if (InMud)
+                {
+                    GetMudModifiers(out float mudSpeed, out _, out float mudAccel);
+                    speedMult *= mudSpeed;
+                    accel *= mudAccel;
+                }
+
+                Velocity = new Vector2(Mathf.MoveToward(Velocity.X, dir * Speed * speedMult, accel * dt), Velocity.Y);
             }
             else
             {
@@ -140,11 +174,23 @@ public partial class Box
         }
         if (_jumpBufferTimer > 0 && (_coyoteTimer > 0 || _jumpsLeft > 0))
         {
-            Velocity = new Vector2(Velocity.X, -jumpVelocity);
+            float power = jumpVelocity;
+
+            // 泥潭：跳不高。注意高度跟速度的平方成正比，
+            // 所以 0.55 倍跳跃力只跳得起原来的三成高。
+            if (InMud)
+            {
+                GetMudModifiers(out _, out float mudJump, out _);
+                power *= mudJump;
+            }
+
+            Velocity = new Vector2(Velocity.X, -power);
             _jumpBufferTimer = 0;
             _coyoteTimer = 0;
             _jumpsLeft--;
-            AudioManager.Instance?.PlaySfx("jump", 0.7f, 1f + GD.Randf() * 0.1f);
+
+            // 跳跃音效固定，不再按「跳得多高 / 在不在泥里」调音量和音高
+            AudioManager.PlayJump();
         }
         if (Input.IsActionJustReleased("jump") && Velocity.Y < 0)
         {
@@ -153,54 +199,105 @@ public partial class Box
     }
 
     /// <summary>
-    /// 绳索攀爬。W 抓住往上爬、S 往下爬、松手就挂在原地，跳跃键蹬绳跳开。
+    /// 临时调试用：把攀爬的内部状态吐成一行字符串。
+    /// GDScript 探针读不到 C# 的私有字段（_climbing 之类），只能靠这个方法转一手。
+    /// </summary>
+    public string DebugClimb()
+    {
+        Rope r = CurrentRope;
+        bool valid = r != null && IsInstanceValid(r) && r.PlayerInRange;
+        return $"rope={(r == null ? "null" : r.Name)} valid={valid} climbing={_climbing}"
+             + $" cd={_grabCooldown:F2} vehicle={_inVehicle} crouch={IsCrouching}"
+             + $" alive={_state == State.Alive} floor={IsOnFloor()}"
+             + $" 对话锁={(GameState.I != null && GameState.I.DialogueActive)}";
+    }
+
+    /// <summary>
+    /// 绳索 / 藤蔓攀爬。W 往上爬、S 往下滑、都不按就挂在原地，跳跃键蹬开。
     ///
     /// 关键点：
     ///   · 必须先于 ApplyGravity / UpdateHorizontalMove / UpdateJump 调用，
     ///     因为这三个在攀爬时都会 return，Velocity 由这里独家决定。
     ///   · 横向用「按距离比例给速度」吸附到绳子中线，而不是直接改 GlobalPosition ——
     ///     直接改位置会绕过 MoveAndSlide 的碰撞检测，可能把玩家塞进墙里。
+    ///   · 上爬慢、下滑快且会加速（UpSpeed / DownSpeed / DownAccel 由具体物件给），
+    ///     所以这里的 vy 不能像以前那样上下共用一个 ClimbSpeed。
     /// </summary>
     private void UpdateClimb(float dt, bool inputLocked)
     {
         if (_grabCooldown > 0f) _grabCooldown = Mathf.Max(0f, _grabCooldown - dt);
+        if (_grabIgnoreTimer > 0f) _grabIgnoreTimer = Mathf.Max(0f, _grabIgnoreTimer - dt);
 
         Rope rope = CurrentRope;
         bool ropeValid = rope != null && IsInstanceValid(rope) && rope.PlayerInRange;
 
-        // 抓绳子的前提：手上有绳子、没锁输入、没坐车、没蹲着
-        bool canGrab = ropeValid && !inputLocked && !_inVehicle && !IsCrouching
+        // 刚蹬开的那一根短时间内不许再抓，否则一按跳就被它自己吸回去，永远跳不走
+        bool justLeft = ropeValid && rope == _grabIgnore && _grabIgnoreTimer > 0f;
+
+        // 抓绳子的前提：手上有绳子、没锁输入、没坐车、没蹲着、不是刚蹬开的那根
+        bool canGrab = ropeValid && !justLeft && !inputLocked && !_inVehicle && !IsCrouching
                        && _state == State.Alive;
 
         // 已经抓着但条件没了（走出判定区 / 开始对话 / 上了车）→ 松手
         if (_climbing && !canGrab) _climbing = false;
 
-        // 起爬：在绳子范围内按住 W
-        if (!_climbing && canGrab && _grabCooldown <= 0f
-            && Input.IsActionPressed("look_up"))
+        // 起爬：按 W；或者这根藤支持「空中碰到就抓」（换藤全靠这条）。
+        // 注意 AutoGrabInAir 只在地面之外生效，否则走路经过藤蔓会被一直吸住。
+        bool wantGrab = Input.IsActionPressed("look_up")
+                        || (ropeValid && rope.AutoGrabInAir && !IsOnFloor());
+
+        if (!_climbing && canGrab && _grabCooldown <= 0f && wantGrab)
         {
             _climbing = true;
             _jumpsLeft = MaxJumps;   // 下绳之后还能正常跳
             _coyoteTimer = 0f;
             _jumpBufferTimer = 0f;
+            _climbSlideSpeed = 0f;
         }
 
         if (!_climbing) return;
 
-        // 蹬绳跳开：跳跃键直接脱离绳子
+        // 蹬开：往「按的方向」跳；没按方向就往面朝的方向跳。
+        // 必须给横向初速度 —— 挂在藤上时横向速度是被吸附清零的，
+        // 只往上跳的话两根藤之间永远换不过去。
         if (Input.IsActionJustPressed("jump"))
         {
             _climbing = false;
-            _grabCooldown = 0.35f;
-            Velocity = new Vector2(Velocity.X, -jumpVelocity * 0.75f);
-            AudioManager.Instance?.PlaySfx("jump", 0.6f, 1.1f);
+            _grabIgnore = rope;
+            _grabIgnoreTimer = 0.5f;
+            _grabCooldown = 0.1f;
+            _climbSlideSpeed = 0f;
+
+            float dir = Input.GetAxis("move_left", "move_right");
+            if (Mathf.Abs(dir) < 0.1f) dir = _facingRight ? 1f : -1f;
+            float vxOff = rope.JumpOffSpeed > 0f ? dir * rope.JumpOffSpeed : Velocity.X;
+
+            Velocity = new Vector2(vxOff, -jumpVelocity * rope.JumpOffUp);
+            AudioManager.PlayJump();
             return;
         }
 
-        // 竖直：W 上、S 下、都不按就挂在原地
-        float vy = 0f;
-        if (Input.IsActionPressed("look_up")) vy = -rope.ClimbSpeed;
-        else if (Input.IsActionPressed("look_down")) vy = rope.ClimbSpeed;
+        // 竖直：W 上（慢）、S 下滑（越滑越快）、都不按就挂着
+        bool holdingUp = Input.IsActionPressed("look_up");
+        bool holdingDown = Input.IsActionPressed("look_down");
+
+        float vy;
+        if (holdingUp)
+        {
+            vy = -rope.UpSpeed;
+            _climbSlideSpeed = 0f;
+        }
+        else if (holdingDown)
+        {
+            // 下滑是加速的：从 0 加到 DownSpeed，手感是「溜下去」而不是电梯
+            _climbSlideSpeed = Mathf.Min(_climbSlideSpeed + rope.DownAccel * dt, rope.DownSpeed);
+            vy = _climbSlideSpeed;
+        }
+        else
+        {
+            vy = 0f;
+            _climbSlideSpeed = 0f;
+        }
 
         // 横向吸附到绳子中线
         float dx = rope.RopeX - GlobalPosition.X;
@@ -209,21 +306,45 @@ public partial class Box
 
         Velocity = new Vector2(vx, vy);
 
-        // 到顶：松手 + 轻轻上抛，让玩家越过绳头落到传送点上。
-        // 加冷却是因为松手后人还在判定区里，按住 W 会立刻又抓住，形成上下弹跳。
-        if (GlobalPosition.Y <= rope.TopY)
+        // 到顶。必须带 vy < 0 这个条件：玩家正好停在顶端时 Y 就等于 ClimbTopY，
+        // 不加方向判断的话按 S 也走这个分支，速度被清零 —— 人就卡死在顶上再也下不来。
+        if (vy < 0f && GlobalPosition.Y <= rope.ClimbTopY)
         {
-            _climbing = false;
-            _grabCooldown = 0.5f;
-            Velocity = new Vector2(0f, -jumpVelocity * 0.35f);
+            if (rope.TossAtTop)
+            {
+                // 绳索：松手 + 轻轻上抛，让玩家越过绳头落到传送点上。
+                // 加冷却是因为松手后人还在判定区里，按住 W 会立刻又抓住，形成上下弹跳。
+                _climbing = false;
+                _grabCooldown = 0.5f;
+                Velocity = new Vector2(0f, -jumpVelocity * 0.35f);
+                return;
+            }
+
+            // 藤蔓：停在顶端。Velocity 归零就行，别去改 GlobalPosition ——
+            // 直接写位置会绕过 MoveAndSlide，可能把脑袋塞进树冠的碰撞里。
+            Velocity = new Vector2(vx, 0f);
+            _climbSlideSpeed = 0f;
             return;
         }
 
-        // 到底：已经踩在地面上了就松手，交还给正常移动
-        if (IsOnFloor() && GlobalPosition.Y >= rope.BottomY - GetHalfHeight() - 4f)
+        // 到底：往下滑到藤蔓/绳索末端就松手，人自然掉下去。
+        // 注意只判「正在往下」（vy > 0）—— 站在藤底刚抓住的那一帧 Y 也在底部，
+        // 不分方向的话会「抓住→立刻放开」死循环，表现就是怎么按 W 都爬不上去。
+        if (vy > 0f && GlobalPosition.Y >= rope.ClimbBottomY - GetHalfHeight())
         {
             _climbing = false;
             Velocity = new Vector2(0f, 0f);
+            _climbSlideSpeed = 0f;
+            return;
+        }
+
+        // 已经站在地上、又没有按着 W 往上 → 松手，交还给正常移动。
+        // 不松的话，抓着藤底站着时左右键会被攀爬接管（UpdateHorizontalMove 会 return），人走不动。
+        if (IsOnFloor() && !holdingUp)
+        {
+            _climbing = false;
+            Velocity = new Vector2(0f, 0f);
+            _climbSlideSpeed = 0f;
         }
     }
 

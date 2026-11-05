@@ -3,6 +3,10 @@ using Godot;
 /// <summary>
 /// 可攀爬的绳索。挂在 Area2D 上，玩家走进判定区就能按 W 往上爬。
 ///
+/// 它同时是「可攀爬物」的基类：<see cref="Vine"/> 继承它，
+/// 只覆盖「长度怎么算、上下多快、到顶抛不抛、空中抓不抓」这几条，
+/// 判定区/提示/吸附这些公用逻辑不用重写。
+///
 /// 判定和移动是分开的：
 ///   · 这里（Area2D）只负责「玩家在不在绳子范围内」，并把自己登记到 Box.CurrentRope；
 ///   · 真正让玩家上下移动的是 Box.Move.cs 里的 UpdateClimb。
@@ -33,7 +37,40 @@ public partial class Rope : Area2D
     public bool PlayerInRange => _inside && _player != null && IsInstanceValid(_player);
 
     /// <summary>绳子中线的世界 X。攀爬时玩家会被吸附到这条线上。</summary>
-    public float RopeX => GlobalPosition.X;
+    public virtual float RopeX => GlobalPosition.X;
+
+    // ── 给 Box.UpdateClimb 用的接口 ────────────────────────────
+    // 这些必须是 virtual 属性，不能直接让 Box 去读字段：
+    //   绳索的语义是「节点在绳子中点，TopY/BottomY 是写死的世界坐标」（老场景按这个配的）；
+    //   藤蔓的语义是「节点在藤蔓顶端，Length 往下量」。
+    // 两种摆法完全不同，所以把「怎么算」交给各自的类，Box 只问结果。
+
+    /// <summary>爬到哪个 Y（玩家中心）就算到顶。</summary>
+    public virtual float ClimbTopY => TopY;
+
+    /// <summary>爬到哪个 Y（玩家中心）就算到底。</summary>
+    public virtual float ClimbBottomY => BottomY;
+
+    /// <summary>往上爬的速度。</summary>
+    public virtual float UpSpeed => ClimbSpeed;
+
+    /// <summary>往下滑的最终速度（藤蔓比绳索快很多）。</summary>
+    public virtual float DownSpeed => ClimbSpeed;
+
+    /// <summary>下滑的加速度：从 0 加速到 DownSpeed，做出「溜下去」的手感。</summary>
+    public virtual float DownAccel => ClimbSpeed * 4f;
+
+    /// <summary>蹬开时的横向初速度。0 = 保持当前横向速度（绳索的老行为）。</summary>
+    public virtual float JumpOffSpeed => 0f;
+
+    /// <summary>蹬开时往上弹多少（乘 jumpVelocity）。</summary>
+    public virtual float JumpOffUp => 0.75f;
+
+    /// <summary>爬到顶端是「被抛出去」还是「停住」。绳索要抛（上面是传送门），藤蔓要停。</summary>
+    public virtual bool TossAtTop => true;
+
+    /// <summary>空中碰到就自动抓（不按 W 也抓）。换藤全靠这个。</summary>
+    public virtual bool AutoGrabInAir => false;
 
     public override void _Ready()
     {
@@ -71,9 +108,9 @@ public partial class Rope : Area2D
         }
 
         // 提示只在「还没抓住绳子」时显示：已经爬上去就没必要再提示按 W。
-        // 距离按绳底算，不是按节点中心算 —— 绳子 500 高，用中心会算成 227px，
-        // 站在地上的玩家永远看不到提示。
-        var foot = new Vector2(GlobalPosition.X, BottomY);
+        // 距离按**底端**算，不是按节点中心算 —— 绳子 500 高，用中心会算成 227px，
+        // 站在地上的玩家永远看不到提示。藤蔓同理，所以走 ClimbBottomY。
+        var foot = new Vector2(GlobalPosition.X, ClimbBottomY);
         bool want = !_player.IsClimbing
                     && _player.GlobalPosition.DistanceTo(foot) <= HintShowDistance;
         if (want != _hint.Visible) _hint.Visible = want;

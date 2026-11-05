@@ -16,6 +16,12 @@ public partial class AutoPortal : Area2D
     [Export] public Vector2 TargetSpawn = Vector2.Zero;         // 零向量 = 用目标场景自己的出生点
     [Export] public float Cooldown = 1.0f;                      // 触发后多久不再响应（防止连点）
 
+    /// <summary>
+    /// 走这个门进目标场景时，要不要播「从古井爬上来」的入场动画。
+    /// 打开后目标场景里的 WellExit 会接手：把玩家塞进井里，演一段爬出来的过程。
+    /// </summary>
+    [Export] public bool WellEntry = false;
+
     private bool _fired;
     private float _coolDown;
 
@@ -68,6 +74,9 @@ public partial class AutoPortal : Area2D
 
             // 零向量 = 不指定落点，让目标场景用它自己摆的出生点
             if (TargetSpawn == Vector2.Zero) gs.PendingSpawn = null;
+
+            // 标记「这次是从井里上来的」，目标场景的 WellExit 会取走并演动画
+            if (WellEntry) gs.MarkWellEntry();
         }
 
         GD.Print($"[AutoPortal] 触发传送 -> {path}  落点={TargetSpawn}");

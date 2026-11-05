@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://SkeletonHand.cs" id="1_hand"]
+[ext_resource type="Texture2D" path="res://assets/enemies/undead_apple/undead_hand_projectile.png" id="2_tex"]
+
+[node name="SkeletonHand" type="Node2D"]
+script = ExtResource("1_hand")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_tex")

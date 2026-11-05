@@ -100,6 +100,26 @@ public partial class AudioManager : Node
         return 1f;
     }
 
+    // ---------------------------------------------------------------- 跳跃音效
+
+    /// <summary>跳跃音效名（对应 assets/audio/sfx/jump.wav / .ogg / .mp3）。</summary>
+    public const string JumpSfxName = "jump";
+
+    /// <summary>
+    /// 跳跃音效的固定音量倍率。**所有跳跃都吃这一个数**，
+    /// 不再按「跳得多高 / 在不在泥里」去调，改音量只改这里。
+    /// </summary>
+    public const float JumpSfxVolume = 0.7f;
+
+    /// <summary>跳跃音效的固定音高。不做随机抖动，也不因为泥潭压低。</summary>
+    public const float JumpSfxPitch = 1f;
+
+    /// <summary>
+    /// 统一入口：地面跳、泥潭跳、蹬藤跳、挣脱弹开、出井那一下，全都走这里，
+    /// 保证听起来永远是同一个声音。需要单独调就改上面三个常量。
+    /// </summary>
+    public static void PlayJump() => Instance?.PlaySfx(JumpSfxName, JumpSfxVolume, JumpSfxPitch);
+
     private AudioStreamPlayer NextSfxPlayer()
     {
         // 先找没在播的
@@ -180,6 +200,8 @@ public partial class AudioManager : Node
         { "house_inside", "house" },
         { "bossarena",    "boss_fight" },
         { "underground",  "horror" },
+        { "jungle",       "jungle" },   // 文件还没放，放了 assets/audio/bgm/jungle.* 就自动生效
+        { "jungleinside", "jungle_inside" },  // 屋内单独一首；没放文件就沿用上一首，不会静音
     };
 
     /// <summary>

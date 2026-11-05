@@ -1,0 +1,110 @@
+[
+ {
+  "path": "ext_chunk_1.png",
+  "size": 4131779,
+  "uid": "uid://di22gvs587haa",
+  "flag": "ok"
+ },
+ {
+  "path": "ext_chunk_2.png",
+  "size": 3933262,
+  "uid": "uid://bbu6c0mdklo3y",
+  "flag": "ok"
+ },
+ {
+  "path": "ext_chunk_3.png",
+  "size": 3895617,
+  "uid": "uid://c73ltn6n2fj3f",
+  "flag": "ok"
+ },
+ {
+  "path": "ext_raw_1.png",
+  "size": 3707515,
+  "uid": "uid://cnnfcygq0kmnw",
+  "flag": "ok"
+ },
+ {
+  "path": "tmp_mud_cut.png",
+  "size": 1011702,
+  "uid": "uid://dks881l22xqor",
+  "flag": "ok"
+ },
+ {
+  "path": "jungle_map_10000x512.png",
+  "size": 11553894,
+  "uid": "uid://b0g3nbayeiogx",
+  "flag": "ok"
+ },
+ {
+  "path": "jungle_scene_v2.png",
+  "size": 14786588,
+  "uid": "uid://rjtyu7w8tfgr",
+  "flag": "ok"
+ },
+ {
+  "path": "ground_big_cut.png",
+  "size": 5115381,
+  "uid": "uid://i5jpsqj4km58",
+  "flag": "ok"
+ },
+ {
+  "path": "assets/player_sheet.png",
+  "size": 3189,
+  "uid": "uid://ca0qngebvewfl",
+  "flag": "ok"
+ },
+ {
+  "path": "assets/sky.png",
+  "size": 13481,
+  "uid": "uid://b6nxcjm8v54ij",
+  "flag": "ok"
+ },
+ {
+  "path": "assets/pixel_cave_background.png",
+  "size": 253918,
+  "uid": "uid://dagew85g6cbx2",
+  "flag": "ok"
+ },
+ {
+  "path": "assets/pixel_cave_brown_quartz.png",
+  "size": 407230,
+  "uid": "uid://swr520g6supp",
+  "flag": "ok"
+ },
+ {
+  "path": "assets/boss/poison_apple.png",
+  "size": 61886,
+  "uid": "uid://dj5coyqkrlsf7",
+  "flag": "ok"
+ },
+ {
+  "path": "assets/boss/sheet_hat7.png",
+  "size": 193409,
+  "uid": "uid://c4qbd4n7dx5se",
+  "flag": "ok"
+ },
+ {
+  "path": "assets/vehicle_icon.png",
+  "size": 11722,
+  "uid": "uid://camd54725vkon",
+  "flag": "ok"
+ },
+ {
+  "path": "assets/ui/boss/seedream-20261026-010332-01.jpg",
+  "size": 151025,
+  "uid": "uid://dus44wqjyu4ul",
+  "flag": "ok"
+ },
+ {
+  "path": "assets/ui/boss/seedream-20261026-010350-01.jpg",
+  "size": 209160,
+  "uid": "uid://b3xw251hrir37",
+  "flag": "ok"
+ },
+ {
+  "path": "assets/ui/boss/seedream-20261026-162228-01.jpg",
+  "size": 204624,
+  "uid": "uid://bxdokjy0oietb",
+  "flag": "ok"
+ }
+]

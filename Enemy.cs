@@ -29,6 +29,17 @@ public partial class Enemy : CharacterBody2D
 
     [ExportGroup("巡逻区间")]
     [Export] public float PatrolRange = 150f;    // 离出生点多远就折返（像素，左右各这么多）
+
+    [ExportGroup("随机巡逻")]
+    // 勾上后不再「一直左右走」，改成随机在「站着」和「朝某方向走」之间切换。
+    // 走到 PatrolRange 边界或撞墙/悬崖时立刻反向并重新计时（不是原路折返）。
+    // 默认 false，老怪物完全不受影响。
+    [Export] public bool RandomPatrol = false;
+    [Export] public float RandomIdleMin = 0.6f;  // 站立时长下限（秒）
+    [Export] public float RandomIdleMax = 1.8f;  // 站立时长上限
+    [Export] public float RandomWalkMin = 0.8f;  // 行走时长下限
+    [Export] public float RandomWalkMax = 2.2f;  // 行走时长上限
+
     [Export] public float AnimInterval = 0.12f; // 每帧动画间隔
     [Export] public int LoopFrames = 0;         // 平时循环的帧数（0=全部）
     [Export] public int DeathFrameStart = -1;   // 死亡动画从哪帧开始（-1 = 用 LoopFrames）
@@ -71,8 +82,16 @@ public partial class Enemy : CharacterBody2D
     protected float _animTimer;
     private int _frameCount = 4;   // 从贴图读，做新怪物时不用改代码
 
+    // ── 随机巡逻状态 ──────────────────────────────────────
+    private bool _rpWalking;        // 当前是不是在走（false = 站着）
+    private float _rpTimer;         // 当前状态还剩多久
+
+    /// <summary>随机巡逻模式下，这一帧是不是「正在走」。子类可以用它选动画。</summary>
+    public bool IsWalkingNow => RandomPatrol && _rpWalking;
+
     private Area2D _hurtArea;
     private Box _touchingPlayer;   // 当前压在 HurtArea 里的玩家，用事件维护，避免每帧分配数组
+    private bool _playerInside;    // 玩家现在是否真的压在 HurtArea 里（接触伤害的唯一开关）
     private float _touchGrace;     // 离开后的宽限时间：防止"刚碰到就被推开"导致漏判
     private bool _leftSinceEnter;  // 是否已经"真的离开"过（超过宽限时间）
 
@@ -93,9 +112,14 @@ public partial class Enemy : CharacterBody2D
     public override void _Ready()
     {
         _spawnPos = GlobalPosition;
-        _sprite = GetNode<Sprite2D>("Sprite2D");
-        // 动画帧数从贴图读，新怪物贴图多少帧都行
-        if (_sprite.Hframes > 0) _frameCount = _sprite.Hframes;
+        // 老怪物都是直接子节点 Sprite2D；新怪物把美术塞进 Visual 之类的容器里，
+        // 这里退化成「递归找第一个 Sprite2D」，两种摆法都能用。
+        _sprite = GetNodeOrNull<Sprite2D>("Sprite2D") ?? FindFirstSprite(this);
+        if (_sprite == null)
+        {
+            GD.PushWarning($"[{Name}] 找不到 Sprite2D，动画不会播放");
+        }
+        else if (_sprite.Hframes > 0) _frameCount = _sprite.Hframes;
         _rayLeft = GetNode<RayCast2D>("RayLeft");
         _rayRight = GetNode<RayCast2D>("RayRight");
         _hurtArea = GetNode<Area2D>("HurtArea");
@@ -158,25 +182,26 @@ public partial class Enemy : CharacterBody2D
         // 5) 4 帧弹跳动画
         UpdateAnimation(dt);
         // 玩家碰到就扣血。用事件维护的引用，不每帧查重叠列表（那是 GC 卡顿的来源）
+        //
+        // ⚠ 判定条件是「玩家现在真的压在 HurtArea 里」，不是「距离多近」。
+        // 以前用的是后者：只要没超过 LeaveDistance 就一直续宽限一直掉血，
+        // 而 LeaveDistance 比怪的本体大一大圈，于是出现「明明没碰到、拳头还能打到，
+        // 血却掉了」和「贴着一直掉、频率特别高」两种怪现象。
         _touchGrace = Mathf.Max(0f, _touchGrace - dt);
-        if (_touchGrace > 0f && _touchingPlayer != null && IsInstanceValid(_touchingPlayer))
+        if (_playerInside && _touchingPlayer != null && IsInstanceValid(_touchingPlayer))
         {
             _touchingPlayer.TakeDamage(Damage, GlobalPosition);
         }
-        else if (_touchGrace <= 0f && _touchingPlayer != null)
+        else if (_touchingPlayer != null)
         {
-            // 宽限耗尽，用「距离」判断是不是真的离开了。
-            // 不能用 HasOverlappingBodies()：它在物理帧里返回的是上一帧状态，
-            // 玩家明明还贴着却返回 false，会误判成"离开"并清掉免疫。
+            // 已经不重叠了，用「距离」判断是不是真的走远了（走远了才算「离开过」，
+            // 下次再贴上来才重新清一次受击无敌）。
+            // 不能用 HasOverlappingBodies()：它在物理帧里返回的是上一帧状态。
             float dist = GlobalPosition.DistanceTo(_touchingPlayer.GlobalPosition);
             if (dist > LeaveDistance)
             {
                 _touchingPlayer = null;
                 _leftSinceEnter = true;         // 真的离开了
-            }
-            else
-            {
-                _touchGrace = TouchGraceTime;   // 还在附近，续上宽限
             }
         }
     }
@@ -209,6 +234,9 @@ public partial class Enemy : CharacterBody2D
     /// </summary>
     protected virtual float ComputeHorizontalVelocity(float dt)
     {
+        // 随机巡逻模式：站立 / 随机方向行走 交替，到边界就反向重来
+        if (RandomPatrol) return RandomPatrolVelocity(dt);
+
         // 前方探针：往右走用右探针，往左走用左探针
         RayCast2D ray = Direction > 0 ? _rayRight : _rayLeft;
 
@@ -226,6 +254,62 @@ public partial class Enemy : CharacterBody2D
         return Direction * Speed;
     }
 
+    /// <summary>
+    /// 随机巡逻：一段时间站着（呼吸），一段时间朝随机方向走。
+    /// 走到巡逻区间边界、撞墙、或者前方是悬崖 → 立刻反向并重新计时。
+    /// </summary>
+    private float RandomPatrolVelocity(float dt)
+    {
+        _rpTimer -= dt;
+        if (_rpTimer <= 0f) EnterNextRandomState();
+
+        if (!_rpWalking) return 0f;
+
+        RayCast2D ray = Direction > 0 ? _rayRight : _rayLeft;
+        float offset = GlobalPosition.X - _spawnPos.X;
+
+        bool blocked = IsOnWall() || (ray != null && !ray.IsColliding());
+        bool outOfRange = offset > PatrolRange || offset < -PatrolRange;
+
+        if (blocked || outOfRange)
+        {
+            // 反向走，并把这一趟的时长重新掷一次，
+            // 否则会变成「撞墙 → 反向 → 立刻撞另一头」的来回抽搐。
+            Direction = -Direction;
+            _rpTimer = (float)GD.RandRange(RandomWalkMin, RandomWalkMax);
+        }
+
+        return Direction * Speed;
+    }
+
+    /// <summary>在「站着」和「走」之间切换，并重新掷时长。</summary>
+    private void EnterNextRandomState()
+    {
+        _rpWalking = !_rpWalking;
+
+        if (_rpWalking)
+        {
+            Direction = GD.Randf() < 0.5f ? -1 : 1;   // 方向也重新随机，避免走出规律
+            _rpTimer = (float)GD.RandRange(RandomWalkMin, RandomWalkMax);
+        }
+        else
+        {
+            _rpTimer = (float)GD.RandRange(RandomIdleMin, RandomIdleMax);
+        }
+    }
+
+    /// <summary>递归找第一个 Sprite2D（给把美术放进容器的怪物用）。</summary>
+    private static Sprite2D FindFirstSprite(Node n)
+    {
+        foreach (var c in n.GetChildren())
+        {
+            if (c is Sprite2D s) return s;
+            var r = FindFirstSprite(c);
+            if (r != null) return r;
+        }
+        return null;
+    }
+
     /// <summary>前方能不能走（不是墙、也不是悬崖）。子类追踪时用它避免跳崖。</summary>
     protected bool CanWalkToward(float dir)
     {
@@ -239,12 +323,15 @@ public partial class Enemy : CharacterBody2D
         if (body is Box b)
         {
             _touchingPlayer = b;
+            _playerInside = true;
             _touchGrace = TouchGraceTime;
 
             // 只有"真的离开过"（超过 TouchGraceTime 才回来）才算新接触。
             // 贴着边缘抖动时 _touchGrace 一直在续，_leftSinceEnter 保持 false，
             // 免疫照常生效，不会变成连续掉血。
-            if (_leftSinceEnter)
+            // Damage = 0 的敌人（比如海盗苹果，只靠刀打人）不该清玩家无敌，
+            // 否则它贴过来就顺手把玩家的受击保护抹掉了。
+            if (_leftSinceEnter && Damage > 0)
             {
                 b.ResetHurtCooldown();
                 _leftSinceEnter = false;
@@ -255,7 +342,12 @@ public partial class Enemy : CharacterBody2D
     private void OnHurtAreaExited(Node2D body)
     {
         // 不清引用，只续一段宽限。否则"刚碰到就被子弹推开"的那次接触会整个丢掉。
-        if (body is Box b && _touchingPlayer == b) _touchGrace = TouchGraceTime;
+        // 但「接触伤害的开关」要立刻关掉 —— 人已经离开判定区了，不该继续扣血。
+        if (body is Box b && _touchingPlayer == b)
+        {
+            _playerInside = false;
+            _touchGrace = TouchGraceTime;
+        }
     }
 
     /// <summary>被武器打中。返回 true 表示这次真的扣到血了。</summary>
@@ -340,6 +432,8 @@ public partial class Enemy : CharacterBody2D
         _knockTimer = 0f;
         _knockRecover = 0f;
         _animTimer = 0f;
+        _rpWalking = false;
+        _rpTimer = 0f;
 
         Scale = Vector2.One;
         Modulate = Colors.White;

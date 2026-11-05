@@ -8,6 +8,7 @@ public partial class Box
     public void TakeDotDamage(int amount)
     {
         if (_state != State.Alive) return;
+        if (Grabbed) return;              // 被抓期间免疫持续伤害
         if (amount <= 0) return;
 
         Hp = Mathf.Max(0, Hp - amount);
@@ -18,7 +19,12 @@ public partial class Box
 
     public void TakeDamage(int amount, Vector2 from)
     {
+        // 0 伤害不该有任何「被打到」的反馈。
+        // 典型场景：海盗苹果把相撞伤害设成 0（只让刀打人），但敌人贴过来时
+        // 仍然每帧调一次 TakeDamage(0)，于是血没掉、人却变红 + 响受击音 + 被击退。
+        if (amount <= 0) return;
         if (_state != State.Alive) return;      // 死亡 / 复活期间完全免疫
+        if (Grabbed) return;                    // 被抓期间只吃投技伤害，其余全免
         if (_hurtTimer > 0f) return;
 
         AudioManager.Instance?.PlaySfx("hurt", 0.9f);
@@ -122,6 +128,7 @@ public partial class Box
         }
 
         _state = State.Dying;
+        if (Grabbed) EndGrab();                  // 死在投技里也要松手，不然尸体会被一直钉在半空
         _stateTimer = DeathTime;
         _hurtTimer = 0f;
         _knockTimer = 0f;

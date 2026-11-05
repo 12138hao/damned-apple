@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://csrqaitv1sa4e"]
 
-[ext_resource type="Texture2D" uid="uid://rjtyu7w8tfgr" path="res://jungle_scene_v2.png" id="1_wdl8g"]
+[ext_resource type="Texture2D" uid="uid://bq33u3yhmk657" path="res://jungle_map_10000x1000.png" id="1_3ptsh"]
 [ext_resource type="Script" uid="uid://ckfwsyc34ots7" path="res://Box.cs" id="2_wdl8g"]
 [ext_resource type="Texture2D" uid="uid://dsfapsyeiv41h" path="res://assets/player_sheet_v2.png" id="3_i50yd"]
 [ext_resource type="Script" uid="uid://dmq7nrftqx2qw" path="res://DialogueUI.cs" id="4_81ahk"]
@@ -8,6 +8,22 @@
 [ext_resource type="Script" uid="uid://bfk5suig6pucp" path="res://ChargeArc.cs" id="6_qtvti"]
 [ext_resource type="Texture2D" uid="uid://c7irabu5sxp5h" path="res://assets/weapon.png" id="7_ylqhw"]
 [ext_resource type="Script" uid="uid://c57ocnohmulys" path="res://WeaponAura.cs" id="8_ocwlh"]
+[ext_resource type="Texture2D" uid="uid://cvg1numfblsmf" path="res://ground_cut_final.png" id="9_ylqhw"]
+[ext_resource type="Texture2D" uid="uid://dq8t8nfcx3xem" path="res://mud_cut_final.png" id="10_h27us"]
+[ext_resource type="Texture2D" uid="uid://b5kitk61fxsq4" path="res://assets/jungle/mud_only.png" id="11_mudonly"]
+[ext_resource type="Shader" uid="uid://dyn013jr482id" path="res://assets/jungle/mud.gdshader" id="12_mudshader"]
+[ext_resource type="Script" uid="uid://dqf04b37uxuvq" path="res://MudPit.cs" id="13_mudpit"]
+[ext_resource type="PackedScene" path="res://UndeadPirateApple.tscn" id="14_undead"]
+[ext_resource type="Script" uid="uid://cmspw2htmxpay" path="res://SpacePrompt.cs" id="15_spaceprompt"]
+[ext_resource type="PackedScene" path="res://PirateApple.tscn" id="16_pirate"]
+[ext_resource type="Script" uid="uid://dpvcbm6kfba6x" path="res://Door.cs" id="17_door"]
+[ext_resource type="Texture2D" uid="uid://wye0f8qk3lnl" path="res://像素苹果怪设计 (7).png" id="21_m6alp"]
+[ext_resource type="Texture2D" uid="uid://b4npt84rf7q3o" path="res://e-marker-64.png" id="22_qfbna"]
+[ext_resource type="Script" uid="uid://b3usr6w73hux2" path="res://EMarker.cs" id="23_bb041"]
+[ext_resource type="PackedScene" path="res://Vine.tscn" id="60_vine"]
+[ext_resource type="Script" uid="uid://gnlhvk12bo52" path="res://WellExit.cs" id="61_well"]
+[ext_resource type="Texture2D" uid="uid://b4a1sbu7ew0ot" path="res://assets/jungle/well.png" id="62_welltex"]
+[ext_resource type="Script" uid="uid://xj40k62qt5mj" path="res://SpawnSavePoint.cs" id="63_spawnsave"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ev7cm"]
 size = Vector2(32, 32)
@@ -16,14 +32,88 @@ size = Vector2(32, 32)
 size = Vector2(26, 42)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_btfou"]
-size = Vector2(7477.5, 187.75)
+size = Vector2(1232.9375, 171.25)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mud"]
+shader = ExtResource("12_mudshader")
+shader_parameter/wobble_x = 0.004
+shader_parameter/wobble_y = 0.026
+shader_parameter/sheen_strength = 0.12
+shader_parameter/sheen_freq = 4.5
+shader_parameter/sheen_speed = 0.45
+shader_parameter/pulse_strength = 0.26
+shader_parameter/pulse_speed = 0.55
+shader_parameter/murkiness = 0.9
+shader_parameter/edge_fade = 0.036
+shader_parameter/surface_v = 0.255
+shader_parameter/surface_depth = 0.15
+shader_parameter/clip_below = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mudfg"]
+shader = ExtResource("12_mudshader")
+shader_parameter/wobble_x = 0.004
+shader_parameter/wobble_y = 0.026
+shader_parameter/sheen_strength = 0.12
+shader_parameter/sheen_freq = 4.5
+shader_parameter/sheen_speed = 0.45
+shader_parameter/pulse_strength = 0.26
+shader_parameter/pulse_speed = 0.55
+shader_parameter/murkiness = 0.9
+shader_parameter/edge_fade = 0.036
+shader_parameter/surface_v = 0.255
+shader_parameter/surface_depth = 0.15
+shader_parameter/clip_below = 0.42
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mudslab"]
+size = Vector2(1651, 300)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mudzone"]
+size = Vector2(1653, 215)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mudslab2"]
+size = Vector2(2044, 300)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mudzone2"]
+size = Vector2(2057.6, 223.31)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uv0j0"]
+size = Vector2(1067.5, 227)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_road3"]
+size = Vector2(1985, 168.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m3r2q"]
+size = Vector2(5988.8003, 32)
 
 [node name="Main" type="Node2D" unique_id=1688052302]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1115306297]
-position = Vector2(4000, 585)
+z_index = -100
+position = Vector2(4005, -1.9999695)
 scale = Vector2(0.8, 0.8)
-texture = ExtResource("1_wdl8g")
+texture = ExtResource("1_3ptsh")
+
+[node name="Vine8" parent="." unique_id=530481959 instance=ExtResource("60_vine")]
+position = Vector2(4444, -52)
+scale = Vector2(0.8, 0.8)
+Length = 460.0
+TopPad = 130.0
+HintPath = NodePath("../Vine1/WMarker")
+
+[node name="Vine1" parent="Vine8" unique_id=855075776 instance=ExtResource("60_vine")]
+position = Vector2(467.50006, -18.75)
+Length = 460.0
+TopPad = 130.0
+
+[node name="Vine1" parent="Vine8/Vine1" unique_id=1295536107 instance=ExtResource("60_vine")]
+position = Vector2(451.2503, 7.5)
+Length = 460.0
+TopPad = 130.0
+
+[node name="Vine1" parent="Vine8/Vine1/Vine1" unique_id=1572181696 instance=ExtResource("60_vine")]
+position = Vector2(441.25027, 18.75)
+Length = 460.0
+TopPad = 130.0
 
 [node name="box" type="CharacterBody2D" parent="." unique_id=61269048]
 z_index = 10
@@ -35,6 +125,7 @@ Speed = 300.0
 jumpVelocity = 400.0
 KnockBack = 100.0
 LockCameraY = true
+CameraFixedY = 330.0
 VehicleSpeedMult = 1.3
 VehicleBulletDamage = 15
 
@@ -70,6 +161,16 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
+[node name="SpacePrompt" type="Control" parent="box" unique_id=1801795784]
+z_index = 30
+layout_mode = 3
+anchors_preset = 0
+offset_left = -43.0
+offset_top = -92.0
+offset_right = -43.0
+offset_bottom = -92.0
+script = ExtResource("15_spaceprompt")
+
 [node name="SwingTrail" type="Node2D" parent="box" unique_id=841069274]
 z_index = 2
 script = ExtResource("5_h27us")
@@ -96,8 +197,271 @@ texture = ExtResource("7_ylqhw")
 [node name="Aura" type="Node2D" parent="box/Weapon" unique_id=1642341596]
 script = ExtResource("8_ocwlh")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=702856765]
+[node name="road" type="StaticBody2D" parent="." unique_id=702856765]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=321954501]
-position = Vector2(3743, 488)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="road" unique_id=321954501]
+position = Vector2(607.53125, 445.75)
 shape = SubResource("RectangleShape2D_btfou")
+
+[node name="Sprite2D" type="Sprite2D" parent="road" unique_id=1710680752]
+z_index = -80
+position = Vector2(517, 495)
+scale = Vector2(0.4670095, 0.41758242)
+texture = ExtResource("9_ylqhw")
+
+[node name="mud" type="StaticBody2D" parent="." unique_id=2013543535]
+position = Vector2(2092.7544, 390.46936)
+
+[node name="Sprite2D" type="Sprite2D" parent="mud" unique_id=1048892295]
+z_index = -90
+position = Vector2(-18.754395, 117.53064)
+scale = Vector2(0.835, 0.64843744)
+texture = ExtResource("10_h27us")
+region_enabled = true
+region_rect = Rect2(0, 80, 2048, 432)
+
+[node name="AnimLayer" type="Sprite2D" parent="mud" unique_id=1888301234]
+z_index = -89
+material = SubResource("ShaderMaterial_mud")
+position = Vector2(-73.754395, 86.53063)
+scale = Vector2(0.835, 0.64843744)
+texture = ExtResource("11_mudonly")
+offset = Vector2(0, -146)
+
+[node name="Foreground" type="Sprite2D" parent="mud" unique_id=1888301235]
+z_index = 15
+material = SubResource("ShaderMaterial_mudfg")
+position = Vector2(-39.6544, 90.767006)
+scale = Vector2(0.83400387, 0.6454546)
+texture = ExtResource("11_mudonly")
+offset = Vector2(0, -146)
+region_enabled = true
+region_rect = Rect2(81.894, 0, 1963.54, 220)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="mud" unique_id=534643542]
+position = Vector2(-40.254395, 124.53064)
+shape = SubResource("RectangleShape2D_mudslab")
+
+[node name="MudZone" type="Area2D" parent="." unique_id=1888301236]
+position = Vector2(2019, 325.31)
+script = ExtResource("13_mudpit")
+SpeedMult = 0.4
+JumpMult = 0.5
+AccelMult = 0.5
+SurfaceOffsetY = 30.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MudZone" unique_id=1888301237]
+position = Vector2(32.5, 144.19)
+shape = SubResource("RectangleShape2D_mudzone")
+
+[node name="mud2" type="StaticBody2D" parent="." unique_id=595443652]
+position = Vector2(5042.7544, 390.46936)
+
+[node name="Sprite2D" type="Sprite2D" parent="mud2" unique_id=1468357911]
+z_index = -90
+position = Vector2(-18.754395, 117.53064)
+scale = Vector2(1.07749, 0.64843744)
+texture = ExtResource("10_h27us")
+region_enabled = true
+region_rect = Rect2(0, 80, 2048, 432)
+
+[node name="AnimLayer" type="Sprite2D" parent="mud2" unique_id=761852759]
+z_index = -89
+material = SubResource("ShaderMaterial_mud")
+position = Vector2(-73.754395, 86.53063)
+scale = Vector2(1.07749, 0.64843744)
+texture = ExtResource("11_mudonly")
+offset = Vector2(0, -146)
+
+[node name="Foreground" type="Sprite2D" parent="mud2" unique_id=423025330]
+z_index = 15
+material = SubResource("ShaderMaterial_mudfg")
+position = Vector2(-74.2044, 90.767006)
+scale = Vector2(1.07621, 0.6454546)
+texture = ExtResource("11_mudonly")
+offset = Vector2(0, -146)
+region_enabled = true
+region_rect = Rect2(72.5872, 0, 1900.0938, 220)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="mud2" unique_id=526954231]
+visible = false
+position = Vector2(-73.7544, 124.53064)
+shape = SubResource("RectangleShape2D_mudslab2")
+
+[node name="MudZone2" type="Area2D" parent="." unique_id=567241444]
+position = Vector2(4969, 325.31)
+script = ExtResource("13_mudpit")
+SpeedMult = 0.4
+JumpMult = 0.5
+AccelMult = 0.5
+SurfaceOffsetY = 30.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MudZone2" unique_id=1710919627]
+position = Vector2(5.7998047, 148.345)
+shape = SubResource("RectangleShape2D_mudzone2")
+
+[node name="road2" type="StaticBody2D" parent="." unique_id=1539234280]
+position = Vector2(2982, 2)
+
+[node name="Sprite2D" type="Sprite2D" parent="road2" unique_id=135645759]
+z_index = -80
+position = Vector2(427, 486)
+scale = Vector2(0.4670095, 0.41758242)
+texture = ExtResource("9_ylqhw")
+region_enabled = true
+region_rect = Rect2(0, 0, 2300, 730)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="road2" unique_id=694727433]
+position = Vector2(429.25, 472)
+shape = SubResource("RectangleShape2D_uv0j0")
+
+[node name="road3" type="StaticBody2D" parent="." unique_id=1265423119]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="road3" unique_id=541863777]
+position = Vector2(6995.5, 445.25)
+shape = SubResource("RectangleShape2D_road3")
+
+[node name="Sprite2D" type="Sprite2D" parent="road3" unique_id=487865877]
+z_index = -80
+position = Vector2(6995.5, 495)
+scale = Vector2(0.65397, 0.41758242)
+texture = ExtResource("9_ylqhw")
+
+[node name="undead_apple1" parent="." unique_id=312997898 instance=ExtResource("14_undead")]
+position = Vector2(2252, 362)
+PatrolRange = 260.0
+RandomPatrol = true
+
+[node name="undead_apple3" parent="." unique_id=1038133475 instance=ExtResource("14_undead")]
+position = Vector2(4268.2837, 311.24054)
+PatrolRange = 260.0
+RandomPatrol = true
+
+[node name="undead_apple4" parent="." unique_id=939271715 instance=ExtResource("14_undead")]
+position = Vector2(4708, 304)
+PatrolRange = 260.0
+RandomPatrol = true
+
+[node name="undead_apple5" parent="." unique_id=1994179875 instance=ExtResource("14_undead")]
+position = Vector2(5335, 330)
+PatrolRange = 260.0
+RandomPatrol = true
+
+[node name="undead_apple6" parent="." unique_id=771530133 instance=ExtResource("14_undead")]
+position = Vector2(5807.066, 292.21967)
+PatrolRange = 260.0
+RandomPatrol = true
+
+[node name="pirate_apple1" parent="." unique_id=755075135 instance=ExtResource("16_pirate")]
+position = Vector2(2031, 359)
+
+[node name="Vine1" parent="." unique_id=1997584452 instance=ExtResource("60_vine")]
+position = Vector2(1280, -131)
+Length = 460.0
+TopPad = 130.0
+
+[node name="Vine2" parent="." unique_id=882621388 instance=ExtResource("60_vine")]
+position = Vector2(1479, -114)
+Length = 300.0
+TopPad = 130.0
+
+[node name="Well" type="Node2D" parent="." unique_id=2067291473]
+position = Vector2(240, 360)
+script = ExtResource("61_well")
+PerchPad = 1.0
+
+[node name="Back" type="Sprite2D" parent="Well" unique_id=1251658693]
+z_index = -1
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("62_welltex")
+offset = Vector2(0, -128)
+
+[node name="Front" type="Sprite2D" parent="Well" unique_id=1604675130]
+z_index = 12
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("62_welltex")
+offset = Vector2(0, -45)
+region_enabled = true
+region_rect = Rect2(0, 166, 260, 90)
+
+[node name="SpawnSave" type="Node2D" parent="." unique_id=1000502232]
+position = Vector2(340, 360)
+script = ExtResource("63_spawnsave")
+TriggerRadius = 110.0
+
+[node name="Vine3" parent="." unique_id=669717863 instance=ExtResource("60_vine")]
+position = Vector2(1665, -8)
+Length = 300.0
+TopPad = 130.0
+
+[node name="Vine4" parent="." unique_id=600977864 instance=ExtResource("60_vine")]
+position = Vector2(1911, -10)
+Length = 230.0
+TopPad = 130.0
+
+[node name="Vine5" parent="." unique_id=710525618 instance=ExtResource("60_vine")]
+position = Vector2(2111, -1)
+Length = 200.0
+TopPad = 130.0
+
+[node name="Vine6" parent="." unique_id=1556841207 instance=ExtResource("60_vine")]
+position = Vector2(2362, -15)
+Length = 260.0
+TopPad = 130.0
+HintPath = NodePath("../Vine2/WMarker")
+
+[node name="Vine7" parent="." unique_id=597882333 instance=ExtResource("60_vine")]
+position = Vector2(2630, 8)
+Length = 350.0
+TopPad = 130.0
+HintPath = NodePath("../Vine2/WMarker")
+
+[node name="undead_apple2" parent="." unique_id=1514337695 instance=ExtResource("14_undead")]
+position = Vector2(1717, 357)
+PatrolRange = 260.0
+RandomPatrol = true
+
+[node name="pirate_apple2" parent="." unique_id=996715914 instance=ExtResource("16_pirate")]
+position = Vector2(3232, 360)
+
+[node name="pirate_apple3" parent="." unique_id=313615050 instance=ExtResource("16_pirate")]
+position = Vector2(3572, 360)
+
+[node name="pirate_apple4" parent="." unique_id=1250408732 instance=ExtResource("16_pirate")]
+position = Vector2(5020, 330)
+
+[node name="pirate_apple5" parent="." unique_id=451432118 instance=ExtResource("16_pirate")]
+position = Vector2(4521, 317)
+
+[node name="pirate_apple6" parent="." unique_id=1034289344 instance=ExtResource("16_pirate")]
+position = Vector2(5592, 311)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=366183938]
+position = Vector2(-132.64606, -59.707153)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1256285623]
+position = Vector2(3288.646, 41.707153)
+shape = SubResource("RectangleShape2D_m3r2q")
+
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=617263971]
+z_index = -85
+position = Vector2(7270.9995, 67)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("21_m6alp")
+
+[node name="EMarker" type="Sprite2D" parent="Sprite2D2" unique_id=443595032]
+z_index = 20
+position = Vector2(162.50195, 489.99994)
+scale = Vector2(0.74999994, 0.74999994)
+texture = ExtResource("22_qfbna")
+script = ExtResource("23_bb041")
+
+[node name="HouseDoorToInside" type="Area2D" parent="."]
+position = Vector2(7330, 400)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("17_door")
+TargetScene = "res://jungleinside.tscn"
+TargetSpawn = Vector2(170, 340)
+InteractDistance = 80.0
+HintText = "按 E 进屋"

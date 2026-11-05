@@ -24,6 +24,24 @@ public partial class GameState : Node
     /// <summary>对话进行中。门和拾取物要检查这个，避免按 E 时一边对话一边被传走。</summary>
     public bool DialogueActive { get; set; }
 
+    /// <summary>
+    /// 下一个场景要不要播「从古井里爬上来」的入场动画。
+    /// 由 AutoPortal 的 WellEntry 开关置位，目标场景的 WellExit 取一次就清掉。
+    /// 用「取完即清」而不是普通 bool：动画只能播一次，
+    /// 否则在同一场景里死亡复活（不重载场景）或者从别处走回来都会再演一遍。
+    /// </summary>
+    private bool _pendingWellEntry;
+
+    public void MarkWellEntry() => _pendingWellEntry = true;
+
+    /// <summary>取「要不要播井口入场」，取完即清空。</summary>
+    public bool TakeWellEntry()
+    {
+        bool v = _pendingWellEntry;
+        _pendingWellEntry = false;
+        return v;
+    }
+
     /// <summary>跨场景的「聊过 / 捡过」记录。纯 C# 实现，可脱离引擎单元测试。</summary>
     private readonly GameRecords _records = new();
 
@@ -145,6 +163,7 @@ public partial class GameState : Node
         RevivePointKey = null;
         ReviveScenePath = null;
         RevivePosition = Vector2.Zero;
+        _pendingWellEntry = false;
     }
 
     /// <summary>

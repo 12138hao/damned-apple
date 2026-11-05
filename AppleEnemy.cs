@@ -165,13 +165,17 @@ public partial class AppleEnemy : Enemy
 
         // 状态/朝向一变就立刻跳到对应帧段的第一帧，
         // 否则要等 AnimInterval（0.12 秒）才更新，会在切换瞬间残留上一段的帧。
-        bool switched = _chasing != _lastChasing
-                     || (_chasing && Direction != _lastDir);
+        // 「在动」= 在追玩家，或者随机巡逻判定为行走。
+        // 只认 _chasing 的话，开了随机巡逻的怪会一边滑走一边播呼吸帧。
+        bool walking = _chasing || IsWalkingNow;
+
+        bool switched = walking != _lastChasing
+                     || (walking && Direction != _lastDir);
         if (switched)
         {
-            _lastChasing = _chasing;
+            _lastChasing = walking;
             _lastDir = Direction;
-            _sprite.Frame = _chasing
+            _sprite.Frame = walking
                 ? (Direction > 0 ? WalkRightStart : WalkLeftStart)
                 : IdleStart;
             _animTimer = 0f;
@@ -186,7 +190,7 @@ public partial class AppleEnemy : Enemy
         int start;
         int count;
 
-        if (_chasing)
+        if (walking)
         {
             start = Direction > 0 ? WalkRightStart : WalkLeftStart;
             count = 4;

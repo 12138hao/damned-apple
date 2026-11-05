@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" uid="uid://r0oew6au3f8n" path="res://Vine.cs" id="1_vine"]
+[ext_resource type="Texture2D" uid="uid://e58og6s2v5o5" path="res://assets/jungle/vine_tile.png" id="2_tile"]
+[ext_resource type="Texture2D" uid="uid://5qupia6vu86g" path="res://w-marker-64.png" id="3_wmarker"]
+[ext_resource type="Script" uid="uid://b3usr6w73hux2" path="res://EMarker.cs" id="4_emarker"]
+
+[node name="Vine" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_vine")
+Length = 320.0
+Tile = ExtResource("2_tile")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+
+[node name="WMarker" type="Sprite2D" parent="."]
+z_index = 20
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_wmarker")
+script = ExtResource("4_emarker")
