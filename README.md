@@ -10,6 +10,28 @@
 
 ---
 
+## 游戏截图
+
+<table>
+  <tr>
+    <td width="50%"><img src="screenshots/01-frog-tutorial.png" alt="奶蛙教操作"><br><sub>第一关 · 奶蛙教操作</sub></td>
+    <td width="50%"><img src="screenshots/02-carnival.jpg" alt="主城游乐场"><br><sub>第一关 · 主城游乐场</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="screenshots/03-big-apple-boss.jpg" alt="大苹果 Boss"><br><sub>第一关 Boss · 大苹果被打哭</sub></td>
+    <td width="50%"><img src="screenshots/04-beast-apple-boss.jpg" alt="野兽苹果 Boss"><br><sub>第二关 Boss · 野兽苹果</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="screenshots/05-jungle-gourd.jpg" alt="丛林入口"><br><sub>第三关 · 丛林入口的葫芦屋</sub></td>
+    <td width="50%"><img src="screenshots/06-jungle-mud.jpg" alt="泥潭与藤蔓"><br><sub>第三关 · 泥潭与可攀爬藤蔓</sub></td>
+  </tr>
+  <tr>
+    <td colspan="2"><p align="center"><img src="screenshots/07-old-apple.jpg" width="50%" alt="老苹果"><br><sub>第三关 · 林中屋里的老苹果</sub></p></td>
+  </tr>
+</table>
+
+---
+
 ## 直接下载游玩
 
 去 **[Releases](https://github.com/12138hao/damned-apple/releases)** 下载 `damned-apple-v0.1.0-win64.zip`，解压后双击 `该死的苹果.exe`（**要整个文件夹，不能只拖出 exe**）。
