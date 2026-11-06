@@ -22,7 +22,7 @@
     <td width="50%"><img src="screenshots/04-beast-apple-boss.jpg" alt="野兽苹果 Boss"><br><sub>第二关 Boss · 野兽苹果</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="screenshots/05-jungle-gourd.jpg" alt="丛林入口"><br><sub>第三关 · 丛林入口的葫芦屋</sub></td>
+    <td width="50%"><img src="screenshots/05-jungle-necked-bottle.jpg" alt="丛林深处的鹅颈瓶"><br><sub>第三关 · 丛林深处的鹅颈瓶</sub></td>
     <td width="50%"><img src="screenshots/06-jungle-mud.jpg" alt="泥潭与藤蔓"><br><sub>第三关 · 泥潭与可攀爬藤蔓</sub></td>
   </tr>
   <tr>
