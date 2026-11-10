@@ -541,7 +541,6 @@ StrugglePresses = 4
 LockCameraY = true
 CameraFixedY = 330.0
 VehicleSpeedMult = 1.3
-VehicleBulletDamage = 15
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=951365296]
 shape = SubResource("RectangleShape2D_ev7cm")

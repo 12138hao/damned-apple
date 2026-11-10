@@ -52,7 +52,6 @@ Speed = 300.0
 jumpVelocity = 400.0
 KnockBack = 100.0
 VehicleSpeedMult = 1.3
-VehicleBulletDamage = 30
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=561886425]
 shape = SubResource("RectangleShape2D_player")

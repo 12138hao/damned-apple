@@ -140,7 +140,6 @@ jumpVelocity = 400.0
 KnockBack = 100.0
 LockCameraY = true
 VehicleSpeedMult = 1.3
-VehicleBulletDamage = 15
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=1866583936]
 shape = SubResource("RectangleShape2D_0boax")

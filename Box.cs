@@ -40,7 +40,7 @@ public partial class Box : CharacterBody2D
     [Export] public float CameraFixedY = 420f;     // 锁定时镜头停在这个世界 Y
     [ExportGroup("载具")]
     [Export] public float VehicleSpeedMult = 1.5f;      // 乘坐后移动速度倍率
-    [Export] public int VehicleBulletDamage = 3;        // 子弹伤害
+    [Export] public int VehicleBulletDamage = 25;       // 子弹伤害（默认值；场景没覆盖就全用它）
     [Export] public float VehicleBulletSpeed = 420f;    // 子弹速度
     [Export] public int VehicleBulletLifeFrames = 100;  // 子弹飞多少物理帧后消失
     [Export] public float VehicleMuzzleIconX = 55.5f;

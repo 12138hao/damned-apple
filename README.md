@@ -39,7 +39,7 @@
 
 ## 直接下载游玩
 
-去 **[Releases](https://github.com/12138hao/damned-apple/releases)** 下载 `damned-apple-v1.0.0-win64.zip`，解压后双击 `该死的苹果.exe`（**要整个文件夹，不能只拖出 exe**——`data_MyGame_windows_x86_64/` 是 .NET 程序集，缺了打不开）。
+去 **[Releases](https://github.com/12138hao/damned-apple/releases)** 下载 `damned-apple-v1.0.1-win64.zip`，解压后双击 `该死的苹果.exe`（**要整个文件夹，不能只拖出 exe**——`data_MyGame_windows_x86_64/` 是 .NET 程序集，缺了打不开）。
 
 不需要安装 Godot，也不需要装 .NET 运行时。Windows 可能弹出 SmartScreen 蓝色提示（exe 没有代码签名），点「更多信息 → 仍要运行」即可。
 
