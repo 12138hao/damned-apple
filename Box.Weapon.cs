@@ -21,6 +21,24 @@ public partial class Box
         }
     }
 
+    // ─────────────────────────── 伤害取值 ───────────────────────────
+    // 数值来源只有一个：武器自己的 .tres（assets/weapons/*.tres）。
+    // 以前这里还有一层"Box 上的覆盖值优先"，结果每张地图各存一份、改了一处别处不生效，已经去掉。
+
+    /// <summary>近战实际伤害区间：直接取 .tres 的 DamageMin / DamageMax。</summary>
+    private void MeleeDamageRange(WeaponData w, out int min, out int max)
+    {
+        min = Mathf.Max(0, w.DamageMin);
+        max = Mathf.Max(min, w.DamageMax);   // 只填了 min 时别让 Lerp 倒着走
+    }
+
+    /// <summary>远程每发伤害：RangedDamage；没填就退回 DamageMax / DamageMin。</summary>
+    private int RangedDamageOf(WeaponData w)
+    {
+        if (w.RangedDamage > 0) return w.RangedDamage;
+        return w.DamageMax > 0 ? w.DamageMax : w.DamageMin;
+    }
+
     /// <summary>从 from 开始往后找下一个有武器的槽，找不到返回 -1。</summary>
     private int FindNextWeaponSlot(int from)
     {

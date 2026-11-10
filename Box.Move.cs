@@ -351,6 +351,10 @@ public partial class Box
     /// <summary>锁定镜头高度：把相机子节点的 local Y 反向补偿掉。</summary>
     private void LockCameraHeight()
     {
+        // 场景里 box 的 _Ready 可能还没跑（比如 WellExit 排在 box 前面），此时 _cam 是 null。
+        // 以前这里没判空，井口入场动画第一帧就抛 NullReference，直接把人锁死在井里。
+        if (_cam == null) return;
+
         // 锁定镜头 Y：Camera2D 是 box 的子节点，把 local Y 反向补偿掉，
         // 世界 Y 就固定了，X 仍然跟着玩家走。
         //
@@ -366,7 +370,13 @@ public partial class Box
         {
             // 半屏高 = 镜头中心能到的最小值（再往上就露出世界外）
             float halfH = GetViewport().GetVisibleRect().Size.Y * 0.5f;
-            center = Mathf.Clamp(GlobalPosition.Y, halfH, baseCenter);
+            // 上限不能比下限还低。有些场景（CameraFixedY 用默认 420、offset 又带 -200 的，
+            // 比如 underground）算出来 baseCenter = 220，比半屏高 225 还小 5 像素 ——
+            // 这时 Mathf.Clamp 的 min > max，会直接抛 ArgumentException
+            // （调试器里刷 "'225' cannot be greater than 225/220"），
+            // 而且它排在 _PhysicsProcess 中段，一抛就把后面的切武器/瞄准/朝向/攻击/换帧全跳过。
+            // 上下限撞车时以"不露出世界外"为先，把上限抬到下限。
+            center = Mathf.Clamp(GlobalPosition.Y, halfH, Mathf.Max(halfH, baseCenter));
         }
 
         _cam.Position = new Vector2(_cam.Position.X,

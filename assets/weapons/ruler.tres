@@ -6,8 +6,8 @@
 [resource]
 script = ExtResource("1_script")
 DisplayName = "ruler"
-DamageMin = 30
-DamageMax = 60
+DamageMin = 40
+DamageMax = 70
 KnockbackMin = 270.0
 KnockbackMax = 1050.0
 KnockbackUpRatio = 0.32

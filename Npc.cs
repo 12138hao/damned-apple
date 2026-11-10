@@ -12,6 +12,9 @@ using Godot;
 /// </summary>
 public partial class Npc : CharacterBody2D
 {
+    /// <summary>把台词全部说完时发出（中途走开被打断不发）。结局演出靠它触发。</summary>
+    [Signal] public delegate void TalkFinishedEventHandler();
+
     [ExportGroup("首次对话（可以双向）")]
     [Export] public string[] FirstLines =
     {
@@ -183,7 +186,7 @@ public partial class Npc : CharacterBody2D
         _index++;
         if (_lines == null || _index >= _lines.Length)
         {
-            EndTalk();
+            EndTalk(true);
             return;
         }
         ShowLine(_index);
@@ -204,7 +207,7 @@ public partial class Npc : CharacterBody2D
         }
     }
 
-    private void EndTalk()
+    private void EndTalk(bool finished = false)
     {
         _talking = false;
         _lines = null;
@@ -217,6 +220,9 @@ public partial class Npc : CharacterBody2D
 
         // 记下来，下次就是 RepeatLines（key 带场景路径，不会串到别的关卡）
         GameState.I?.MarkTalked(TalkKey);
+
+        // 台词说完了才通知（走开打断不算），结局演出挂在这个信号上
+        if (finished) EmitSignal(SignalName.TalkFinished);
     }
 
     /// <summary>显示第 i 句：按前缀决定谁说话、用哪个气泡。</summary>

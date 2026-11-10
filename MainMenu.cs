@@ -17,6 +17,7 @@ public partial class MainMenu : Control
     private Button _newGame;
     private Button _quit;
     private ConfirmationDialog _confirm;
+    private ConfirmationDialog _clearedConfirm;
 
     /// <summary>站在草地上的 box 立绘。</summary>
     private Sprite2D _boxSprite;
@@ -109,6 +110,14 @@ public partial class MainMenu : Control
             return;
         }
 
+        // 上一周目已经看完结局了：不让他再回到结局现场，提示后开新游戏
+        if (GameState.I != null && GameState.I.Cleared)
+        {
+            if (_clearedConfirm == null) _clearedConfirm = BuildClearedConfirm();
+            _clearedConfirm.PopupCentered(new Vector2I(400, 150));
+            return;
+        }
+
         _busy = true;
         SetButtonsEnabled(false);
         await FadeOut();
@@ -152,6 +161,21 @@ public partial class MainMenu : Control
             Title = "开始新游戏",
             DialogText = "当前存档会被覆盖，确定要重新开始吗？",
             OkButtonText = "覆盖并开始",
+            CancelButtonText = "取消",
+        };
+        AddChild(d);
+        d.Confirmed += StartNewGame;
+        return d;
+    }
+
+    /// <summary>通关之后再点「继续游戏」：只能开新周目。</summary>
+    private ConfirmationDialog BuildClearedConfirm()
+    {
+        var d = new ConfirmationDialog
+        {
+            Title = "游戏已通关",
+            DialogText = "游戏已通关，继续游戏则开启新游戏。\n\n确定要从头再玩一遍吗？",
+            OkButtonText = "开启新游戏",
             CancelButtonText = "取消",
         };
         AddChild(d);

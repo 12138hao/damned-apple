@@ -93,6 +93,19 @@ public partial class WellExit : Node2D
         // 落地位置：井口右侧的地面上，玩家中心要抬半个身高
         _landPos = GlobalPosition + new Vector2(ExitOffset.X, -half + ExitOffset.Y);
 
+        // 关键：不能在自己的 _Ready 里就动玩家。
+        // 场景里 Well 排在 box 前面，这时 box 的 _Ready 还没跑（_cam 还是 null、出生点也还没读），
+        // 直接瞬移会抛空引用 + 位置随后被 box 自己的出生点覆盖 —— 表现就是"卡在井里出不来"。
+        // 延后一帧，等所有节点的 _Ready 都过完再开始。
+        SetProcess(false);
+        CallDeferred(nameof(StartIntro));
+    }
+
+    /// <summary>真正开始演（延后一帧，保证玩家已经初始化完）。</summary>
+    private void StartIntro()
+    {
+        if (_player == null || !IsInstanceValid(_player)) return;
+
         if (_front != null) _front.ZIndex = FrontZIndex;   // 演出期间：前沿挡住井里的玩家
 
         _player.BeginCutscene();
@@ -101,6 +114,7 @@ public partial class WellExit : Node2D
 
         _running = true;
         _t = 0f;
+        SetProcess(true);
         GD.Print($"[WellExit] 开始井口入场动画：前沿顶 y={_rimTop:F1} 起点 {_startPos} 踩前沿 {_perchPos} 落点 {_landPos}");
     }
 

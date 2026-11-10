@@ -1,0 +1,434 @@
+[gd_scene format=3 uid="uid://d21am6s2r3hcg"]
+
+[ext_resource type="Script" uid="uid://e5wi8hrcen2r" path="res://EdenBackdrop.cs" id="1_eden"]
+[ext_resource type="Script" uid="uid://t2mqwwy1jk3t" path="res://ShadowCaster.cs" id="2_shadow"]
+[ext_resource type="Script" uid="uid://ckfwsyc34ots7" path="res://Box.cs" id="2_wdl8g"]
+[ext_resource type="Texture2D" uid="uid://dsfapsyeiv41h" path="res://assets/player_sheet_v2.png" id="3_i50yd"]
+[ext_resource type="Script" uid="uid://dmq7nrftqx2qw" path="res://DialogueUI.cs" id="4_81ahk"]
+[ext_resource type="Script" uid="uid://bkvaedtmio4gf" path="res://SwingTrail.cs" id="5_h27us"]
+[ext_resource type="Script" uid="uid://bfk5suig6pucp" path="res://ChargeArc.cs" id="6_qtvti"]
+[ext_resource type="Texture2D" uid="uid://c7irabu5sxp5h" path="res://assets/weapon.png" id="7_ylqhw"]
+[ext_resource type="Script" uid="uid://c57ocnohmulys" path="res://WeaponAura.cs" id="8_ocwlh"]
+[ext_resource type="Texture2D" uid="uid://rw8cuepww0qd" path="res://像素蛇怪生成 (6).png" id="15_8db7l"]
+[ext_resource type="Script" uid="uid://cmspw2htmxpay" path="res://SpacePrompt.cs" id="15_spaceprompt"]
+[ext_resource type="Texture2D" uid="uid://draw17j5ahvuf" path="res://assets/eden/giant_vine_crawl.png" id="16_vinerun"]
+[ext_resource type="Texture2D" uid="uid://beaupkqspx52t" path="res://assets/eden/giant_vine_bend.png" id="17_vinebend"]
+[ext_resource type="Texture2D" uid="uid://b4npt84rf7q3o" path="res://e-marker-64.png" id="20_obwnw"]
+[ext_resource type="Script" uid="uid://tq7fx7bx2bur" path="res://ScreenFade.cs" id="21_fade"]
+[ext_resource type="Script" uid="uid://b3usr6w73hux2" path="res://EMarker.cs" id="21_sqlbi"]
+[ext_resource type="Script" uid="uid://bg5ks6a6bwwwg" path="res://SceneFadeIn.cs" id="22_fadein"]
+[ext_resource type="Script" uid="uid://yepyo4hu3b73" path="res://Npc.cs" id="22_i4q8y"]
+[ext_resource type="Texture2D" uid="uid://b1a1qmph1i2h0" path="res://assets/naiwa_sheet.png" id="23_4jsvj"]
+[ext_resource type="Script" uid="uid://bjqr8o3rcadc8" path="res://SheetAnimator.cs" id="24_qii0u"]
+[ext_resource type="Texture2D" uid="uid://c2xtxbjc6naey" path="res://d1f5ea4575a7c69f3a8439524a128515.png" id="25_nnjoi"]
+[ext_resource type="PackedScene" uid="uid://cp4v7l1a2auik" path="res://RevivePoint.tscn" id="26_3pc70"]
+[ext_resource type="Script" uid="uid://cuipsb4n5tu8t" path="res://Breath.cs" id="26_y5mwc"]
+[ext_resource type="Texture2D" uid="uid://dijjc0ang68bh" path="res://7d4304a8c92e5d3059a5430660718669.png" id="27_7kdf8"]
+[ext_resource type="PackedScene" uid="uid://bn63kr6nu773g" path="res://SnakeBossArena.tscn" id="30_snake"]
+[ext_resource type="Script" uid="uid://dixwdp4268h7q" path="res://EndingSequence.cs" id="31_endseq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_groundfirst"]
+size = Vector2(400, 240)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(1000, 240)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vinefloor"]
+size = Vector2(600, 240)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vinewall"]
+size = Vector2(24, 500)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ev7cm"]
+size = Vector2(32, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v45c0"]
+size = Vector2(26, 42)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_btfou"]
+size = Vector2(118.00049, 3329)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uv0j0"]
+size = Vector2(33.95459, 2570)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qb2o0"]
+radius = 2617.2505
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_0hqua"]
+radius = 156.88
+
+[node name="Eden" type="Node2D" unique_id=1735698447]
+script = ExtResource("22_fadein")
+
+[node name="EdenBackdrop" type="Node2D" parent="." unique_id=1097143218]
+script = ExtResource("1_eden")
+
+[node name="Fade" type="Node" parent="." unique_id=420905155]
+script = ExtResource("21_fade")
+
+[node name="Ground" type="StaticBody2D" parent="." unique_id=903493656]
+collision_mask = 0
+
+[node name="Seg_0" type="CollisionShape2D" parent="Ground" unique_id=516108243]
+position = Vector2(800, 820)
+shape = SubResource("RectangleShape2D_groundfirst")
+
+[node name="Seg_1" type="CollisionShape2D" parent="Ground" unique_id=1479206070]
+position = Vector2(1500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_2" type="CollisionShape2D" parent="Ground" unique_id=395324923]
+position = Vector2(2500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_3" type="CollisionShape2D" parent="Ground" unique_id=643738385]
+position = Vector2(3500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_4" type="CollisionShape2D" parent="Ground" unique_id=1904842562]
+position = Vector2(4500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_5" type="CollisionShape2D" parent="Ground" unique_id=334219049]
+position = Vector2(5500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_6" type="CollisionShape2D" parent="Ground" unique_id=154600616]
+position = Vector2(6500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_7" type="CollisionShape2D" parent="Ground" unique_id=1116059155]
+position = Vector2(7500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_8" type="CollisionShape2D" parent="Ground" unique_id=826200924]
+position = Vector2(8500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_9" type="CollisionShape2D" parent="Ground" unique_id=369315751]
+position = Vector2(9500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_10" type="CollisionShape2D" parent="Ground" unique_id=1247732700]
+position = Vector2(10500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_11" type="CollisionShape2D" parent="Ground" unique_id=1813410950]
+position = Vector2(11500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_12" type="CollisionShape2D" parent="Ground" unique_id=350713871]
+position = Vector2(12500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_13" type="CollisionShape2D" parent="Ground" unique_id=22071643]
+position = Vector2(13500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_14" type="CollisionShape2D" parent="Ground" unique_id=1730229925]
+position = Vector2(14500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_15" type="CollisionShape2D" parent="Ground" unique_id=1001350380]
+position = Vector2(15500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_16" type="CollisionShape2D" parent="Ground" unique_id=214283935]
+position = Vector2(16500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_17" type="CollisionShape2D" parent="Ground" unique_id=93045597]
+position = Vector2(17500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_18" type="CollisionShape2D" parent="Ground" unique_id=1913786139]
+position = Vector2(18500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="Seg_19" type="CollisionShape2D" parent="Ground" unique_id=902948071]
+position = Vector2(19500, 820)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="VineFloorBody" type="StaticBody2D" parent="." unique_id=308407515]
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VineFloorBody" unique_id=2102695900]
+position = Vector2(300, 820)
+shape = SubResource("RectangleShape2D_vinefloor")
+
+[node name="VineWall" type="StaticBody2D" parent="." unique_id=88666199]
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VineWall" unique_id=948919390]
+position = Vector2(169, 446)
+shape = SubResource("RectangleShape2D_vinewall")
+
+[node name="VineRun" type="Sprite2D" parent="." unique_id=1136671590]
+z_index = -50
+texture_filter = 1
+position = Vector2(300, 768.5)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("16_vinerun")
+region_enabled = true
+region_rect = Rect2(0, 0, 1500, 342)
+
+[node name="VineBend" type="Sprite2D" parent="." unique_id=752071037]
+z_index = -45
+texture_filter = 1
+position = Vector2(348.2, 867.75)
+scale = Vector2(0.55, 0.55)
+texture = ExtResource("17_vinebend")
+flip_v = true
+region_enabled = true
+region_rect = Rect2(0, 0, 1448, 658)
+
+[node name="box" type="CharacterBody2D" parent="." unique_id=174375804]
+z_index = 10
+position = Vector2(350, 684)
+collision_layer = 2
+collision_mask = 9
+script = ExtResource("2_wdl8g")
+Speed = 300.0
+jumpVelocity = 400.0
+KnockBack = 100.0
+LockCameraY = true
+CameraFixedY = 740.0
+VehicleSpeedMult = 1.3
+VehicleBulletDamage = 20
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=951365296]
+shape = SubResource("RectangleShape2D_ev7cm")
+
+[node name="Camera2D" type="Camera2D" parent="box" unique_id=177238293]
+offset = Vector2(0, -200)
+limit_left = 0
+limit_top = -1239
+limit_right = 20000
+limit_bottom = 980
+position_smoothing_enabled = true
+position_smoothing_speed = 22.0
+
+[node name="Sprite2D" type="Sprite2D" parent="box" unique_id=1799098205]
+texture = ExtResource("3_i50yd")
+offset = Vector2(0, -10)
+hframes = 21
+
+[node name="Shadow" type="Node2D" parent="box" unique_id=696095691]
+top_level = true
+z_index = -40
+z_as_relative = false
+script = ExtResource("2_shadow")
+TargetPath = NodePath("../Sprite2D")
+
+[node name="DialogueUI" type="Node2D" parent="box" unique_id=1800548140]
+z_index = 20
+position = Vector2(-85, -114)
+script = ExtResource("4_81ahk")
+
+[node name="Text" type="Label" parent="box/DialogueUI" unique_id=778084194]
+offset_left = -109.0
+offset_top = -35.0
+offset_right = 97.0
+offset_bottom = 27.0
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="SpacePrompt" type="Control" parent="box" unique_id=901054134]
+z_index = 30
+layout_mode = 3
+anchors_preset = 0
+offset_left = -43.0
+offset_top = -92.0
+offset_right = -43.0
+offset_bottom = -92.0
+script = ExtResource("15_spaceprompt")
+
+[node name="SwingTrail" type="Node2D" parent="box" unique_id=1375705468]
+z_index = 2
+script = ExtResource("5_h27us")
+
+[node name="ChargeArc" type="Node2D" parent="box" unique_id=1968629947]
+position = Vector2(-38, -6)
+script = ExtResource("6_qtvti")
+Radius = 20.0
+SweepDeg = 120.0
+
+[node name="Weapon" type="Area2D" parent="box" unique_id=1364064803]
+z_index = 100
+position = Vector2(18, -15)
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box/Weapon" unique_id=1619872649]
+shape = SubResource("RectangleShape2D_v45c0")
+
+[node name="Sprite2D" type="Sprite2D" parent="box/Weapon" unique_id=763978235]
+visible = false
+texture = ExtResource("7_ylqhw")
+
+[node name="Aura" type="Node2D" parent="box/Weapon" unique_id=726727286]
+script = ExtResource("8_ocwlh")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=78674672]
+position = Vector2(19843.17, 448.10706)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1147628415]
+position = Vector2(208.83008, -200.60706)
+shape = SubResource("RectangleShape2D_btfou")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=864469842]
+position = Vector2(3952, 5)
+texture = ExtResource("15_8db7l")
+
+[node name="SnakeBossArena" parent="." unique_id=724512756 instance=ExtResource("30_snake")]
+position = Vector2(3964, 700)
+IntroLines = PackedStringArray("黑蛇：嘶——居然有人类能上来", "黑蛇：人类必须毁灭！！", "黑蛇：去死吧！！！")
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="." unique_id=1912073288]
+position = Vector2(7959.893, 184.99854)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=462338712]
+position = Vector2(7937.0225, 39)
+shape = SubResource("RectangleShape2D_uv0j0")
+
+[node name="VineWall2" type="StaticBody2D" parent="." unique_id=1362620120]
+position = Vector2(6952.765, 724.50024)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VineWall2" unique_id=1791404414]
+position = Vector2(-48.765137, -251.50024)
+shape = SubResource("RectangleShape2D_vinewall")
+
+[node name="naiwa" type="CharacterBody2D" parent="." unique_id=232217966]
+light_mask = 2
+visibility_layer = 3
+z_index = 1
+position = Vector2(6822.456, 668.374)
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("22_i4q8y")
+FirstLines = PackedStringArray("npc:我想这就是终点了吧", "npc:没想到你真的做到了", "npc:你真的很厉害", "npc:那么", "npc:让我们下次再见吧", "npc:后会有期！")
+RepeatLines = PackedStringArray()
+LineFaces = PackedInt32Array(-1, -1, -1, 0, 0, 0, -1, -1, -1)
+
+[node name="Sprite2D" type="Sprite2D" parent="naiwa" unique_id=1818198595]
+light_mask = 2
+visibility_layer = 2
+z_index = 1
+position = Vector2(10.999999, -8.999999)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("23_4jsvj")
+hframes = 4
+script = ExtResource("24_qii0u")
+Interval = 0.2
+
+[node name="DialogueUI" type="Node2D" parent="naiwa" unique_id=1194149015]
+z_index = 1
+position = Vector2(-85, -114)
+script = ExtResource("4_81ahk")
+
+[node name="Text" type="Label" parent="naiwa/DialogueUI" unique_id=28927468]
+offset_left = -109.0
+offset_top = -35.0
+offset_right = 97.0
+offset_bottom = 27.0
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="FaceA" type="Sprite2D" parent="naiwa" unique_id=1358106442]
+visible = false
+z_index = 1
+position = Vector2(5, -9)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("25_nnjoi")
+script = ExtResource("26_y5mwc")
+
+[node name="FaceB" type="Sprite2D" parent="naiwa" unique_id=682674283]
+visible = false
+z_index = 1
+position = Vector2(10.999999, -8.999999)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("27_7kdf8")
+script = ExtResource("26_y5mwc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="naiwa" unique_id=181652817]
+visible = false
+z_index = 1
+position = Vector2(12, -13)
+scale = Vector2(0.01, 0.01)
+shape = SubResource("CircleShape2D_qb2o0")
+
+[node name="TalkArea" type="Area2D" parent="naiwa" unique_id=1952012120]
+visible = false
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="naiwa/TalkArea" unique_id=2120212286]
+position = Vector2(10, -13)
+shape = SubResource("CircleShape2D_0hqua")
+
+[node name="EMarker" type="Sprite2D" parent="naiwa" unique_id=1485743348]
+z_index = 20
+position = Vector2(10, -76)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("20_obwnw")
+script = ExtResource("21_sqlbi")
+
+[node name="EndingSequence" type="Node" parent="." unique_id=206297611]
+script = ExtResource("31_endseq")
+Credits = "《该死的苹果》
+
+
+—— 制作 ——
+
+策划 / 程序 / 美术
+彭灏
+
+
+—— 技术 ——
+
+Godot Engine 4.7
+C# / .NET
+
+
+—— 致谢 ——
+
+感谢Pixabay素材库
+
+感谢游戏音效工厂
+
+感谢自己
+
+感谢deepseek
+
+感谢seedream
+
+感谢Orange
+
+谢谢你游玩我的游戏
+谢谢
+
+
+
+真的十分感谢
+
+ps
+这是我的第一款游戏，
+是一个试试水，
+一边学一边做的作品，
+所以前后几章的质量完全不在一个层次上。
+制作这款游戏让我感受到了
+一款能动的游戏的复杂性，
+个人游戏制作需要考虑的东西
+有很多很多，
+这个游戏也让我学习到了很多东西，
+有了经验。
+让我们一起
+无限进步。"
+
+[node name="RevivePoint" parent="EndingSequence" unique_id=1585508078 instance=ExtResource("26_3pc70")]
+position = Vector2(629.19196, 681.1503)

@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://bn63kr6nu773g"]
+
+[ext_resource type="Script" uid="uid://chuk8n6cngpg6" path="res://SnakeArena.cs" id="1_arena"]
+[ext_resource type="Script" uid="uid://bk2j4ut6lyptq" path="res://SnakeBoss.cs" id="2_boss"]
+[ext_resource type="Texture2D" uid="uid://bl13mtcg2kohw" path="res://assets/eden/snake_body_idle.png" id="3_art"]
+[ext_resource type="Texture2D" uid="uid://dcov6piyqqdqo" path="res://assets/eden/snake_body_dead.png" id="4_dead"]
+[ext_resource type="Texture2D" uid="uid://2iov1k2ebxc8" path="res://assets/eden/snake_tail_sheet.png" id="5_tail"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(300, 420)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hit"]
+size = Vector2(190, 340)
+
+[node name="SnakeArena" type="Area2D" unique_id=2002333340]
+position = Vector2(6964, 700)
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_arena")
+
+[node name="Trigger" type="CollisionShape2D" parent="." unique_id=1228402788]
+position = Vector2(0, -210)
+shape = SubResource("RectangleShape2D_trigger")
+
+[node name="SnakeBoss" type="CharacterBody2D" parent="." unique_id=383458694]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("2_boss")
+MaxHp = 4000
+ImmuneToKnockback = true
+HurtSfx = "snake_hurt"
+DeathSfx = "snake_die"
+SfxSpit = "snake_spit"
+SfxTailWind = "snake_tail"
+SfxTreeShake = "tree_shake"
+SfxEnrage = "snake_roar"
+SfxSummon = "snake_summon"
+
+[node name="TailArt" type="Sprite2D" parent="SnakeBoss" unique_id=375224189]
+visible = false
+z_index = 2
+texture_filter = 1
+position = Vector2(0, -263)
+texture = ExtResource("5_tail")
+centered = false
+hframes = 12
+
+[node name="Art" type="Sprite2D" parent="SnakeBoss" unique_id=722096121]
+texture_filter = 1
+texture = ExtResource("3_art")
+offset = Vector2(0, -180)
+
+[node name="ArtDead" type="Sprite2D" parent="SnakeBoss" unique_id=956893263]
+visible = false
+modulate = Color(1, 1, 1, 0)
+texture_filter = 1
+texture = ExtResource("4_dead")
+offset = Vector2(0, -180)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SnakeBoss" unique_id=218905455]
+position = Vector2(0, -170)
+shape = SubResource("RectangleShape2D_hit")
+
+[node name="RayLeft" type="RayCast2D" parent="SnakeBoss" unique_id=1906186990]
+target_position = Vector2(-40, 0)
+
+[node name="RayRight" type="RayCast2D" parent="SnakeBoss" unique_id=170923435]
+target_position = Vector2(40, 0)
+
+[node name="HurtArea" type="Area2D" parent="SnakeBoss" unique_id=335061234]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SnakeBoss/HurtArea" unique_id=2023895167]
+position = Vector2(0, -170)
+shape = SubResource("RectangleShape2D_hit")

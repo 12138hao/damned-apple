@@ -55,6 +55,9 @@ public partial class AudioManager : Node
     private readonly List<AudioStreamPlayer> _sfxPool = new();
     private int _sfxCursor;
     private string _currentBgm = "";
+
+    /// <summary>当前正在播的 BGM 名（空 = 没在播）。调试/剧情判断用。</summary>
+    public string CurrentBgm => _currentBgm;
     private Tween _bgmTween;
 
     public override void _Ready()
@@ -138,6 +141,14 @@ public partial class AudioManager : Node
     public void PlayBgm(string name, float fadeTime = 0.6f)
     {
         if (string.IsNullOrEmpty(name)) return;
+
+        // 兜底：正常流程里 _Ready 早就建好了；但 -s 脚本调试时可能在 autoload 就绪前就调过来
+        if (_bgm == null)
+        {
+            _bgm = new AudioStreamPlayer { Bus = "Master" };
+            AddChild(_bgm);
+        }
+
         if (_currentBgm == name && _bgm.Playing) return;
 
         var stream = LoadStream(BgmDir, name);
@@ -202,6 +213,7 @@ public partial class AudioManager : Node
         { "underground",  "horror" },
         { "jungle",       "jungle" },   // 文件还没放，放了 assets/audio/bgm/jungle.* 就自动生效
         { "jungleinside", "jungle_inside" },  // 屋内单独一首；没放文件就沿用上一首，不会静音
+        { "eden",         "eden" },   // 伊甸园自己的曲子（bgm/eden.mp3）
     };
 
     /// <summary>

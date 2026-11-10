@@ -142,8 +142,7 @@ public partial class Enemy : CharacterBody2D
         }
 
         // 受击闪红 + 短暂无敌，避免同一次挥击连续扣血
-        _hitInvuln = Mathf.Max(0f, _hitInvuln - dt);
-        _sprite.Modulate = _hitInvuln > 0f ? new Color(1f, 0.45f, 0.45f) : Colors.White;
+        TickHitFeedback(dt);
 
         // 0) 被击退中：暂时不巡逻，只吃击退速度
         if (_knockTimer > 0f)
@@ -350,6 +349,20 @@ public partial class Enemy : CharacterBody2D
         }
     }
 
+    /// <summary>
+    /// 受击反馈的逐帧推进：无敌计时递减 + 闪红。
+    ///
+    /// 单独抽出来的原因：不少子类（蛇小怪、Boss）自己重写了 _PhysicsProcess
+    /// 而且不调 base，父类这段就永远不跑 —— 表现是"打上去一点反应都没有"。
+    /// 这类子类在自己的 _PhysicsProcess 里调一次本方法即可。
+    /// </summary>
+    protected void TickHitFeedback(float dt)
+    {
+        _hitInvuln = Mathf.Max(0f, _hitInvuln - dt);
+        if (_sprite == null) return;
+        _sprite.Modulate = _hitInvuln > 0f ? new Color(1f, 0.45f, 0.45f) : Colors.White;
+    }
+
     /// <summary>被武器打中。返回 true 表示这次真的扣到血了。</summary>
     public bool TryTakeHit(int dmg, Vector2 from, float knockback, float upRatio = -1f, bool ignoreInvuln = false)
     {
@@ -391,6 +404,37 @@ public partial class Enemy : CharacterBody2D
         if (_bar == null) return;
         _bar.MaxValue = MaxHp;
         _bar.Value = _hp;
+    }
+
+    /// <summary>
+    /// 直接把血量设成某个值（不触发受击表现）。
+    ///
+    /// 给「分身 / 共血条」这类**代理血量**用：分身自己也有一份血量，
+    /// 但它挨的伤害会实时转给本体，转完就把自己补满，这样分身永远打不死。
+    /// </summary>
+    public void SetHp(int value)
+    {
+        _hp = Mathf.Clamp(value, 0, MaxHp);
+        UpdateBar();
+    }
+
+    /// <summary>
+    /// 直接扣血：不走受击无敌、不击退、不闪红，返回**实际扣掉**的血量。
+    ///
+    /// 和 <see cref="TryTakeHit"/> 的区别是它专供"把伤害从一个个体转交给另一个个体"，
+    /// 所以不能被受击无敌吃掉。血量扣到 0 会正常走死亡流程。
+    /// </summary>
+    public int DrainHp(int dmg)
+    {
+        if (_dead || dmg <= 0) return 0;
+
+        int before = _hp;
+        _hp = Mathf.Max(0, _hp - dmg);
+        UpdateBar();
+
+        if (_hp <= 0) Die();
+
+        return before - _hp;
     }
 
     /// <summary>被击倒后：一边压扁一边淡出，播完销毁自己。</summary>

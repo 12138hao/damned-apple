@@ -84,11 +84,9 @@ public partial class Box
 
         var p = new ChalkProjectile
         {
-            // 远程伤害读的是 RangedDamage，不是 DamageMin / DamageMax
-            // （那两个是近战蓄力区间，IsRanged 勾上后在检查器里是藏起来的）。
-            // 这里留一层兜底：万一 RangedDamage 没配（<= 0），退回武器最高伤害，
-            // 免得「改了 DamageMax 却发现粉笔伤害纹丝不动」这种坑再踩一次。
-            Damage = w.RangedDamage > 0 ? w.RangedDamage : w.DamageMax,
+            // 远程伤害只有一个来源：武器 .tres 的 RangedDamage（没填退回 DamageMax）。
+            // （DamageMin / DamageMax 是近战蓄力区间，远程不读，IsRanged 勾上后在检查器里也是藏起来的。）
+            Damage = RangedDamageOf(w),
             Speed = w.RangedSpeed,
             MaxDistance = w.RangedMaxDistance,
             Radius = w.ProjectileRadius,

@@ -43,8 +43,9 @@ public partial class Box
 
         bool finisher = _combo >= MaxCombo;
 
-        // 最后一拳更疼、推得更远
-        int dmg = finisher ? FistDamage * 2 : FistDamage;
+        // 最后一拳更疼、推得更远（拳头数值在 assets/balance/combat.tres，全局一份）
+        int fistDamage = CombatBalance.I.FistDamage;
+        int dmg = finisher ? fistDamage * 2 : fistDamage;
         float knock = finisher ? 320f : 120f;
         float reach = finisher ? FistReach * 1.25f : FistReach;
 
@@ -334,11 +335,13 @@ public partial class Box
                     _lastChargeRatio = ratio;
 
                     // 伤害和击退都按当前武器的区间、随蓄力比例取值
+                    // 伤害区间来自武器自己的 .tres（assets/weapons/*.tres），全地图共用
                     var w = Current;
                     if (w != null)
                     {
+                        MeleeDamageRange(w, out int dmgMin, out int dmgMax);
                         _pendingDamage = Mathf.RoundToInt(
-                            Mathf.Lerp(w.DamageMin, w.DamageMax, ratio));
+                            Mathf.Lerp(dmgMin, dmgMax, ratio));
                         _pendingKnockback = Mathf.Lerp(w.KnockbackMin, w.KnockbackMax, ratio);
                     }
                     else

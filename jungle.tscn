@@ -20,16 +20,19 @@
 [ext_resource type="Texture2D" uid="uid://wye0f8qk3lnl" path="res://像素苹果怪设计 (7).png" id="21_m6alp"]
 [ext_resource type="Texture2D" uid="uid://b4npt84rf7q3o" path="res://e-marker-64.png" id="22_qfbna"]
 [ext_resource type="Script" uid="uid://b3usr6w73hux2" path="res://EMarker.cs" id="23_bb041"]
+[ext_resource type="Texture2D" uid="uid://b3qc8kudj6i6b" path="res://beanstalk_2000x4000.png" id="30_8hef2"]
+[ext_resource type="PackedScene" uid="uid://cp4v7l1a2auik" path="res://RevivePoint.tscn" id="33_3nnb8"]
 [ext_resource type="PackedScene" path="res://Vine.tscn" id="60_vine"]
 [ext_resource type="Script" uid="uid://gnlhvk12bo52" path="res://WellExit.cs" id="61_well"]
 [ext_resource type="Texture2D" uid="uid://b4a1sbu7ew0ot" path="res://assets/jungle/well.png" id="62_welltex"]
 [ext_resource type="Script" uid="uid://xj40k62qt5mj" path="res://SpawnSavePoint.cs" id="63_spawnsave"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ev7cm"]
-size = Vector2(32, 32)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_v45c0"]
-size = Vector2(26, 42)
+[ext_resource type="Script" uid="uid://dgjnxny5qh0rk" path="res://CliffBackdrop.cs" id="70_cliffbg"]
+[ext_resource type="Script" uid="uid://bsiosg2npxtn6" path="res://CloudLayer.cs" id="71_clouds"]
+[ext_resource type="Texture2D" uid="uid://dkb27sql3rl44" path="res://assets/jungle/bg/cliff_transition.png" id="73_clifftrans"]
+[ext_resource type="Texture2D" uid="uid://c2d25ojl54cb3" path="res://assets/jungle/bg/bridge_pillar.png" id="75_seampillar"]
+[ext_resource type="Script" uid="uid://j4ygwyq8bv7p" path="res://GrasslandBackdrop.cs" id="80_grassland"]
+[ext_resource type="Script" uid="uid://cfdgedt5bwbw5" path="res://AppleFairy.cs" id="90_fairy"]
+[ext_resource type="Script" uid="uid://bopm8sorlmtmn" path="res://FairyArena.cs" id="91_arena"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_btfou"]
 size = Vector2(1232.9375, 171.25)
@@ -85,6 +88,21 @@ size = Vector2(1985, 168.5)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_m3r2q"]
 size = Vector2(5988.8003, 32)
 
+[sub_resource type="RectangleShape2D" id="Shape_cliffground"]
+size = Vector2(4100, 120)
+
+[sub_resource type="RectangleShape2D" id="Shape_grassground"]
+size = Vector2(8000, 120)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ev7cm"]
+size = Vector2(32, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v45c0"]
+size = Vector2(26, 42)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vgssw"]
+size = Vector2(73.31641, 3636)
+
 [node name="Main" type="Node2D" unique_id=1688052302]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1115306297]
@@ -114,88 +132,6 @@ TopPad = 130.0
 position = Vector2(441.25027, 18.75)
 Length = 460.0
 TopPad = 130.0
-
-[node name="box" type="CharacterBody2D" parent="." unique_id=61269048]
-z_index = 10
-position = Vector2(172.0004, 82.922714)
-collision_layer = 2
-collision_mask = 9
-script = ExtResource("2_wdl8g")
-Speed = 300.0
-jumpVelocity = 400.0
-KnockBack = 100.0
-LockCameraY = true
-CameraFixedY = 330.0
-VehicleSpeedMult = 1.3
-VehicleBulletDamage = 15
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=618069436]
-shape = SubResource("RectangleShape2D_ev7cm")
-
-[node name="Camera2D" type="Camera2D" parent="box" unique_id=1677849719]
-offset = Vector2(0, -80)
-limit_left = 2
-limit_top = 0
-limit_right = 32979
-limit_bottom = 8251
-position_smoothing_enabled = true
-position_smoothing_speed = 22.0
-
-[node name="Sprite2D" type="Sprite2D" parent="box" unique_id=876825132]
-texture = ExtResource("3_i50yd")
-offset = Vector2(0, -10)
-hframes = 21
-
-[node name="DialogueUI" type="Node2D" parent="box" unique_id=254819191]
-z_index = 20
-position = Vector2(-85, -114)
-script = ExtResource("4_81ahk")
-
-[node name="Text" type="Label" parent="box/DialogueUI" unique_id=772042903]
-offset_left = -109.0
-offset_top = -35.0
-offset_right = 97.0
-offset_bottom = 27.0
-theme_override_font_sizes/font_size = 16
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-
-[node name="SpacePrompt" type="Control" parent="box" unique_id=1801795784]
-z_index = 30
-layout_mode = 3
-anchors_preset = 0
-offset_left = -43.0
-offset_top = -92.0
-offset_right = -43.0
-offset_bottom = -92.0
-script = ExtResource("15_spaceprompt")
-
-[node name="SwingTrail" type="Node2D" parent="box" unique_id=841069274]
-z_index = 2
-script = ExtResource("5_h27us")
-
-[node name="ChargeArc" type="Node2D" parent="box" unique_id=2083930892]
-position = Vector2(-38, -6)
-script = ExtResource("6_qtvti")
-Radius = 20.0
-SweepDeg = 120.0
-
-[node name="Weapon" type="Area2D" parent="box" unique_id=398510171]
-z_index = 100
-position = Vector2(18, -15)
-collision_mask = 4
-monitoring = false
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="box/Weapon" unique_id=1163878538]
-shape = SubResource("RectangleShape2D_v45c0")
-
-[node name="Sprite2D" type="Sprite2D" parent="box/Weapon" unique_id=919389940]
-visible = false
-texture = ExtResource("7_ylqhw")
-
-[node name="Aura" type="Node2D" parent="box/Weapon" unique_id=1642341596]
-script = ExtResource("8_ocwlh")
 
 [node name="road" type="StaticBody2D" parent="." unique_id=702856765]
 
@@ -337,6 +273,41 @@ position = Vector2(4268.2837, 311.24054)
 PatrolRange = 260.0
 RandomPatrol = true
 
+[node name="undead_apple7" parent="." unique_id=1096030722 instance=ExtResource("14_undead")]
+position = Vector2(9728.341, 329.36734)
+PatrolRange = 260.0
+RandomPatrol = true
+
+[node name="undead_apple8" parent="." unique_id=490362403 instance=ExtResource("14_undead")]
+position = Vector2(9299.14, 329.91827)
+PatrolRange = 260.0
+RandomPatrol = true
+
+[node name="undead_apple9" parent="." unique_id=1164725664 instance=ExtResource("14_undead")]
+position = Vector2(10159.747, 314.49133)
+PatrolRange = 260.0
+RandomPatrol = true
+
+[node name="undead_apple10" parent="." unique_id=1545215684 instance=ExtResource("14_undead")]
+position = Vector2(10550.384, 328.26544)
+PatrolRange = 260.0
+RandomPatrol = true
+
+[node name="undead_apple11" parent="." unique_id=956029645 instance=ExtResource("14_undead")]
+position = Vector2(10900.797, 310.63458)
+PatrolRange = 260.0
+RandomPatrol = true
+
+[node name="undead_apple12" parent="." unique_id=747857794 instance=ExtResource("14_undead")]
+position = Vector2(11233.58, 296.3095)
+PatrolRange = 260.0
+RandomPatrol = true
+
+[node name="undead_apple13" parent="." unique_id=1242526045 instance=ExtResource("14_undead")]
+position = Vector2(8342.654, 312.8474)
+PatrolRange = 260.0
+RandomPatrol = true
+
 [node name="undead_apple4" parent="." unique_id=939271715 instance=ExtResource("14_undead")]
 position = Vector2(4708, 304)
 PatrolRange = 260.0
@@ -430,6 +401,9 @@ position = Vector2(3572, 360)
 [node name="pirate_apple4" parent="." unique_id=1250408732 instance=ExtResource("16_pirate")]
 position = Vector2(5020, 330)
 
+[node name="pirate_apple7" parent="." unique_id=1577461377 instance=ExtResource("16_pirate")]
+position = Vector2(9522.903, 336.9631)
+
 [node name="pirate_apple5" parent="." unique_id=451432118 instance=ExtResource("16_pirate")]
 position = Vector2(4521, 317)
 
@@ -456,7 +430,7 @@ scale = Vector2(0.74999994, 0.74999994)
 texture = ExtResource("22_qfbna")
 script = ExtResource("23_bb041")
 
-[node name="HouseDoorToInside" type="Area2D" parent="."]
+[node name="HouseDoorToInside" type="Area2D" parent="." unique_id=360501484]
 position = Vector2(7330, 400)
 collision_layer = 0
 collision_mask = 2
@@ -465,3 +439,184 @@ TargetScene = "res://jungleinside.tscn"
 TargetSpawn = Vector2(170, 340)
 InteractDistance = 80.0
 HintText = "按 E 进屋"
+
+[node name="CliffBackdrop" type="Node2D" parent="." unique_id=56247563]
+position = Vector2(7880, 0)
+script = ExtResource("70_cliffbg")
+Length = 4120.0
+SurfaceY = 361.0
+ChasmDepth = 320.0
+SkyTopPad = 763.0
+SkyBottomPad = 380.0
+
+[node name="CloudLayer" type="Node2D" parent="." unique_id=1880358956]
+position = Vector2(7880, 0)
+script = ExtResource("71_clouds")
+Length = 4000.0
+TopY = 15.0
+BottomY = 285.0
+Count = 12
+
+[node name="CliffTransition" type="Sprite2D" parent="." unique_id=1784646282]
+z_index = -92
+position = Vector2(7893, 74)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("73_clifftrans")
+
+[node name="CliffGround" type="StaticBody2D" parent="." unique_id=276128469]
+position = Vector2(9950, 421)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CliffGround" unique_id=1418354239]
+shape = SubResource("Shape_cliffground")
+
+[node name="SeamPillar" type="Sprite2D" parent="." unique_id=1814486810]
+z_index = -78
+position = Vector2(8020, 520)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("75_seampillar")
+
+[node name="GrasslandBackdrop" type="Node2D" parent="." unique_id=460627073]
+position = Vector2(12000, 0)
+script = ExtResource("80_grassland")
+
+[node name="GrassGround" type="StaticBody2D" parent="." unique_id=372426953]
+position = Vector2(16000, 421)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrassGround" unique_id=1644155299]
+shape = SubResource("Shape_grassground")
+
+[node name="CloudLayer2" type="Node2D" parent="." unique_id=198816284]
+position = Vector2(12000, 0)
+script = ExtResource("71_clouds")
+Length = 8000.0
+TopY = 15.0
+BottomY = 285.0
+Count = 12
+
+[node name="BridgeEndPillar" type="Sprite2D" parent="." unique_id=913879908]
+z_index = -68
+position = Vector2(11980, 460)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("75_seampillar")
+
+[node name="pirate_apple8" parent="." unique_id=540288331 instance=ExtResource("16_pirate")]
+position = Vector2(9952, 349)
+
+[node name="pirate_apple9" parent="." unique_id=1843437299 instance=ExtResource("16_pirate")]
+position = Vector2(10709.801, 344.9395)
+
+[node name="pirate_apple10" parent="." unique_id=84363056 instance=ExtResource("16_pirate")]
+position = Vector2(11042, 344)
+
+[node name="Sprite2D3" type="Sprite2D" parent="." unique_id=1968859143]
+z_index = -85
+position = Vector2(16247, -1393)
+texture = ExtResource("30_8hef2")
+
+[node name="AppleFairy" type="CharacterBody2D" parent="." unique_id=1644444773]
+position = Vector2(16300, 210)
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("90_fairy")
+FirstLines = PackedStringArray("npc:你好呀，我是老苹果创造的苹果仙子", "npc:我的使命是看护这个巨茎", "me:哇原来是这样，那你能送我上去吗", "npc:没问题！", "npc:但是前面的区域很危险，我需要对你进行测试", "npc:如果你能通过测挑战的话我就送你上去", "me:放马过来吧！")
+BattleMenuTitles = PackedStringArray("开启挑战", "我还要再准备一下")
+DeclineLines = PackedStringArray("npc:没关系，你再准备一下吧")
+DefeatLines = PackedStringArray("npc:呼……呼……你比我想象的还厉害")
+AfterWinMenuTitles = PackedStringArray("带我飞到上面", "再来一次", "随便聊聊")
+ChatLines = PackedStringArray("me:约吗", "npc:滚。")
+
+[node name="FairyArena" type="Node2D" parent="." unique_id=2061426983]
+script = ExtResource("91_arena")
+
+[node name="box" type="CharacterBody2D" parent="." unique_id=174375804]
+z_index = 10
+position = Vector2(235.606, 80.464)
+collision_layer = 2
+collision_mask = 9
+script = ExtResource("2_wdl8g")
+Speed = 300.0
+jumpVelocity = 400.0
+KnockBack = 100.0
+StrugglePresses = 4
+LockCameraY = true
+CameraFixedY = 330.0
+VehicleSpeedMult = 1.3
+VehicleBulletDamage = 15
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box" unique_id=951365296]
+shape = SubResource("RectangleShape2D_ev7cm")
+
+[node name="Camera2D" type="Camera2D" parent="box" unique_id=177238293]
+offset = Vector2(0, -80)
+limit_left = 2
+limit_top = -3302
+limit_right = 19992
+limit_bottom = 8251
+position_smoothing_enabled = true
+position_smoothing_speed = 22.0
+
+[node name="Sprite2D" type="Sprite2D" parent="box" unique_id=1799098205]
+texture = ExtResource("3_i50yd")
+offset = Vector2(0, -10)
+hframes = 21
+
+[node name="DialogueUI" type="Node2D" parent="box" unique_id=1800548140]
+z_index = 20
+position = Vector2(-85, -114)
+script = ExtResource("4_81ahk")
+
+[node name="Text" type="Label" parent="box/DialogueUI" unique_id=778084194]
+offset_left = -109.0
+offset_top = -35.0
+offset_right = 97.0
+offset_bottom = 27.0
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="SpacePrompt" type="Control" parent="box" unique_id=901054134]
+z_index = 30
+layout_mode = 3
+anchors_preset = 0
+offset_left = -43.0
+offset_top = -92.0
+offset_right = -43.0
+offset_bottom = -92.0
+script = ExtResource("15_spaceprompt")
+
+[node name="SwingTrail" type="Node2D" parent="box" unique_id=1375705468]
+z_index = 2
+script = ExtResource("5_h27us")
+
+[node name="ChargeArc" type="Node2D" parent="box" unique_id=1968629947]
+position = Vector2(-38, -6)
+script = ExtResource("6_qtvti")
+Radius = 20.0
+SweepDeg = 120.0
+
+[node name="Weapon" type="Area2D" parent="box" unique_id=1364064803]
+z_index = 100
+position = Vector2(18, -15)
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="box/Weapon" unique_id=1619872649]
+shape = SubResource("RectangleShape2D_v45c0")
+
+[node name="Sprite2D" type="Sprite2D" parent="box/Weapon" unique_id=763978235]
+visible = false
+texture = ExtResource("7_ylqhw")
+
+[node name="Aura" type="Node2D" parent="box/Weapon" unique_id=726727286]
+script = ExtResource("8_ocwlh")
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="." unique_id=590368226]
+position = Vector2(19479.684, 261.0791)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1784023887]
+position = Vector2(46.658203, -1583.0791)
+shape = SubResource("RectangleShape2D_vgssw")
+
+[node name="RevivePoint" parent="." unique_id=1585508078 instance=ExtResource("33_3nnb8")]
+position = Vector2(13390.661, 347.18878)

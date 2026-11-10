@@ -1,0 +1,57 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://SnakeMinion.cs" id="1_minion"]
+[ext_resource type="Texture2D" path="res://assets/eden/snake_minion_idle.png" id="2_idle"]
+[ext_resource type="Texture2D" path="res://assets/ui/enemy_bar_bg.png" id="3_bg"]
+[ext_resource type="Texture2D" path="res://assets/ui/enemy_bar_fill.png" id="4_fill"]
+[ext_resource type="Texture2D" path="res://assets/ui/enemy_bar_border.png" id="5_border"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(110, 117)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
+size = Vector2(110, 120)
+
+[node name="SnakeMinion" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_minion")
+MaxHp = 50
+Damage = 20
+Gravity = 1200.0
+DeathSfx = "enemy_hurt"
+
+[node name="Art" type="Sprite2D" parent="."]
+texture = ExtResource("2_idle")
+offset = Vector2(0, -64)
+texture_filter = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -58.5)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="RayLeft" type="RayCast2D" parent="."]
+target_position = Vector2(-30, 0)
+
+[node name="RayRight" type="RayCast2D" parent="."]
+target_position = Vector2(30, 0)
+
+[node name="HurtArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtArea"]
+position = Vector2(0, -60)
+shape = SubResource("RectangleShape2D_hurt")
+
+[node name="HpBar" type="TextureProgressBar" parent="."]
+z_index = 20
+offset_left = -70.0
+offset_top = -152.0
+offset_right = 70.0
+offset_bottom = -128.0
+max_value = 50.0
+value = 50.0
+texture_under = ExtResource("3_bg")
+texture_over = ExtResource("5_border")
+texture_progress = ExtResource("4_fill")

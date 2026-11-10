@@ -70,7 +70,7 @@ public partial class MudPit : Area2D
     // ── 入泥反馈 ──────────────────────────────────────────────
     [ExportGroup("入泥反馈")]
     [Export] public string SplashSfx = "mud_splash";
-    [Export(PropertyHint.Range, "0,1,0.05")] public float SplashVolume = 0.75f;
+    [Export(PropertyHint.Range, "0,1,0.05")] public float SplashVolume = 0.375f;   // 原来 0.75，太刺耳，砍到 50%
 
     /// <summary>两次入泥反馈之间的最短间隔，防止在边界反复进出时刷屏。</summary>
     [Export] public float EnterCooldown = 0.4f;
@@ -104,7 +104,7 @@ public partial class MudPit : Area2D
     // ── 行走反馈 ──────────────────────────────────────────────
     [ExportGroup("行走反馈")]
     [Export] public string StepSfx = "mud_step";
-    [Export(PropertyHint.Range, "0,1,0.05")] public float StepVolume = 0.5f;
+    [Export(PropertyHint.Range, "0,1,0.05")] public float StepVolume = 0.25f;      // 原来 0.5，同步砍到 50%
 
     /// <summary>泥里走多久踩一下（秒）。</summary>
     [Export] public float StepInterval = 0.32f;

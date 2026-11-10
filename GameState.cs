@@ -25,6 +25,12 @@ public partial class GameState : Node
     public bool DialogueActive { get; set; }
 
     /// <summary>
+    /// 这一周目已经通关（看完结局字幕）。主菜单点「继续游戏」时靠它弹提示，
+    /// 确认后开新游戏。开新游戏时会被清掉。
+    /// </summary>
+    public bool Cleared { get; set; }
+
+    /// <summary>
     /// 下一个场景要不要播「从古井里爬上来」的入场动画。
     /// 由 AutoPortal 的 WellEntry 开关置位，目标场景的 WellExit 取一次就清掉。
     /// 用「取完即清」而不是普通 bool：动画只能播一次，
@@ -176,5 +182,6 @@ public partial class GameState : Node
         Reset();
         _records.Reset();
         DialogueActive = false;
+        Cleared = false;     // 新周目：通关标记清掉，结局才能再演一次
     }
 }

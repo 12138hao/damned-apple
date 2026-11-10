@@ -21,6 +21,15 @@ public partial class SheetAnimator : Sprite2D
         Frame = StartFrame;
     }
 
+    /// <summary>切动画时从头开始播，避免上次的帧计数残留导致越界。</summary>
+    public void Restart()
+    {
+        _i = 0;
+        _t = 0f;
+        _dir = 1;
+        Frame = StartFrame;
+    }
+
     public override void _Process(double delta)
     {
         if (Paused) return;

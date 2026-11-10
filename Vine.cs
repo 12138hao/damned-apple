@@ -25,6 +25,9 @@ public partial class Vine : Rope
 
     [ExportGroup("粗细")]
     [Export] public float GrabWidth = 30f;        // 判定区宽度（比贴图略宽，好抓一点）
+    // 贴图整数放大倍数。巨藤那种要用 4（24px → 96px 宽）；1 = 保持原样，老场景不受影响。
+    // 必须是整数，非整数会把像素格子拉得大小不一。
+    [Export] public float ArtScale = 1f;
 
     [ExportGroup("速度")]
     [Export] public float ClimbUpSpeed = 95f;     // 往上爬：慢
@@ -82,7 +85,7 @@ public partial class Vine : Rope
         var hint = GetNodeOrNull<Sprite2D>(HintPath);
         if (hint != null)
         {
-            var pos = new Vector2(-24f, Length - 60f);
+            var pos = new Vector2(-24f - Mathf.Max(0f, ArtScale - 1f) * 10f, Length - 60f);
             if (hint is EMarker em) em.SetBasePosition(pos);
             else hint.Position = pos;
         }
@@ -102,16 +105,21 @@ public partial class Vine : Rope
         float th = Tile.GetHeight();
         if (th <= 0f) return;
 
-        int count = Mathf.CeilToInt(Length / th);
+        float sc = Mathf.Max(0.1f, ArtScale);
+        float dw = tw * sc;          // 放大后的宽
+        float dh = th * sc;          // 放大后单片的高
+
+        int count = Mathf.CeilToInt(Length / dh);
         for (int i = 0; i < count; i++)
         {
-            float y = i * th;
-            float h = Mathf.Min(th, Length - y);
+            float y = i * dh;
+            float h = Mathf.Min(dh, Length - y);
             if (h <= 0f) break;
             // DrawTextureRectRegion(贴图, 目标矩形, 源矩形)：源矩形取上半截，不满一片就裁
+            // 源矩形要按放大倍数换算回纹理像素，否则最后一片会被压扁
             DrawTextureRectRegion(Tile,
-                new Rect2(-tw * 0.5f, y, tw, h),                        // 摆到藤蔓中线上
-                new Rect2(0f, 0f, tw, h));
+                new Rect2(-dw * 0.5f, y, dw, h),                        // 摆到藤蔓中线上
+                new Rect2(0f, 0f, tw, h / sc));
         }
     }
 

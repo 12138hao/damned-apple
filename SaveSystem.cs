@@ -89,6 +89,9 @@ public static class SaveSystem
         d["talked"] = ToArray(gs.TalkedKeys);
         d["picked"] = ToArray(gs.PickedKeys);
 
+        // 已通关：主菜单读档后靠它弹「游戏已通关」提示
+        d["cleared"] = gs.Cleared;
+
         using var f = FileAccess.Open(SavePath, FileAccess.ModeFlags.Write);
         if (f == null)
         {
@@ -189,6 +192,9 @@ public static class SaveSystem
         gs.RestoreRecords(
             ReadStringList(d, "talked"),
             ReadStringList(d, "picked"));
+
+        // 已通关（老存档没有这个键 → false）
+        gs.Cleared = d.ContainsKey("cleared") && d["cleared"].AsBool();
 
         PendingScene = scene;
         return true;

@@ -35,17 +35,19 @@ public partial class ChalkProjectile : Area2D
     private Vector2 _start;
     private bool _spent;      // 已命中或已过期，等销毁
     private float _fade;      // 消失时的淡出计时（防止"啪"一下没了）
+    private CollisionShape2D _shapeNode;
 
     public override void _Ready()
     {
         CollisionLayer = 0;       // 自己不属于任何层（不会被别的子弹打到）
         CollisionMask = 4;        // 只打敌人层
-        Monitoring = true;
+        Monitoring = false;       // 命中改成每帧自己查形状，不再依赖 body_entered
 
-        AddChild(new CollisionShape2D
+        _shapeNode = new CollisionShape2D
         {
             Shape = new CircleShape2D { Radius = Radius }
-        });
+        };
+        AddChild(_shapeNode);
 
         if (ProjectileTexture != null)
         {
@@ -65,7 +67,6 @@ public partial class ChalkProjectile : Area2D
             AddChild(sp);
         }
 
-        BodyEntered += OnBodyEntered;
     }
 
     /// <summary>设置飞行方向。AddChild 之后调用。</summary>
@@ -94,6 +95,15 @@ public partial class ChalkProjectile : Area2D
         // 按距离而不是帧数：改了 Speed 之后最远距离也不会跟着变
         Position += _dir * Speed * dt;
 
+        // 命中判定：每帧自己查一次形状重叠，取**最近的那个敌人**结算。
+        //
+        // 不用 Area2D 的 body_entered，是因为它有两个坑：
+        //   ① 一帧走 15px，贴着边擦过去时可能整个漏掉；
+        //   ② 炮弹只要碰到任意一个敌人就吃掉自己 —— 当小怪站在蛇身的判定框里时，
+        //      先被碰到的往往是身后那条大蛇，小怪反而一点事没有（玩家看到的就是"打中了没掉血"）。
+        // 取最近的敌人就没有歧义：谁离粉笔近算谁的。
+        if (TryHitNearest()) return;
+
         float moved = GlobalPosition.DistanceTo(_start);
         if (moved >= MaxDistance)
         {
@@ -104,13 +114,37 @@ public partial class ChalkProjectile : Area2D
         }
     }
 
-    private void OnBodyEntered(Node2D body)
+    /// <summary>查这一帧压在谁身上，取最近的一个扣血。返回是否命中。</summary>
+    private bool TryHitNearest()
     {
-        if (_spent) return;
-        if (body is not Enemy enemy) return;
+        if (_shapeNode == null) return false;
+
+        var space = GetWorld2D().DirectSpaceState;
+        var query = new PhysicsShapeQueryParameters2D
+        {
+            Shape = _shapeNode.Shape,
+            Transform = _shapeNode.GlobalTransform,
+            CollisionMask = 4,
+            CollideWithBodies = true,
+            CollideWithAreas = false,
+        };
+
+        Enemy best = null;
+        float bestDist = float.MaxValue;
+        foreach (var hit in space.IntersectShape(query))
+        {
+            if (hit["collider"].As<Node>() is not Enemy enemy) continue;
+            if (enemy.IsQueuedForDeletion()) continue;
+
+            float d = enemy.GlobalPosition.DistanceSquaredTo(GlobalPosition);
+            if (d < bestDist) { bestDist = d; best = enemy; }
+        }
+
+        if (best == null) return false;
 
         _spent = true;
         // ignoreInvuln = true：每一发都独立结算，不会被敌人 0.25 秒的受击无敌吃掉
-        enemy.TryTakeHit(Damage, GlobalPosition - _dir * 10f, Knockback, 0.2f, true);
+        best.TryTakeHit(Damage, GlobalPosition - _dir * 10f, Knockback, 0.2f, true);
+        return true;
     }
 }

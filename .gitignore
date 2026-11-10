@@ -28,6 +28,17 @@ export_credentials.cfg
 tools/ref/
 tools/preview_audio/
 
+# ---------------- 素材工作区中间产物 ----------------
+# tools/_art/ 是素材生产现场：预览图、AI 生成原稿、分色/抠图中间稿、对比图。
+# 最终素材在 assets/ 下，中间产物靠脚本可重跑，不进仓库。
+tools/_art/**/*.png
+tools/_art/**/*.jpg
+
+# ---------------- 开发过程截图 ----------------
+# docs/screenshots/ 是调试抓手（无头探针抓帧、局部放大比对），目前 340+ 张，不进仓库。
+# README 引用的成品图在 screenshots/ 下，那一份要提交。
+docs/screenshots/
+
 # ---------------- 系统 ----------------
 Thumbs.db
 desktop.ini

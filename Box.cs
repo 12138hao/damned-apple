@@ -63,8 +63,11 @@ public partial class Box : CharacterBody2D
     // 这段区间（脚下左右各 60°）打不到，鼠标指到这里时攻击方向会贴到边界。
     [Export] public float AimBlockFromDeg = 25f;    // 脚下禁区起点（右下）
     [Export] public float AimBlockToDeg = 155f;     // 脚下禁区终点（左下）
+    // 武器伤害**不在这里配**：木棒/尺子/粉笔的伤害写在 assets/weapons/*.tres 里，
+    // 一份资源全地图共用。以前这几个数是 Box 上的 [Export]，而 Box 每个场景各一个，
+    // 在 A 图检查器里改了 B 图不生效，所以整组删掉了。
     [ExportGroup("空手出拳")]
-    [Export] public int FistDamage = 8;            // 第一拳伤害
+    // 拳头没有 .tres，数值放在 assets/balance/combat.tres（CombatBalance），同样是全局一份。
     [Export] public float FistReach = 26f;         // 拳头伸出距离
     [Export] public float FistTime = 0.14f;        // 单拳动作时长
     [Export] public float FistCooldown = 0.10f;    // 两拳之间最短间隔
