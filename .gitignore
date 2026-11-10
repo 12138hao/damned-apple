@@ -39,6 +39,9 @@ tools/_art/**/*.jpg
 # README 引用的成品图在 screenshots/ 下，那一份要提交。
 docs/screenshots/
 
+# 视频剪辑工作目录（中间片段、抽帧检查图），成品放 dist/
+docs/video/
+
 # ---------------- 系统 ----------------
 Thumbs.db
 desktop.ini
